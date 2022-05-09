@@ -59,3 +59,11 @@ function toggleheaderleft() {
       
     }
   }
+
+
+/**
+ * Adding the chat widget
+ */
+
+import { Tawk } from './Tawk';
+const tawk = new Tawk();
