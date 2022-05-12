@@ -137,8 +137,8 @@
 
           <div v-for="chatroom in roomMsgs" :key="chatroom.room_id">
             <!-- Chat messages and 'is typing...' -->
-            <div class="card-body chatboxfix p-0 roomMessages" :style="{'background-image':'url(background_trans.png)'}" 
-              v-bind:id="'messages_room' + chatroom.room_id" 
+            <div class="card-body chatboxfix p-0 roomMessages" :style="{'background-image':'url(background_trans.png)'}"
+              v-bind:id="'messages_room' + chatroom.room_id"
               v-if="chatroom.room_id == activeRoom">
               <ul
                 v-if="!addingRoom"
@@ -163,11 +163,11 @@
                   }">
                     <span class="p">
                       <strong v-if="message.user.id !== user.id"> {{ message.user.first_name }} {{ message.user.last_name }} : </strong>
-                      {{ message.message }} 
+                      {{ message.message }}
                     </span>
-                    
+
                   </div>
-                  <div v-if="message.attachment_path" 
+                  <div v-if="message.attachment_path"
                     class="message"
                     :class="{
                     my_message: message.user.id === user.id,
@@ -183,7 +183,7 @@
                       />
                     </span>
                   </div>
-                  
+
                 </li>
               </ul>
 
@@ -391,8 +391,12 @@ export default {
 
   methods: {
     fetchMessages() {
+        console.log('fetchMessages');
       axios.get("messages").then((response) => {
+          console.log('messages', response);
         this.roomMsgs = response.data;
+      }).catch ((e) => {
+          console.log('error', e);
       });
     },
     scrollToChatBottom() {
@@ -407,12 +411,14 @@ export default {
         user: this.user,
         message: this.newMessage,
       });
+      console.log('sendMessage', this.activeRoom);
       axios
         .post("messages", {
           message: this.newMessage,
           room_id: this.activeRoom,
         })
         .then((response) => {
+            console.log('sendMessage response', response);
           if (response.data.status == "success" && this.chatrooms.length > 1) {
             let found = null;
             for (const indx in this.chatrooms) {
@@ -439,8 +445,10 @@ export default {
       });
     },
     fetchChatrooms() {
+        console.log('fetchChatrooms');
       this.loadingChatrooms = true;
       axios.get("rooms").then((response) => {
+          console.log('rooms', response);
         if (response.data.length > 0) {
           this.chatrooms = response.data;
           this.activeRoom = this.chatrooms[0].room_id;

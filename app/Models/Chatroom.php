@@ -10,6 +10,6 @@ class Chatroom extends Model
     use HasFactory;
 
     public function members() {
-        return $this->belongsToMany(User::class, 'members', 'room_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(User::class, null, 'room_id', 'user_id')->withTimestamps();
     }
 }
