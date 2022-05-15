@@ -1,116 +1,210 @@
 <template>
+  <div class="row">
+    <div class="col-4">
+      <div class="header" data-toggle="collapse">
+        <div class="userimg">
+          <img :src="user.profile_picture || 'http://placekitten.com/150/150'" class="cover" />
+        </div>
 
+        <h4>
+          {{ user.first_name }} {{ user.last_name }}<br />
+          <span>{{ user.email }}</span>
+        </h4>
 
-<div class="row">
-  <!--MAIN SIDE BAR-->
-  <div class="col-lg-1 mainsidebar">
-    
-    <a class="activemenu" href="#messaging"><ion-icon name="mail-outline"></ion-icon><span class="menutitle">Messaging</span></a>
-      <a href="#reporting"><ion-icon name="bar-chart-outline"></ion-icon><span class="menutitle">Reporting</span></a>
-      <a href="#viewwidget"><ion-icon name="copy-outline"></ion-icon><span class="menutitle">Widget</span></a>
-  </div>
+        <ul class="nav_icons">
+          <li>
+            <ion-icon
+              name="chatbubble-ellipses-outline"
+              @click="addingRoom = !addingRoom"
+              id="headerToggle"
+            ></ion-icon>
+          </li>
+          <li><ProfileUpdateComponent></ProfileUpdateComponent></li>
+        </ul>
+      </div>
 
-  <!--MESSAGE LISTS-->
+      <!-- search -->
 
-  <div class="col-lg-2 sidebar" style="overflow-y: scroll">
-    
-    <!--INCOMING SESSIONS-->
+      <div class="search_chat">
+        <div @keyup.enter="createRoom()">
+          <vue-multiselect
+            v-model="newRoomMembers"
+            :options="userDropdownOptions"
+            :multiple="true"
+            :block-keys="['Tab', 'Enter']"
+            :hide-selected="true"
+            select-label=""
+            deselect-label=""
+            placeholder="Type in a name..."
+            :close-on-select="false"
+            label="id"
+            :show-label="false"
+            track-by="id"
+            :custom-label="(user) => `${user.first_name} ${user.last_name}`"
+            @search-change="findUser"
+            :loading="isSearchLoading"
+          >
+            <template v-slot:caret><span></span></template>
+          </vue-multiselect>
+        </div>
+      </div>
 
-    <div class="row py-0 mt-0">
-      
-      <p class="subtitle">Incoming Sessions</p>
-
-      <!--INCOMING CHAT BLOCK-->
-      <!--TO DO: VUE FOR INCOMING MESSAGE TAGGING-->
-
-      <div class="block incoming">
-        <div class="details">
+    <!-- chatlist -->
+    <div class="chatlist" style="overflow-y: scroll">
+      <div
+        :class="{ block: true, active: chatroom.room_id == activeRoom }"
+        v-for="chatroom in chatrooms"
+        :key="chatroom.room_id"
+      >
+        <div
+          class="details"
+          v-on:click="selectRoom(chatroom.room_id)"
+          v-bind:id="chatroom.room_id"
+        >
           <div class="listHead">
-            <p>Incoming user</p>
-            <!-- UNREAD MESSAGES NOTIF 
-            <b>1</b> -->
+            <h4>{{ chatroom.room_name }}</h4>
           </div>
 
           <!-- The message last sent to the room -->
           <div class="message_p">
-            <p>last message sent</p>
-          </div>
-        </div>
-      </div>
-      <!--INCOMING CHAT BLOCK-->
-
-    </div>
-
-    <!--ACTIVE SESSIONS-->
-
-    <div class="row">
-      <p class="subtitle sidebartitle">Active Sessions</p>
-        
-        <!--ACTIVE CHAT BLOCK-->
-        <div 
-          :class="{ block: true, active: chatroom.room_id == activeRoom }"
-          v-for="chatroom in chatrooms"
-          :key="chatroom.room_id">
-          <div class="details"
-            v-on:click="selectRoom(chatroom.room_id)"
-            v-bind:id="chatroom.room_id">
-            
-            <div class="listHead">
-              <p>{{ message.user.first_name }}</p> 
-              <b>1</b>
-            </div>
-
-            <!-- The message last sent to the room -->
-            <div class="message_p">
-              <p v-if="roomMsgs.length > 0 && roomMsgs[getTargetRoomIndex(chatroom.room_id)].messages.length > 0">
+            <p v-if="roomMsgs.length > 0 && roomMsgs[getTargetRoomIndex(chatroom.room_id)].messages.length > 0">
               {{
                 // Get the last message and convert to string
                 convertMessageObjectToString(
                   roomMsgs.find(room => room.room_id === chatroom.room_id).messages.slice(-1)[0]
                 )
               }}
-              </p>
+            </p>
+            <!-- UNREAD MESSAGES NOTIF
+            <b>1</b> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="col-8">
+        <div class="rightSide">
+          <div class="header" id="orig" :style="{ display: !addingRoom ? 'flex' : 'none' }">
+            <div class="imgText">
+              <!-- TODO: Default Room Photo -->
+              <!-- <div class="userimg">
+                <img src="https://via.placeholder.com/150" class="cover" />
+              </div> -->
+              <!-- TODO: Consider showing photo if chatroom is 1-on-1 -->
+
+              <h4 v-if="activeRoomDetails">
+                {{ activeRoomDetails.room_name }}
+
+              </h4>
+            </div>
+          </div>
+
+          <!-- TOGGLE DISPLAY when ADD to Chat is Clicked -->
+
+          <div class="header" id="toBar" :style="{ display: addingRoom ? 'flex' : 'none' }">
+            <div class="imgTextLabel" @keyup.enter="createRoom()">
+              <vue-multiselect
+                v-model="newRoomMembers"
+                :options="userDropdownOptions"
+                :multiple="true"
+                :block-keys="['Tab', 'Enter']"
+                :hide-selected="true"
+                select-label=""
+                deselect-label=""
+                placeholder="Type in a name..."
+                :close-on-select="false"
+                label="id"
+                :show-label="false"
+                track-by="id"
+                :custom-label="(user) => `${user.first_name} ${user.last_name}`"
+                @search-change="findUser"
+                :loading="isSearchLoading"
+              >
+                <template v-slot:caret><span></span></template>
+              </vue-multiselect>
             </div>
           </div>
         </div>
-        <!--ACTIVE CHAT BLOCK-->
-    </div>
-  
-  </div>
 
+        <div class="card card-default">
+          <!-- Placeholder chat box (if there are no rooms yet) -->
+         <div v-if="roomMsgs.length === 0" class="card-body chatboxfix p-4" :style="{'background-image':'url(background_trans.png)'}" >
+           <div class="d-flex justify-content-center align-items-center h-100">
+                <p class="fs-3 text-muted" v-if="!loadingChatrooms">Click on the bubble icon <ion-icon name="chatbubble-ellipses-outline"></ion-icon> above to create a new chatroom!</p>
+              </div>
+         </div>
 
-  <!--CHAT DISPLAY-->
-  <div class="col-lg-9 mainchat">
-    <div class="mainchat2" style="overflow-y: scroll;"
-      v-for="chatroom in roomMsgs" :key="chatroom.room_id">
-
-      <!-- Chat messages-->
-      <div class="card-body chatmessages roomMessages"
-        v-bind:id="'messages_room' + chatroom.room_id" 
-        v-if="chatroom.room_id == activeRoom">
-
-        <ul class="list-unstyled" v-if="!addingRoom" ref="chatWindow" v-chat-scroll>
-
-          <!-- CHAT MESSAGE BLOCK -->
-          <li v-for="(message, index) in chatroom.messages" :key="index">
-            <!-- Only show the text part if it isn't empty  -->
-            <div v-if="message.message.length > 0" class="message"
-              :class="{
-                my_message: message.user.id === user.id,
-                friend_message: message.user.id !== user.id
-              }">
-              <span class="p"><strong v-if="message.user.id !== user.id"> {{ message.user.first_name }} </strong>{{ message.message }} </span>
+          <div v-for="chatroom in roomMsgs" :key="chatroom.room_id">
+            <!-- Chat messages and 'is typing...' -->
+            <div class="card-body chatboxfix p-0 roomMessages" :style="{'background-image':'url(background_trans.png)'}" 
+              v-bind:id="'messages_room' + chatroom.room_id" 
+              v-if="chatroom.room_id == activeRoom">
+              <ul
+                v-if="!addingRoom"
+                ref="chatWindow"
+                class="list-unstyled"
+                style="height: 560px; overflow-y: scroll; overflow-x: hidden; padding: 0 1.5rem"
+                v-chat-scroll
+              >
+                <!-- Chatroom Messages -->
+                <li
+                  class="py-2"
+                  v-for="(message, index) in chatroom.messages"
+                  :key="index"
+                >
+                  <!-- Only show the text part if it isn't empty  -->
+                  <div
+                    v-if="message.message.length > 0"
+                    class="message"
+                    :class="{
+                    my_message: message.user.id === user.id,
+                    friend_message: message.user.id !== user.id
+                  }">
+                    <span class="p">
+                      <strong v-if="message.user.id !== user.id"> {{ message.user.first_name }} {{ message.user.last_name }} : </strong>
+                      {{ message.message }} 
+                    </span>
                     
-            </div>
-          </li>
-          <!-- CHAT MESSAGE BLOCK -->
-          
-        </ul>
-      </div>
-    </div>
+                  </div>
+                  <div v-if="message.attachment_path" 
+                    class="message"
+                    :class="{
+                    my_message: message.user.id === user.id,
+                    friend_message: message.user.id !== user.id
+                  }">
+                    <!-- Attachment -->
+                    <span class="p--full">
+                      <strong class="d-block pb-1" v-if="message.user.id !== user.id"> {{ message.user.first_name }} {{ message.user.last_name }} : </strong>
+                      <img
+                        class="img-fluid attachment"
+                        :src="message.attachment_path"
+                        @load="scrollToChatBottom"
+                      />
+                    </span>
+                  </div>
+                  
+                </li>
+              </ul>
 
-    <!--INPUT MESSAGE BOX-->
-    <div class="chatbox_input">
+              <!-- Message shown while adding a room via To Bar: -->
+              <div class="d-flex justify-content-center align-items-center h-100" v-else>
+                <p class="fs-3 text-muted">Add chat members above, and then press <strong>enter</strong> to create a new chatroom!</p>
+              </div>
+
+              <span class="text-muted" v-if="activeUser"
+                >{{ activeUser.name }} is typing...</span
+              >
+            </div>
+          </div>
+
+          <!--chat input-->
+          <div class="chatbox_input">
+            <FileUploadComponent
+            :active-room="activeRoom"
+              v-on:upload-success="handleAttachmentUpload"
+            ></FileUploadComponent>
+
             <input
               @keydown="sendTypingEvent"
               @keyup.enter="sendMessage"
@@ -120,12 +214,10 @@
               placeholder="Enter your message..."
               class="form-control"
             />
-     </div>
+          </div>
+        </div>
+      </div>
   </div>
-
-
-</div>
-
 </template>
 
 <style scoped>
