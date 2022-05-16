@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\BindingResolutionException;
+use Illuminate\Support\Str;
 
 
 class RegisterController extends Controller
@@ -71,12 +72,13 @@ class RegisterController extends Controller
     public function create(array $data)
     {
         $newUser = new User;
+        $newUser->_id = Str::uuid()->toString();
         $newUser->name = $data['name'];
         $newUser->first_name = $data['first_name'];
         $newUser->last_name = $data['last_name'];
         $newUser->email = $data['email'];
         $newUser->password = Hash::make($data['password']);
-        
+
         // Receive the file via the app request object
         $request = app('request');
         if ($request->hasFile('profile_picture')) {
