@@ -17,6 +17,10 @@ class CreateSessionsTable extends Migration
             $table->id();
             $table->string('chat_widget_id');
             $table->string('visitor_id');
+            $table->string('socket_id');
+            $table->string('ip_address')->nullable();
+            $table->string('browser')->nullable();
+            $table->string('webpage_source')->nullable();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('ended_at')->nullable();
             $table->timestamps();

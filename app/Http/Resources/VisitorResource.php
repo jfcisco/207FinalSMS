@@ -11,12 +11,6 @@ class VisitorResource extends JsonResource
         return [
             'id' => $this->_id,
             'user' => new UserResource($this->user),
-            'socket_id' => $this->socket_id,
-            'role' => $this->role,
-            'ip_address' => $this->ip_address,
-            'browser' => $this->browser,
-            'webpage_source' => $this->webpage_source,
-            'created_at' => $this->created_at,
         ];
     }
 }

@@ -46,7 +46,6 @@ Route::prefix('api')->group(function(){
     Route::resource('/messages', MessageController::class);
     Route::resource('sessions', SessionController::class);
     Route::resource('/users', UserController::class);
-    Route::resource('/visitor', VisitorController::class);
 });
 
 

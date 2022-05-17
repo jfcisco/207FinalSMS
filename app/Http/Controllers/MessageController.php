@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MessageResource;
+use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MessageController extends Controller
 {
@@ -13,7 +16,7 @@ class MessageController extends Controller
      */
     public function index()
     {
-        //
+        return response(['data' => MessageResource::collection(Message::all())], 200);
     }
 
     /**
@@ -34,7 +37,23 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            return response([
+                'error' => $validator->errors(),
+            ], 400);
+        }
+
+        $message = new Message();
+        $message->session_id =  $request->session_id;
+        $message->created_by_id =  $request->created_by_id;
+        $message->attachment_path =  $request->attachment_path;
+        $message->message =  $request->message;
+        $message->is_whisper =  $request->is_whisper;
+        $message->save();
+
+        return response(['data' => new MessageResource($message)], 200);
     }
 
     /**
@@ -45,7 +64,8 @@ class MessageController extends Controller
      */
     public function show($id)
     {
-        //
+        $message = Message::find($id);
+        return response(['data' => new MessageResource($message)], 200);
     }
 
     /**
@@ -80,5 +100,14 @@ class MessageController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function validator(array $data)
+    {
+        return Validator::make($data, [
+            'session_id' => ['required'],
+            'created_by_id' => ['required'],
+            'message' => ['required'],
+        ]);
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SessionResource;
+use App\Models\ChatWidget;
 use App\Models\Session;
+use App\Models\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,7 +18,7 @@ class SessionController extends Controller
      */
     public function index()
     {
-        //
+        return response(['data' => SessionResource::collection(Session::all())], 200);
     }
 
     /**
@@ -37,8 +39,7 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->all();
-        $validator = $this->validator($input);
+        $validator = $this->validator($request->all());
 
         if ($validator->fails()) {
             return response([
@@ -47,10 +48,13 @@ class SessionController extends Controller
         }
 
         $session = new Session();
-        $session->chat_widget_id = $input['chat_widget_id'];
-        $session->visitor_id =$input['visitor_id'];
+        $session->chat_widget_id =  $request->chat_widget_id;
+        $session->visitor_id = $request->visitor_id;
+        $session->socket_id =  $request->socket_id;
+        $session->ip_address =  $request->ip_address;
+        $session->browser =  $request->browser;
+        $session->webpage_source =  $request->webpage_source;
         $session->save();
-        $session->load('chat_widget');
 
         return response(['data' => new SessionResource($session)], 200);
     }
@@ -63,7 +67,8 @@ class SessionController extends Controller
      */
     public function show($id)
     {
-        //
+        $session = Session::find($id);
+        return response(['data' => new SessionResource($session)], 200);
     }
 
     /**
@@ -106,6 +111,7 @@ class SessionController extends Controller
         return Validator::make($data, [
             'chat_widget_id' => ['required'],
             'visitor_id' => ['required'],
+            'socket_id' => ['required'],
         ]);
     }
 }

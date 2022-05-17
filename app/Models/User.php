@@ -43,6 +43,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+
+
     public function chat_widgets(): BelongsToMany
     {
         return $this->belongsToMany(ChatWidget::class);

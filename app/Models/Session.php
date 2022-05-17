@@ -19,6 +19,10 @@ class Session extends Model
     protected $fillable = [
         'chat_widget_id',
         'visitor_id',
+        'socket_id',
+        'ip_address',
+        'browser',
+        'webpage_source',
         'started_at',
         'ended_at',
     ];
@@ -45,6 +49,6 @@ class Session extends Model
 
     public function visitor(): BelongsTo
     {
-        return $this->belongsTo(Visitor::class);
+        return $this->belongsTo(User::class);
     }
 }

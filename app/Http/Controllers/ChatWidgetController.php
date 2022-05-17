@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ChatWidgetResource;
 use App\Models\ChatWidget;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ChatWidgetController extends Controller
 {
@@ -36,7 +38,36 @@ class ChatWidgetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            return response([
+                'error' => $validator->errors(),
+            ], 400);
+        }
+
+        $chatWidget = new ChatWidget();
+        $chatWidget->created_by_id =  $request->created_by_id;
+        $chatWidget->name = $request->name;
+        $chatWidget->color = $request->color;
+        $chatWidget->position = $request->position;
+        $chatWidget->hide_when_offline = $request->hide_when_offline;
+        $chatWidget->hide_when_on_desktop = $request->hide_when_on_desktop;
+        $chatWidget->hide_when_on_mobile = $request->hide_when_on_mobile;
+        $chatWidget->enable_emojis = $request->enable_emojis;
+        $chatWidget->availability_start_time = $request->availability_start_time;
+        $chatWidget->availability_end_time = $request->availability_end_time;
+        $chatWidget->generated_code = $request->generated_code;
+        $chatWidget->direct_chat_link = $request->direct_chat_link;
+        $chatWidget->is_active = $request->is_active;
+        $chatWidget->save();
+
+        $user = User::find($request->created_by_id);
+        $user->chat_widgets()->attach($chatWidget->_id);
+        $user->save();
+
+
+        return response(['data' => new ChatWidgetResource($chatWidget)], 200);
     }
 
     /**
@@ -47,7 +78,8 @@ class ChatWidgetController extends Controller
      */
     public function show($id)
     {
-        //
+        $chatWidget = ChatWidget::find($id);
+        return response(['data' => new ChatWidgetResource($chatWidget)], 200);
     }
 
     /**
@@ -82,5 +114,13 @@ class ChatWidgetController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function validator(array $data)
+    {
+        return Validator::make($data, [
+            'created_by_id' => ['required'],
+            'name' => ['required'],
+        ]);
     }
 }
