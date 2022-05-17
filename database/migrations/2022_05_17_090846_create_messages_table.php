@@ -14,13 +14,12 @@ class CreateMessagesTable extends Migration
     public function up()
     {
         Schema::create('messages', function (Blueprint $table) {
-            $table->id('message_id');
-            $table->unsignedBigInteger('room_id')->nullable();
-            $table->unsignedBigInteger('sender_id');
-            $table->unsignedBigInteger('recipient_id')->nullable();
-            $table->dateTime('sent_at');
-            $table->text('message');
-            $table->binary('attachment')->nullable();
+            $table->id();
+            $table->string('session_id');
+            $table->string('created_by');
+            $table->string('attachment_path')->nullable();
+            $table->string('message');
+            $table->boolean('is_whisper')->default(false);
             $table->timestamps();
         });
     }

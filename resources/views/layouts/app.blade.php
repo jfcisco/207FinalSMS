@@ -56,11 +56,11 @@
                                 </li>
                             @endif
 
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
+{{--                            @if (Route::has('register'))--}}
+{{--                                <li class="nav-item">--}}
+{{--                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>--}}
+{{--                                </li>--}}
+{{--                            @endif--}}
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -94,26 +94,40 @@
 
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/627d27487b967b11798f1033/1g2se2trp';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+
 <script>
     function toggleheaderleft() {
-    
+
     var origHeader = document.getElementById('orig');
     var toBar = document.getElementById('toBar');
-    
+
     var displaySetting = origHeader.style.display;
 
     var button = document.getElementById('headerToggle').addEventListener("click", toggleheaderleft);;
 
-    
+
     if (displaySetting == 'flex') {
-      
+
       origHeader.style.display = 'none';
       toBar.style.display='flex';
     }
     else {
       origHeader.style.display = 'flex';
       toBar.style.display='none';
-      
+
     }
   }
 </script>

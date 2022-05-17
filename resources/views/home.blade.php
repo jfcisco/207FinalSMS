@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<profile-edit-form></profile-edit-form>
+    <div class="container">
+
+    </div>
 @endsection

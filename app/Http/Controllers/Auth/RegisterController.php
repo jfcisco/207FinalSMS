@@ -54,12 +54,10 @@ class RegisterController extends Controller
     public function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'profile_picture' => ['image']
+            'name' => ['required', 'string'],
+            'email' => ['string', 'email', 'unique:users'],
+            'password' => ['string', 'min:8', 'confirmed'],
+            'role' => ['required', 'string', ],
         ]);
     }
 
@@ -72,19 +70,10 @@ class RegisterController extends Controller
     public function create(array $data)
     {
         $newUser = new User;
-        $newUser->_id = Str::uuid()->toString();
         $newUser->name = $data['name'];
-        $newUser->first_name = $data['first_name'];
-        $newUser->last_name = $data['last_name'];
         $newUser->email = $data['email'];
+        $newUser->role = $data['role'];
         $newUser->password = Hash::make($data['password']);
-
-        // Receive the file via the app request object
-        $request = app('request');
-        if ($request->hasFile('profile_picture')) {
-            $profilePicture = $request->file('profile_picture')->store('images', 'public');
-            $newUser->profile_picture = $profilePicture;
-        }
 
         $newUser->save();
         return $newUser;

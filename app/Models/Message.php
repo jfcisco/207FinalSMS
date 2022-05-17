@@ -4,15 +4,41 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model;
+use Jenssegers\Mongodb\Relations\BelongsTo;
 
 class Message extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['message', 'sent_at', 'sender_id', 'attachment_path', 'room_id'];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'session_id',
+        'created_by',
+        'attachment_path',
+        'message',
+        'is_whisper',
+    ];
 
-    public function user()
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_whisper' =>'boolean',
+    ];
+
+    public function session(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'sender_id');
+        return $this->belongsTo(Session::class);
+    }
+
+    public function created_by(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
