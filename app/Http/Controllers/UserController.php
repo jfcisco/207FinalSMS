@@ -15,7 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-//        return response(['data' => UserResource::collection(User::with('chat_widgets', 'chat_widgets.created_by', 'chat_widgets.agents')->get())]);
+        return response(['data' => UserResource::collection(User::all())], 200);
     }
 
     /**

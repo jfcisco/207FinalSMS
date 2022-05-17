@@ -13,7 +13,6 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'role' => $this->role,
-            'chat_widgets' => ChatWidgetResource::collection($this->chat_widgets),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

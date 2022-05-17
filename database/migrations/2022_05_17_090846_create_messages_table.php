@@ -16,7 +16,7 @@ class CreateMessagesTable extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->string('session_id');
-            $table->string('created_by');
+            $table->string('created_by_id');
             $table->string('attachment_path')->nullable();
             $table->string('message');
             $table->boolean('is_whisper')->default(false);

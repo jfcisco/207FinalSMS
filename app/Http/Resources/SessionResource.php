@@ -10,8 +10,9 @@ class SessionResource extends JsonResource
     {
         return [
             'id' => $this->_id,
-            'chat_widget' => new ChatWidgetResource($request->chat_widget),
-            'visitor' => new VisitorResource($request->visitor),
+            'chat_widget_id' => $this->chat_widget_id,
+            'chat_widget' => new ChatWidgetResource($this->chat_widget),
+            'visitor' => new VisitorResource($this->visitor),
             'agents' => UserResource::collection($this->agents),
             'started_at' => $this->started_at,
             'ended_at' => $this->ended_at,

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ChatWidgetResource;
+use App\Models\ChatWidget;
 use Illuminate\Http\Request;
 
 class ChatWidgetController extends Controller
@@ -13,7 +15,7 @@ class ChatWidgetController extends Controller
      */
     public function index()
     {
-        //
+        return response(['data' => ChatWidgetResource::collection(ChatWidget::all())], 200);
     }
 
     /**

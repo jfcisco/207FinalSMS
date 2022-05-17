@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SessionResource;
+use App\Models\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SessionController extends Controller
 {
@@ -34,7 +37,22 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $validator = $this->validator($input);
+
+        if ($validator->fails()) {
+            return response([
+                'error' => $validator->errors(),
+            ], 400);
+        }
+
+        $session = new Session();
+        $session->chat_widget_id = $input['chat_widget_id'];
+        $session->visitor_id =$input['visitor_id'];
+        $session->save();
+        $session->load('chat_widget');
+
+        return response(['data' => new SessionResource($session)], 200);
     }
 
     /**
@@ -80,5 +98,14 @@ class SessionController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function validator(array $data)
+    {
+        return Validator::make($data, [
+            'chat_widget_id' => ['required'],
+            'visitor_id' => ['required'],
+        ]);
     }
 }

@@ -15,7 +15,7 @@ class CreateChatWidgetsTable extends Migration
     {
         Schema::create('chat_widgets', function (Blueprint $table) {
             $table->id();
-            $table->string('created_by');
+            $table->string('created_by_id');
             $table->string('name');
             $table->string('color')->nullable();
             $table->string('position')->nullable();

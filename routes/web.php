@@ -23,19 +23,30 @@ use App\Http\Controllers\ProfileController;
 */
 
 Route::get('/', function () {
-    return redirect('home');
+    return redirect('/home');
 })->middleware('auth');
 
 Auth::routes();
 
 Route::middleware('auth')->group(function () {
-    Route::get('home', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index']);
 
+    //region View Routes
+    // TODO: Add View Routes here
+    //endregion
+
+    //region Web API Endpoints
+    // TODO: Add Web API Endpoints here
+    //endregion
 });
 
 // TODO: Move inside middleware
-Route::resource('chat-widgets', ChatWidgetController::class);
-Route::resource('messages', MessageController::class);
-Route::resource('sessions', SessionController::class);
-Route::resource('users', UserController::class);
-Route::resource('visitor', VisitorController::class);
+Route::prefix('api')->group(function(){
+    Route::resource('/chat-widgets', ChatWidgetController::class);
+    Route::resource('/messages', MessageController::class);
+    Route::resource('sessions', SessionController::class);
+    Route::resource('/users', UserController::class);
+    Route::resource('/visitor', VisitorController::class);
+});
+
+
