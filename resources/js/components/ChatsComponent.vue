@@ -197,8 +197,15 @@
 
 
 <script>
-    import FileUploadComponent from './FileUploadComponent.vue';
-    import ProfileUpdateComponent from './ProfileUpdateComponent.vue';
+  import FileUploadComponent from './FileUploadComponent.vue';
+  import ProfileUpdateComponent from './ProfileUpdateComponent.vue';
+
+  const client = new cj.ClientJS();
+
+  const socket = io("https://sms-ws.ml:3000", {
+    secure: true,
+    autoConnect: false,
+  });
 
 export default {
   props: ["user"],
@@ -252,109 +259,144 @@ export default {
   },
 
   created() {
-    this.fetchChatrooms();
-    Echo.join("chat")
-      .here((user) => {
-        this.users = user;
-        this.fetchMessages();
-      })
-      .joining((user) => {
-        this.users.push(user);
-      })
-      .leaving((user) => {
-        this.users = this.users.filter((u) => u.id != user.id);
-      })
-      .listen(".chatroom.created", (event) => {
-        // Add the chatroom created to the user's list of chatrooms
+    // this.fetchChatrooms();
+    // Echo.join("chat")
+    //   .here((user) => {
+    //     this.users = user;
+    //     this.fetchMessages();
+    //   })
+    //   .joining((user) => {
+    //     this.users.push(user);
+    //   })
+    //   .leaving((user) => {
+    //     this.users = this.users.filter((u) => u.id != user.id);
+    //   })
+    //   .listen(".chatroom.created", (event) => {
+    //     // Add the chatroom created to the user's list of chatrooms
 
-        // Only if they're a member of the chatroom
-        if (
-          event.chatRoom.members.some(
-            (member) => member.id === this.$props.user.id
-          )
-        ) {
-          this.chatrooms.unshift({
-            room_id: event.chatRoom.room_id,
-            room_name: event.chatRoom.room_name,
-          });
+    //     // Only if they're a member of the chatroom
+    //     if (
+    //       event.chatRoom.members.some(
+    //         (member) => member.id === this.$props.user.id
+    //       )
+    //     ) {
+    //       this.chatrooms.unshift({
+    //         room_id: event.chatRoom.room_id,
+    //         room_name: event.chatRoom.room_name,
+    //       });
 
-          this.roomMsgs.unshift({
-            room_id: event.chatRoom.room_id,
-            room_name: event.chatRoom.room_name,
-            messages: [],
-          });
-        }
-      })
-      .listen(".message", (event) => {
-        //check which room the message goes
-        let found = this.getTargetRoomIndex(event.room_id);
-        if (
-          event.room_name == "" &&
-          found == null &&
-          event.new_member != this.user.id
-        ) {
-          //no one is being added and user doesn't have the room
-          //message is not for the user
-          return;
-        } else if (
-          event.room_name != "" &&
-          found == null &&
-          event.new_member == this.user.id
-        ) {
-          //user is being added to the room
-          this.chatrooms.unshift({
-            room_id: event.room_id,
-            room_name: event.room_name,
-          });
-          this.roomMsgs.unshift({
-            room_id: event.room_id,
-            room_name: event.room_name,
-            messages: [],
-          });
-          //this.activeRoom = event.room_id;
-          found = this.getTargetRoomIndex(event.room_id);
-        }
+    //       this.roomMsgs.unshift({
+    //         room_id: event.chatRoom.room_id,
+    //         room_name: event.chatRoom.room_name,
+    //         messages: [],
+    //       });
+    //     }
+    //   })
+    //   .listen(".message", (event) => {
+    //     //check which room the message goes
+    //     let found = this.getTargetRoomIndex(event.room_id);
+    //     if (
+    //       event.room_name == "" &&
+    //       found == null &&
+    //       event.new_member != this.user.id
+    //     ) {
+    //       //no one is being added and user doesn't have the room
+    //       //message is not for the user
+    //       return;
+    //     } else if (
+    //       event.room_name != "" &&
+    //       found == null &&
+    //       event.new_member == this.user.id
+    //     ) {
+    //       //user is being added to the room
+    //       this.chatrooms.unshift({
+    //         room_id: event.room_id,
+    //         room_name: event.room_name,
+    //       });
+    //       this.roomMsgs.unshift({
+    //         room_id: event.room_id,
+    //         room_name: event.room_name,
+    //         messages: [],
+    //       });
+    //       //this.activeRoom = event.room_id;
+    //       found = this.getTargetRoomIndex(event.room_id);
+    //     }
 
-        if (found != null) {
-          //put the new message received in the right room
-          let newMessage = {
-            user: event.user,
-            message: event.message,
-          };
-          console.log("Event");
-          console.log(event);
-          console.log("New Message");
-          console.log(newMessage);
+    //     if (found != null) {
+    //       //put the new message received in the right room
+    //       let newMessage = {
+    //         user: event.user,
+    //         message: event.message,
+    //       };
+    //       console.log("Event");
+    //       console.log(event);
+    //       console.log("New Message");
+    //       console.log(newMessage);
 
-          // Check if incoming has an attachment
-          if (event.attachment_path) {
-            newMessage.attachment_path = event.attachment_path;
-          }
+    //       // Check if incoming has an attachment
+    //       if (event.attachment_path) {
+    //         newMessage.attachment_path = event.attachment_path;
+    //       }
 
-          this.roomMsgs[found].messages.push(newMessage);
-          //move up the room with the new message
-          let found2 = null;
-          for (const indx in this.chatrooms) {
-            if (this.chatrooms[indx].room_id == event.room_id) {
-              found2 = indx;
-            }
-          }
-          let room = this.chatrooms[found2];
-          this.chatrooms.splice(found2, 1);
-          this.chatrooms.unshift(room);
-        }
-      })
-      .listenForWhisper("typing", (user) => {
-        this.activeUser = user;
+    //       this.roomMsgs[found].messages.push(newMessage);
+    //       //move up the room with the new message
+    //       let found2 = null;
+    //       for (const indx in this.chatrooms) {
+    //         if (this.chatrooms[indx].room_id == event.room_id) {
+    //           found2 = indx;
+    //         }
+    //       }
+    //       let room = this.chatrooms[found2];
+    //       this.chatrooms.splice(found2, 1);
+    //       this.chatrooms.unshift(room);
+    //     }
+    //   })
+    //   .listenForWhisper("typing", (user) => {
+    //     this.activeUser = user;
 
-        if (this.typingTimer) {
-          clearTimeout(this.typingTimer);
-        }
+    //     if (this.typingTimer) {
+    //       clearTimeout(this.typingTimer);
+    //     }
 
-        this.typingTimer = setTimeout(() => {
-          this.activeUser = false;
-        }, 3000);
+    //     this.typingTimer = setTimeout(() => {
+    //       this.activeUser = false;
+    //     }, 3000);
+    //   });
+
+    socket.auth = {
+      // For visitors
+      clientId: client.getFingerprint(),
+      clientType: "visitor",
+      clientName: "bisita",
+      widgetId: "widget1",
+
+      // For admin/agent
+      // clientId: userId,
+      // clientName: "agentako",
+      // clientType: "user",
+    };
+
+    socket.connect();
+
+    setTimeout(() => {
+      // Message sent by admin/agent/visitor
+      socket.emit("message", {
+          content: "This is a message from visitor to room",
+          roomId: chatRooms[0]._id,
       });
+
+      // Whisper sent only by admin/agent
+      socket.emit("whisper", {
+          content: "This is a whisper from admin/agent to another admin/agent",
+          roomId: chatRooms[0]._id,
+      });
+    }, 1000);
+
+    socket.on("message", (message) => {
+      console.log("received new message", message);
+    });
+
+
   },
 
   methods: {
