@@ -126,8 +126,8 @@ export class Tawk {
                 padding: 20px 20px;
                 color: #fff;
                 background-color: #466289;
-                border-radius-top-right: 5px;
-                border-radius-top-left: 5px;
+                border-top-right-radius: 5px;
+                border-top-left-radius: 5px;
             }
             .message-container .content {
                 margin: 20px 10px ;
