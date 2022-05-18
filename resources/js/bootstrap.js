@@ -40,7 +40,10 @@ window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 //  });
 
 const client = new cj.ClientJS();
-const socket = io("http://128.199.98.124:3000", { autoConnect: false });
+const socket = io("https://sms-ws.ml:3000", {
+    secure: true,
+    autoConnect: false,
+});
 
 // The rest are for testing only
 socket.auth = {
@@ -98,4 +101,4 @@ socket.on("join", (notification) => {
 // An admin/agent/visitor left the room
 socket.on("user_disconnect", (notification) => {
     console.log("left", notification);
-})
+});
