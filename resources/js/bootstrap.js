@@ -47,10 +47,12 @@ socket.auth = {
     // For visitors
     clientId: client.getFingerprint(),
     clientType: "visitor",
+    clientName: "bisita",
     widgetId: "widget1",
 
     // For admin/agent
     // clientId: userId,
+    // clientName: "agentako",
     // clientType: "user",
 };
 socket.connect();
@@ -92,3 +94,8 @@ socket.on("whisper", (whisper) => {
 socket.on("join", (notification) => {
     console.log("new joiner", notification);
 });
+
+// An admin/agent/visitor left the room
+socket.on("user_disconnect", (notification) => {
+    console.log("left", notification);
+})
