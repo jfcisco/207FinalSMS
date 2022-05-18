@@ -24,7 +24,6 @@ export class Tawk {
         const buttonContainer = document.createElement('div');
         buttonContainer.classList.add('button-container')
 
-        //TO DO:  Edit the SVG icons so they work.
         const chatIcon = document.createElement('img');
         chatIcon.src = 'assets/chat.svg';
         chatIcon.classList.add('icon');
@@ -52,25 +51,28 @@ export class Tawk {
         this.messageContainer.innerHTML = '';
         const title = document.createElement('h2');
         // TO DO: Edit the text content based on schedule / timezone
-        title.textContent = `We're not here, drop us an email...`;
+        title.textContent = `SMS`;
 
         const form = document.createElement('form');
         form.classList.add('content');
-        const email = document.createElement('input');
-        email.required = true;
-        email.id = 'email';
-        email.type = 'email';
-        email.placeholder = 'Enter your email address';
+        
+        const welcome = document.createElement('div');
+        welcome.textContent = `Enter your name and start chatting with us.`;
 
-        const message = document.createElement('textarea');
-        message.required = true;
-        message.id = 'message';
-        message.placeholder = 'Your message';
+        const name = document.createElement('input');
+        name.required = true;
+        name.id = 'name';
+        name.type = 'name';
+        name.placeholder = 'Your name';
  
+        const space = document.createElement('br');
+
         const btn = document.createElement('button');
-        btn.textContent = 'Submit';
-        form.appendChild(email);
-        form.appendChild(message);
+        btn.textContent = 'Start a Conversation';
+
+        form.appendChild(welcome);
+        form.appendChild(name);
+        form.appendChild(space);
         form.appendChild(btn);
         form.addEventListener('submit', this.submit.bind(this));
 
@@ -114,6 +116,7 @@ export class Tawk {
                 max-height: 400px;
                 position: absolute;
                 transition: max-height .2s ease;
+                border-radius: 5px;
             }
             .message-container.hidden {
                 max-height: 0px;
@@ -123,6 +126,8 @@ export class Tawk {
                 padding: 20px 20px;
                 color: #fff;
                 background-color: #466289;
+                border-radius-top-right: 5px;
+                border-radius-top-left: 5px;
             }
             .message-container .content {
                 margin: 20px 10px ;
@@ -165,6 +170,12 @@ export class Tawk {
             }
             .message-container form button:hover {
                 background-color: #FFB739;
+
+            .chatbox-input
+                padding: 10px;
+                border-color: #627894;
+                border: 2px;
+                margin: 10px;
             }
         `.replace(/^\s+|\n/gm, '');
         document.head.appendChild(styleTag);
@@ -188,11 +199,26 @@ export class Tawk {
         // TO DO:  Edit this part to connect to API
         event.preventDefault();
         const formSubmission = {
-            email: event.srcElement.querySelector('#email').value, 
-            message: event.srcElement.querySelector('#message').value,
+            name: event.srcElement.querySelector('#name').value, 
         };
 
-        this.messageContainer.innerHTML = '<h2>Thanks for your submission.</h2><p class="content">Someone will be in touch with your shortly regarding your enquiry';
+        this.messageContainer.innerHTML =
+            `<h2>Conversation </h2>
+            <section id="messages" class="content">
+            <div class="card-body chatboxfix p-0 roomMessages"><strong>Agent X: </strong> Hello user! I'm agent X. How may I help you?</div>
+            <!--INPUT MESSAGE BOX-->
+                <div class="chatbox-input">
+                        <input
+                        @keydown="sendTypingEvent"
+                        @keyup.enter="sendMessage"
+                        v-model="newMessage"
+                        type="text"
+                        name="message"
+                        placeholder="Enter your message..."
+                        class="form-control"
+                        />
+                </div>
+            </section>`;
         
         console.log(formSubmission);
     }
