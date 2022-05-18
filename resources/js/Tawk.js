@@ -2,6 +2,7 @@ export class Tawk {
     constructor({ position = 'bottom-right'} = {}) {
         this.position = this.getPosition(position);
         this.open = false;
+        this.sessionStarted = false;
         this.initialise();
         this.createStyles();
     }
@@ -50,7 +51,6 @@ export class Tawk {
     createMessageContainerContent() {
         this.messageContainer.innerHTML = '';
         const title = document.createElement('h2');
-        // TO DO: Edit the text content based on schedule / timezone
         title.textContent = `SMS`;
 
         const form = document.createElement('form');
@@ -136,6 +136,41 @@ export class Tawk {
                 background-color: #E9EDEE;
                 flex-direction: column;
             }
+            .message-container .content .messages {
+                overflow-y: scroll;
+                max-height: 200px;
+                margin-bottom: 5px;
+                background-color: #ffffff;
+                font-family: 'Raleway', sans-serif;
+            }
+            .content .messages .message {
+                display: flex;
+                padding: 10px;
+            }
+            .content .messages .message > div {
+                max-width: 70%;
+                background: #ffffff;
+                box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.05);
+                padding: 10px;
+            }
+            .content .messages .message.sent-message {
+                justify-content: flex-end;
+            }
+            .content .messages .message.received-message {
+                justify-content: flex-start;
+            }
+            .content .messages .message .name {
+                font-size: 12px;
+                color: #FA6121;
+            }
+            .content .messages .message .text {
+                word-wrap: break-word;
+            }
+            .content .messages .update {
+                text-align: center;
+                padding: 10px;
+                font-style: italic;
+            }
             .message-container form * {
                 margin: 5px 0;
                 font-family: 'Raleway', sans-serif;
@@ -147,16 +182,6 @@ export class Tawk {
                 padding: 10px;
                 border-color: #627894;
                 border: 2px;
-            }
-            .message-container form textarea {
-                resize: none;
-                height: 100px;
-                padding: 10px;
-                border-color: #627894;
-                border: 2px;
-            }
-            .message-container form textarea::placeholder {
-                font-family: 'Raleway', sans-serif;;
             }
             .message-container form button {
                 font-family: 'Raleway', sans-serif;
@@ -170,13 +195,8 @@ export class Tawk {
             }
             .message-container form button:hover {
                 background-color: #FFB739;
-
-            .chatbox-input
-                padding: 10px;
-                border-color: #627894;
-                border: 2px;
-                margin: 10px;
             }
+            .message my-message
         `.replace(/^\s+|\n/gm, '');
         document.head.appendChild(styleTag);
     }
@@ -188,7 +208,12 @@ export class Tawk {
             this.closeIcon.classList.remove('hidden');
             this.messageContainer.classList.remove('hidden');
         } else {
-            this.createMessageContainerContent();
+            if (this.sessionStarted) {
+                this.startConversation();
+            } else {
+                this.createMessageContainerContent();
+            }
+            // TO DO: Need to insert a check if the visitor has already started a conversation.
             this.chatIcon.classList.remove('hidden');
             this.closeIcon.classList.add('hidden');
             this.messageContainer.classList.add('hidden');
@@ -196,30 +221,58 @@ export class Tawk {
     }
 
     submit(event) {
-        // TO DO:  Edit this part to connect to API
+        // TO DO:  Add here code to start the chat.
         event.preventDefault();
         const formSubmission = {
             name: event.srcElement.querySelector('#name').value, 
         };
-
-        this.messageContainer.innerHTML =
-            `<h2>Conversation </h2>
-            <section id="messages" class="content">
-            <div class="card-body chatboxfix p-0 roomMessages"><strong>Agent X: </strong> Hello user! I'm agent X. How may I help you?</div>
-            <!--INPUT MESSAGE BOX-->
-                <div class="chatbox-input">
-                        <input
-                        @keydown="sendTypingEvent"
-                        @keyup.enter="sendMessage"
-                        v-model="newMessage"
-                        type="text"
-                        name="message"
-                        placeholder="Enter your message..."
-                        class="form-control"
-                        />
-                </div>
-            </section>`;
+            this.sessionStarted = true;
+            this.startConversation();
         
         console.log(formSubmission);
     }
+
+    startConversation() {
+        const gIconsHeader = document.createElement('link');
+        gIconsHeader.innerHTML = '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">'
+        document.head.appendChild(gIconsHeader);
+
+        this.messageContainer.innerHTML =
+            // TO DO: Styling for the End Conversation button.
+            `<h2>Conversation <!--<button id=exit-chat onClick="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i></button>--></h2>
+            
+            <!--CHAT MESSAGES BOX-->            
+            <div id="messages" class="content">
+                <div class="messages">
+                    <div class="message sent-message">
+                        <div class="name">You</div>
+                        <div class="text">Hello, how are you? I need to talk to an agent.</div>
+                    </div>
+                    <div class ="update">
+                        Agent X joined the conversation
+                    </div>
+                    <div class="message received-message">
+                        <div class="name">Agent X</div>
+                        <div class="text">Hi. I am an agent. How may I help you?</div>
+                    </div>
+                </div>
+                <!--INPUT MESSAGE BOX-->
+                    <div class="chatbox-input">
+                            <input
+                            @keydown="sendTypingEvent"
+                            @keyup.enter="sendMessage"
+                            v-model="newMessage"
+                            type="text"
+                            name="message"
+                            placeholder="Enter your message..."
+                            class="form-control"
+                            />
+                    </div>
+            </div>`;
+    }
+
+    // endConversation() {
+    //     this.sessionStarted = false;
+    // }
+
 }
