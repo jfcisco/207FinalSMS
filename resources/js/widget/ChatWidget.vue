@@ -92,16 +92,15 @@ export default {
 
     // Listen to any sent messages
     socket.on("message", (message) => {
-      // console.log("received new message", message);
       this.messages.push({
         ...message,
         fromSelf: message.clientId === socket.auth.clientId,
+        isUpdate: false,
       });
     });
 
     // An admin/agent has joined the room
     socket.on("join", (notification) => {
-      // console.log("new joiner", notification);
       this.messages.push({
         isUpdate: true,
         content: notification
@@ -115,6 +114,11 @@ export default {
         content: notification
       });
     });
+
+    // Log any connect_errors
+    socket.on('connect_error', err => {
+      console.error(err);
+    })
   },
 
   methods: {
