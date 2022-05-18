@@ -1,4 +1,5 @@
 import Vue from 'vue'; 
+import VueChatScroll from "vue-chat-scroll";
 
 export class Tawk {
     constructor({ position = 'bottom-right'} = {}) {
@@ -140,7 +141,7 @@ export class Tawk {
             }
             .message-container .content .messages {
                 overflow-y: scroll;
-                max-height: 200px;
+                height: 200px;
                 margin-bottom: 5px;
                 background-color: #ffffff;
                 font-family: 'Raleway', sans-serif;
@@ -232,21 +233,29 @@ export class Tawk {
         const formSubmission = {
             name: event.srcElement.querySelector('#name').value, 
         };
-            this.sessionStarted = true;
-            this.startConversation();
+
+        this.sessionStarted = true;
+        this.startConversation(formSubmission);
         
         console.log(formSubmission);
     }
 
-    startConversation() {
+    startConversation(formSubmission) {
         const gIconsHeader = document.createElement('link');
         gIconsHeader.innerHTML = '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">'
         document.head.appendChild(gIconsHeader);
         
         // Set up Vue component
         this.messageContainer.innerHTML = `<chat-widget></chat-widget>`;
-        Vue.component('chat-widget', require('./ChatWidget.vue').default);
-        this.vue = new Vue();
+        Vue.use(VueChatScroll);
+        this.vue = new Vue({
+            components: {
+                'chat-widget': require('./ChatWidget.vue').default 
+            },
+            propsData: {
+                visitorName: formSubmission.name
+            }
+        });
 
         // Mount it to message-container
         this.vue.$mount(this.messageContainer);
