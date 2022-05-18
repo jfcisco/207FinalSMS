@@ -64,6 +64,5 @@ function toggleheaderleft() {
 /**
  * Adding the chat widget
  */
-
-import { Tawk } from './Tawk';
-const tawk = new Tawk();
+// Only keeping this here for testing purposes. We should remove this eventually
+require('./widget/embed');

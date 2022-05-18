@@ -1,4 +1,6 @@
 {
     "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/js/embed.js": "/js/embed.js",
+    "/css/app.css": "/css/app.css",
+    "/resources/views/widget/widget-script.blade.php": "/resources/views/widget/widget-script.blade.php"
 }
