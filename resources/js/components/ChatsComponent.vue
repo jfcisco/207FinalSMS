@@ -91,78 +91,80 @@
 
         <ul class="list-unstyled" v-if="!addingRoom" ref="chatWindow" v-chat-scroll>
 
-        <div class="card card-default">
-          <!-- Placeholder chat box (if there are no rooms yet) -->
-         <div v-if="roomMsgs.length === 0" class="card-body chatboxfix p-4" :style="{'background-image':'url(background_trans.png)'}" >
-           <div class="d-flex justify-content-center align-items-center h-100">
-                <p class="fs-3 text-muted" v-if="!loadingChatrooms">Click on the bubble icon <ion-icon name="chatbubble-ellipses-outline"></ion-icon> above to create a new chatroom!</p>
-              </div>
-         </div>
-
-          <div v-for="chatroom in roomMsgs" :key="chatroom.room_id">
-            <!-- Chat messages and 'is typing...' -->
-            <div class="card-body chatboxfix p-0 roomMessages" :style="{'background-image':'url(background_trans.png)'}"
-              v-bind:id="'messages_room' + chatroom.room_id"
-              v-if="chatroom.room_id == activeRoom">
-              <ul
-                v-if="!addingRoom"
-                ref="chatWindow"
-                class="list-unstyled"
-                style="height: 560px; overflow-y: scroll; overflow-x: hidden; padding: 0 1.5rem"
-                v-chat-scroll
-              >
-                <!-- Chatroom Messages -->
-                <li
-                  class="py-2"
-                  v-for="(message, index) in chatroom.messages"
-                  :key="index"
-                >
-                  <!-- Only show the text part if it isn't empty  -->
-                  <div
-                    v-if="message.message.length > 0"
-                    class="message"
-                    :class="{
-                    my_message: message.user.id === user.id,
-                    friend_message: message.user.id !== user.id
-                  }">
-                    <span class="p">
-                      <strong v-if="message.user.id !== user.id"> {{ message.user.first_name }} {{ message.user.last_name }} : </strong>
-                      {{ message.message }}
-                    </span>
-
-                  </div>
-                  <div v-if="message.attachment_path"
-                    class="message"
-                    :class="{
-                    my_message: message.user.id === user.id,
-                    friend_message: message.user.id !== user.id
-                  }">
-                    <!-- Attachment -->
-                    <span class="p--full">
-                      <strong class="d-block pb-1" v-if="message.user.id !== user.id"> {{ message.user.first_name }} {{ message.user.last_name }} : </strong>
-                      <img
-                        class="img-fluid attachment"
-                        :src="message.attachment_path"
-                        @load="scrollToChatBottom"
-                      />
-                    </span>
-                  </div>
-
-                </li>
-              </ul>
-
-              <!-- Message shown while adding a room via To Bar: -->
-              <div class="d-flex justify-content-center align-items-center h-100" v-else>
-                <p class="fs-3 text-muted">Add chat members above, and then press <strong>enter</strong> to create a new chatroom!</p>
-              </div>
-
-              <span class="text-muted" v-if="activeUser"
-                >{{ activeUser.name }} is typing...</span
-              >
+          <div class="card card-default">
+            <!-- Placeholder chat box (if there are no rooms yet) -->
+            <div v-if="roomMsgs.length === 0" class="card-body chatboxfix p-4" :style="{'background-image':'url(background_trans.png)'}" >
+              <div class="d-flex justify-content-center align-items-center h-100">
+                  <p class="fs-3 text-muted" v-if="!loadingChatrooms">Click on the bubble icon <ion-icon name="chatbubble-ellipses-outline"></ion-icon> above to create a new chatroom!</p>
+                </div>
             </div>
-          </li>
-          <!-- CHAT MESSAGE BLOCK -->
-          
+
+            <div v-for="chatroom in roomMsgs" :key="chatroom.room_id">
+              <!-- Chat messages and 'is typing...' -->
+              <div class="card-body chatboxfix p-0 roomMessages" :style="{'background-image':'url(background_trans.png)'}"
+                v-bind:id="'messages_room' + chatroom.room_id"
+                v-if="chatroom.room_id == activeRoom">
+                <ul
+                  v-if="!addingRoom"
+                  ref="chatWindow"
+                  class="list-unstyled"
+                  style="height: 560px; overflow-y: scroll; overflow-x: hidden; padding: 0 1.5rem"
+                  v-chat-scroll
+                >
+                  <!-- Chatroom Messages -->
+                  <li
+                    class="py-2"
+                    v-for="(message, index) in chatroom.messages"
+                    :key="index"
+                  >
+                    <!-- Only show the text part if it isn't empty  -->
+                    <div
+                      v-if="message.message.length > 0"
+                      class="message"
+                      :class="{
+                      my_message: message.user.id === user.id,
+                      friend_message: message.user.id !== user.id
+                    }">
+                      <span class="p">
+                        <strong v-if="message.user.id !== user.id"> {{ message.user.first_name }} {{ message.user.last_name }} : </strong>
+                        {{ message.message }}
+                      </span>
+
+                    </div>
+                    <div v-if="message.attachment_path"
+                      class="message"
+                      :class="{
+                      my_message: message.user.id === user.id,
+                      friend_message: message.user.id !== user.id
+                    }">
+                      <!-- Attachment -->
+                      <span class="p--full">
+                        <strong class="d-block pb-1" v-if="message.user.id !== user.id"> {{ message.user.first_name }} {{ message.user.last_name }} : </strong>
+                        <img
+                          class="img-fluid attachment"
+                          :src="message.attachment_path"
+                          @load="scrollToChatBottom"
+                        />
+                      </span>
+                    </div>
+
+                  </li>
+                </ul>
+
+                <!-- Message shown while adding a room via To Bar: -->
+                <div class="d-flex justify-content-center align-items-center h-100" v-else>
+                  <p class="fs-3 text-muted">Add chat members above, and then press <strong>enter</strong> to create a new chatroom!</p>
+                </div>
+
+                <span class="text-muted" v-if="activeUser"
+                  >{{ activeUser.name }} is typing...</span
+                >
+              </div>
+            </div>
+            <!-- CHAT MESSAGE BLOCK -->
+
+          </div>
+
         </ul>
       </div>
     </div>
