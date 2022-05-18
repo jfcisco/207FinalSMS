@@ -16,5 +16,5 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css');
 
 // Bundle the widget code, and transform it into a Blade template
-mix.js('resources/js/widget/embed.js', 'public/js');
+mix.js('resources/js/widget/embed.js', 'public/js').vue();
 mix.copy('public/js/embed.js', 'resources/views/widget/widget-script.blade.php');

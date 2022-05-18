@@ -1,3 +1,5 @@
+import Vue from 'vue'; 
+
 export class Tawk {
     constructor({ position = 'bottom-right'} = {}) {
         this.position = this.getPosition(position);
@@ -86,7 +88,7 @@ export class Tawk {
         styleTag.innerHTML = `
             @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200;400&display=swap');
             
-            * {
+            .message-container * {
                 font-family: 'Raleway', sans-serif;
             }
             .icon {
@@ -203,16 +205,20 @@ export class Tawk {
 
     toggleOpen() {
         this.open = !this.open;
+
+        console.log(`Is open? ${this.open}`);
         if (this.open) {
             this.chatIcon.classList.add('hidden');
             this.closeIcon.classList.remove('hidden');
             this.messageContainer.classList.remove('hidden');
+
+            const nameField = document.querySelector("input#name");
+            if (nameField) nameField.focus();
         } else {
-            if (this.sessionStarted) {
-                this.startConversation();
-            } else {
+            if (!this.sessionStarted) {
                 this.createMessageContainerContent();
             }
+
             // TO DO: Need to insert a check if the visitor has already started a conversation.
             this.chatIcon.classList.remove('hidden');
             this.closeIcon.classList.add('hidden');
@@ -236,39 +242,15 @@ export class Tawk {
         const gIconsHeader = document.createElement('link');
         gIconsHeader.innerHTML = '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">'
         document.head.appendChild(gIconsHeader);
+        
+        // Set up Vue component
+        this.messageContainer.innerHTML = `<chat-widget></chat-widget>`;
+        Vue.component('chat-widget', require('./ChatWidget.vue').default);
+        this.vue = new Vue();
 
-        this.messageContainer.innerHTML =
-            // TO DO: Styling for the End Conversation button.
-            `<h2>Conversation <!--<button id=exit-chat onClick="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i></button>--></h2>
-            
-            <!--CHAT MESSAGES BOX-->            
-            <div id="messages" class="content">
-                <div class="messages">
-                    <div class="message sent-message">
-                        <div class="name">You</div>
-                        <div class="text">Hello, how are you? I need to talk to an agent.</div>
-                    </div>
-                    <div class ="update">
-                        Agent X joined the conversation
-                    </div>
-                    <div class="message received-message">
-                        <div class="name">Agent X</div>
-                        <div class="text">Hi. I am an agent. How may I help you?</div>
-                    </div>
-                </div>
-                <!--INPUT MESSAGE BOX-->
-                    <div class="chatbox-input">
-                            <input
-                            @keydown="sendTypingEvent"
-                            @keyup.enter="sendMessage"
-                            v-model="newMessage"
-                            type="text"
-                            name="message"
-                            placeholder="Enter your message..."
-                            class="form-control"
-                            />
-                    </div>
-            </div>`;
+        // Mount it to message-container
+        this.vue.$mount(this.messageContainer);
+        this.messageContainer = this.vue.$el;
     }
 
     // endConversation() {
