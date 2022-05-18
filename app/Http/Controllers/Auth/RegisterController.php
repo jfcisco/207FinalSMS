@@ -70,6 +70,7 @@ class RegisterController extends Controller
     public function create(array $data)
     {
         $newUser = new User;
+        $newUser->_id = Str::uuid()->toString();
         $newUser->name = $data['name'];
         $newUser->email = $data['email'];
         $newUser->role = $data['role'];

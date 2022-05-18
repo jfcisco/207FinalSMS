@@ -40,7 +40,7 @@ window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 //  });
 
 const client = new cj.ClientJS();
-const socket = io("http://localhost:3000", { autoConnect: false });
+const socket = io("http://128.199.98.124:3000", { autoConnect: false });
 
 // The rest are for testing only
 socket.auth = {
