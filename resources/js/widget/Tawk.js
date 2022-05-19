@@ -60,6 +60,7 @@ export class Tawk {
         form.classList.add('content');
         
         const welcome = document.createElement('div');
+        form.classList.add('welcome');
         welcome.textContent = `Enter your name and start chatting with us.`;
 
         const name = document.createElement('input');
@@ -116,7 +117,7 @@ export class Tawk {
                 width: 400px;
                 right: -25px;
                 bottom: 75px;
-                max-height: 400px;
+                max-height: 500px;
                 position: absolute;
                 transition: max-height .2s ease;
                 border-radius: 5px;
@@ -136,15 +137,31 @@ export class Tawk {
                 margin: 20px 10px ;
                 padding: 10px;
                 display: flex;
+                height: 80%;
                 background-color: #E9EDEE;
                 flex-direction: column;
             }
+            .message-container .content .welcome {
+                vertical-align: middle;
+            }
             .message-container .content .messages {
                 overflow-y: scroll;
-                height: 200px;
+                height: 330px;
                 margin-bottom: 5px;
                 background-color: #ffffff;
                 font-family: 'Raleway', sans-serif;
+            }
+            .content .messages .form {
+                margin: 5px 0;
+                font-family: 'Raleway', sans-serif;
+                border-radius: 4px;
+                border-color: #627894;
+                border: 2px;
+            }
+            .content .messages .form input {
+                padding: 10px;
+                border-color: #627894;
+                border: 2px;
             }
             .content .messages .message {
                 display: flex;
@@ -185,6 +202,7 @@ export class Tawk {
                 padding: 10px;
                 border-color: #627894;
                 border: 2px;
+                width: 95%;
             }
             .message-container form button {
                 font-family: 'Raleway', sans-serif;
@@ -199,7 +217,6 @@ export class Tawk {
             .message-container form button:hover {
                 background-color: #FFB739;
             }
-            .message my-message
         `.replace(/^\s+|\n/gm, '');
         document.head.appendChild(styleTag);
     }
@@ -240,6 +257,7 @@ export class Tawk {
     }
 
     startConversation(formSubmission) {
+        // TO DO: Add exit chat button
         const gIconsHeader = document.createElement('link');
         gIconsHeader.innerHTML = '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">'
         document.head.appendChild(gIconsHeader);

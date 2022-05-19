@@ -31,7 +31,7 @@
       </div>
 
       <!--INPUT MESSAGE BOX-->
-      <form class="chatbox-input" @submit.prevent="sendMessage()">
+      <form @submit.prevent="sendMessage()">
         <input
           :disabled="!room._id"
           v-model="message"
@@ -48,9 +48,43 @@
 
 <style scoped>
   /* CSS rules can be added here */
-  .chatbox-input > input {
-    width: 100%;
+
+  .content .messages {
+      overflow-y: scroll;
+      max-height: 320px;
+      margin-bottom: 5px;
+      background-color: #ffffff;
+      font-family: 'Raleway', sans-serif;
   }
+  .content .messages .message {
+      display: flex;
+      padding: 10px;
+  }
+  .content .messages .message > div {
+      max-width: 70%;
+      background: #ffffff;
+      box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.05);
+      padding: 10px;
+  }
+  .content .messages .message.sent-message {
+      justify-content: flex-end;
+  }
+  .content .messages .message.received-message {
+      justify-content: flex-start;
+  }
+  .content .messages .message .name {
+      font-size: 12px;
+      color: #FA6121;
+  }
+  .content .messages .message .text {
+      word-wrap: break-word;
+  }
+  .content .messages .update {
+      text-align: center;
+      padding: 10px;
+      font-style: italic;
+  }
+  
 </style>
 
 <script>
