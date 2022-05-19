@@ -2,6 +2,12 @@
 
 Widget-based chat application made by team SMS.
 
+## Required Software
+- [PHP 8.0 or later](https://www.apachefriends.org/index.html)
+- [PHP MongoDB Driver (latest)](https://pecl.php.net/package/mongodb)
+- [Node.js 16 LTS](https://nodejs.org/en/download/)
+- [Composer 2.3.5](https://getcomposer.org/download/)
+
 ## How to Run the Application
 1. Clone this repository
 2. Open your terminal or command prompt. The succeeding commands must be run in it.
@@ -9,16 +15,25 @@ Widget-based chat application made by team SMS.
 4. Run `npm install`
 5. Run `composer install`
 6. Run `cp .env.example .env` and configure your database in .env file (i.e., set the variables that start with `DB_`).
-    - Sample database configuration: ![DB .env setting](/DB.env%20settings.png)
-    - If you did this step correctly, there should be a `.env` file and a `.env.example` file inside your 207MidtermPusher folder.
-7. Run migration to create tables in the database.
-`php artisan migrate`
-8. Run `php artisan key:generate`
+7. Make the following edits to the .env file:
+    ```
+    APP_URL=http://localhost:8000
+
+    DB_CONNECTION=mongodb
+    DB_HOST=<see MongoDB Local Setup doc>
+    DB_PORT=27017
+    DB_DATABASE=<see MongoDB Local Setup doc>
+    DB_USERNAME=<see MongoDB Local Setup doc>
+    DB_PASSWORD=<see MongoDB Local Setup doc>
+    ```
+    - If you are using a different domain or port, change the APP_URL to them.
+    - The MongoDB Local Setup document can be found in our shared Google Drive.
+    - If you did this step correctly, there should be a `.env` file and a `.env.example` file inside your 207FinalSMS folder.
+8. Run `php artisan key:generate` to generate the application key.
 9. Run `php artisan storage:link` to links to the images folder
-10. Run `npm run watch`. Wait for Laravel Mix to finish building.
-11. Open another terminal window and run `php artisan websocket:serve`,
-12. Open yet another terminal window and run `php artisan serve`
-13. Open your web browser and navigate to http://localhost:8000.
+10. Run `npm run watch` and wait for Laravel Mix to finish building. Keep this terminal or command prompt window open.
+11. Open another terminal or command prompt window and run `php artisan serve`
+12. Open your web browser and navigate to http://localhost:8000.
 
 ## Group Members
 - Adrian Mark Arguelles
