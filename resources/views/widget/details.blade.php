@@ -43,9 +43,8 @@
                     <div class="row mb-2">
                         <h3 class="fs-4">Widget Code</h3>
                         <p class="mb-0"><strong>Copy and paste the HTML code below</strong> into your website's HTML document to give it chat functionality.</p>
-        
-                        {{-- TODO: Add a "click to copy" feature to this --}}
-                        <pre class="bg-dark p-3 rounded">{{ $template }}</pre>
+                        
+                        <pre class="widget-code bg-dark p-3 rounded">{{ $template }}</pre>
                     </div>
                 </div>
             </div>

@@ -33,6 +33,7 @@
       <!--INPUT MESSAGE BOX-->
       <form @submit.prevent="sendMessage()">
         <input
+          ref="messageInput"
           :disabled="!room._id"
           v-model="message"
           type="text"
@@ -135,6 +136,8 @@ export default {
         // Process the room's messages, attaching additional properties we need
         room.messages = room.messages.map(msg => this.attachMessageProperties(msg));
         this.room = room;
+
+        this.focusOnMessageInput();
       } 
     });
 
@@ -200,6 +203,13 @@ export default {
         isUpdate: true,
         content: notification
       };
+    },
+
+    focusOnMessageInput() {
+      this.$nextTick(() => {
+        const messageInputRef = this.$refs.messageInput;
+        messageInputRef.focus()
+    });
     }
   },
 };

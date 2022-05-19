@@ -39,37 +39,41 @@ const app = new Vue({
 
 
 function toggleheaderleft() {
-    
-    var origHeader = document.getElementById('orig');
-    var toBar = document.getElementById('toBar');
-    
-    var displaySetting = origHeader.style.display;
+  var origHeader = document.getElementById('orig');
+  var toBar = document.getElementById('toBar');
+  
+  var displaySetting = origHeader.style.display;
 
-    var button = document.getElementById('headerToggle').addEventListener("click", hello);;
+  var button = document.getElementById('headerToggle').addEventListener("click", hello);;
 
+  
+  if (displaySetting == 'flex') {
     
-    if (displaySetting == 'flex') {
-      
-      origHeader.style.display = 'none';
-      toBar.style.display='flex';
-    }
-    else {
-      origHeader.style.display = 'flex';
-      toBar.style.display='none';
-      
-    }
+    origHeader.style.display = 'none';
+    toBar.style.display='flex';
   }
+  else {
+    origHeader.style.display = 'flex';
+    toBar.style.display='none';
+    
+  }
+}
 
+/* Code used to copy widget code to the clipboard */
+function copyContentsToClipboard(event) {
+  // Source: https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
+  const copyText = event.target;
+  
+  // copyText.select();
+  // copyText.setSelection(0, 99999);
 
-/**
- * Adding the chat widget
- */
-// Only keeping this here for testing purposes. We should remove this eventually
-(function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.charset='UTF-8';
-  s1.src='http://localhost:8000/embed/62840ecbcd2a866ec70ab01a/62840ecccd2a866ec70ab01c';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-})();
+  navigator.clipboard.writeText(copyText.textContent);
+
+  alert("Copied text!");
+}
+
+const widgetCode = document.querySelector(".widget-code");
+
+if (widgetCode) {
+  widgetCode.addEventListener("click", copyContentsToClipboard);
+}

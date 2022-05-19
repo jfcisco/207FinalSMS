@@ -1,0 +1,18 @@
+/* Widget Code CSS*/
+.widget-code {
+    cursor: pointer;
+	position: relative;
+
+	&:hover::before {
+		content: "Click me to copy the widget code.";
+		background: rgba(108, 117, 125, 0.8);
+		padding: 2rem 1rem;
+		position: absolute;
+		font-size: 1.5rem;
+		top: 40%;
+		left: 3rem;
+		right: 3rem;
+		text-align: center;
+	}
+}
+
