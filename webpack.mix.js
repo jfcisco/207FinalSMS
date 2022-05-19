@@ -18,3 +18,5 @@ mix.js('resources/js/app.js', 'public/js')
 // Bundle the widget code, and transform it into a Blade template
 mix.js('resources/js/widget/embed.js', 'public/js').vue();
 mix.copy('public/js/embed.js', 'resources/views/widget/widget-script.php');
+
+mix.disableSuccessNotifications();

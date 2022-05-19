@@ -9,7 +9,8 @@
     <!--CHAT MESSAGES BOX-->
     <div id="messages" class="content">
       <div class="messages" v-chat-scroll>
-        <template v-for="(message, index) in messages">
+        <!--CHAT MESSAGE/CHAT UPDATE-->    
+        <template v-for="(message, index) in room.messages">
           <!-- Check if the message is just an update -->
           <div class="update" v-if="message.isUpdate" :key="index">
             {{ message.content }}
@@ -32,6 +33,7 @@
       <!--INPUT MESSAGE BOX-->
       <form class="chatbox-input" @submit.prevent="sendMessage()">
         <input
+          :disabled="!room._id"
           v-model="message"
           type="text"
           name="message"
@@ -73,8 +75,10 @@ export default {
     return {
       isVisible: true,
       message: '',
-      rooms: [],
-      messages: [],
+      room: { // Room default values
+        _id: null,
+        messages: [],
+      },
     };
   },
 
@@ -90,34 +94,32 @@ export default {
     socket.connect();
 
     socket.on("rooms", ({ rooms }) => {
-      if (this.rooms.length === 0) {
-        this.rooms = rooms;
+      if (!this.room._id) {
+        // Get the room and its accompanying information
+        let room = rooms[0];
+
+        // Process the room's messages, attaching additional properties we need
+        room.messages = room.messages.map(msg => this.attachMessageProperties(msg));
+        this.room = room;
       } 
     });
 
     // Listen to any sent messages
     socket.on("message", (message) => {
-      this.messages.push({
-        ...message,
-        fromSelf: message.clientId === socket.auth.clientId,
-        isUpdate: false,
-      });
+      const chatMessage = this.attachMessageProperties(message);
+      this.room.messages.push(chatMessage);
     });
 
     // An admin/agent has joined the room
     socket.on("join", (notification) => {
-      this.messages.push({
-        isUpdate: true,
-        content: notification
-      });
+      const update = this.attachUpdateProperties(notification);
+      this.room.messages.push(update);
     });
 
     // An admin/agent/visitor left the room
     socket.on("user_disconnect", (notification) => {
-      this.messages.push({
-        isUpdate: true,
-        content: notification
-      });
+      const update = this.attachUpdateProperties(notification);
+      this.room.messages.push(update);
     });
 
     // Log any connect_errors
@@ -133,13 +135,13 @@ export default {
 
       const newMessage = {
         content: this.message,
-        roomId: this.rooms[0]._id,
+        roomId: this.room._id,
       };
 
       socket.emit("message", newMessage);
 
       // Attach some properties we need later
-      this.messages.push({
+      this.room.messages.push({
         ...newMessage,
         isUpdate: false,
         fromSelf: true,
@@ -148,6 +150,23 @@ export default {
       // Clear message input
       this.message = "";
     },
+
+    // Helper method to attach properties to a `message` instance so that we can display it properly
+    attachMessageProperties(message) {
+      return {
+        ...message,
+        isUpdate: false,
+        fromSelf: message.clientId === socket.auth.clientId
+      }
+    },
+
+    // Helper method to attach properties to an `update` notification so that we can display it properly
+    attachUpdateProperties(notification) {
+      return {
+        isUpdate: true,
+        content: notification
+      };
+    }
   },
 };
 </script>
