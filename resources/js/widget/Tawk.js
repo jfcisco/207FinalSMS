@@ -29,12 +29,12 @@ export class Tawk {
         buttonContainer.classList.add('button-container')
 
         const chatIcon = document.createElement('img');
-        chatIcon.src = 'assets/chat.svg';
+        chatIcon.src = '<?php echo $baseUrl; ?>/assets/chat.svg';
         chatIcon.classList.add('icon');
         this.chatIcon = chatIcon;
 
         const closeIcon = document.createElement('img');
-        closeIcon.src = 'assets/cross.svg';
+        closeIcon.src = '<?php echo $baseUrl; ?>/assets/cross.svg';
         closeIcon.classList.add('icon', 'hidden');
         this.closeIcon = closeIcon;
 
@@ -207,7 +207,6 @@ export class Tawk {
     toggleOpen() {
         this.open = !this.open;
 
-        console.log(`Is open? ${this.open}`);
         if (this.open) {
             this.chatIcon.classList.add('hidden');
             this.closeIcon.classList.remove('hidden');

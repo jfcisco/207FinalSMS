@@ -5,9 +5,9 @@
   <!--MAIN SIDE BAR-->
   <div class="col-lg-1 mainsidebar">
     
-    <a class="activemenu" href="#messaging"><ion-icon name="mail-outline"></ion-icon><span class="menutitle">Messaging</span></a>
-      <a href="#reporting"><ion-icon name="bar-chart-outline"></ion-icon><span class="menutitle">Reporting</span></a>
-      <a href="#viewwidget"><ion-icon name="copy-outline"></ion-icon><span class="menutitle">Widget</span></a>
+    <a class="activemenu" href="/home"><ion-icon name="mail-outline"></ion-icon><span class="menutitle">Messaging</span></a>
+      <a href="#"><ion-icon name="bar-chart-outline"></ion-icon><span class="menutitle">Reporting</span></a>
+      <a href="/widgets"><ion-icon name="copy-outline"></ion-icon><span class="menutitle">Widget</span></a>
   </div>
 
   <!--MESSAGE LISTS-->

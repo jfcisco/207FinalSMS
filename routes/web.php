@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WidgetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,11 +29,19 @@ Route::get('/', function () {
 
 Auth::routes();
 
+//region Anonymous Routes
+Route::get('/embed/{userId}/{widgetId}', [WidgetController::class, 'generateScript']);
+//endregion
+
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index']);
 
     //region View Routes
     // TODO: Add View Routes here
+    
+    // Routes for Widget Management front-end
+    // Route::get('/widget/create', [WidgetController::class, 'create']);
+    Route::get('/widgets/{widgetId?}', [WidgetController::class, 'index'])->name('widget-details');
     //endregion
 
     //region Web API Endpoints
@@ -47,5 +56,4 @@ Route::prefix('api')->group(function(){
     Route::resource('sessions', SessionController::class);
     Route::resource('/users', UserController::class);
 });
-
 

@@ -46,6 +46,9 @@
 
 <style scoped>
   /* CSS rules can be added here */
+  .chatbox-input > input {
+    width: 100%;
+  }
 </style>
 
 <script>
@@ -87,7 +90,9 @@ export default {
     socket.connect();
 
     socket.on("rooms", ({ rooms }) => {
-      this.rooms = rooms;
+      if (this.rooms.length === 0) {
+        this.rooms = rooms;
+      } 
     });
 
     // Listen to any sent messages

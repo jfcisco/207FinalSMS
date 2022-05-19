@@ -65,4 +65,11 @@ function toggleheaderleft() {
  * Adding the chat widget
  */
 // Only keeping this here for testing purposes. We should remove this eventually
-require('./widget/embed');
+(function(){
+  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+  s1.async=true;
+  s1.charset='UTF-8';
+  s1.src='http://localhost:8000/embed/62840ecbcd2a866ec70ab01a/62840ecccd2a866ec70ab01c';
+  s1.setAttribute('crossorigin','*');
+  s0.parentNode.insertBefore(s1,s0);
+})();
