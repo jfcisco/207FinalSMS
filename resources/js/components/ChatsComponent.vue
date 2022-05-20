@@ -157,9 +157,9 @@
                                             >
                                                 <span class="p">
                                                     <strong>
-                                                        {{ message._id }}
+                                                        <!-- {{ message._id }} -->
                                                         {{ message.clientId }}
-                                                        {{ message.roomId }}
+                                                        <!-- {{ message.roomId }} -->
                                                     </strong>
                                                     {{ message.content }}
                                                 </span>
