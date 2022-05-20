@@ -63,11 +63,10 @@
                         v-on:click="selectRoom(chatroom._id)"
                         v-bind:id="chatroom._id"
                     >
-                        <p>{{ chatroom._id }}</p>
-                        <!-- <div class="listHead">
-                            <p>{{ message.user.first_name }}</p>
-                            <b>1</b>
-                        </div> -->
+                        <div class="listHead">
+                            <p>{{ chatroom._id }}</p>
+                            <!-- <b>1</b> -->
+                        </div>
 
                         <!-- The message last sent to the room -->
                         <!-- <div class="message_p">
@@ -115,35 +114,7 @@
                 >
                     <ul class="list-unstyled" ref="chatWindow" v-chat-scroll>
                         <div class="card card-default">
-                            <!-- Placeholder chat box (if there are no rooms yet) -->
-                            <div
-                                v-if="chatrooms.length === 0"
-                                class="card-body chatboxfix p-4"
-                                :style="{
-                                    'background-image':
-                                        'url(background_trans.png)',
-                                }"
-                            >
-                                <div
-                                    class="d-flex justify-content-center align-items-center h-100"
-                                >
-                                    <p
-                                        class="fs-3 text-muted"
-                                        v-if="!loadingChatrooms"
-                                    >
-                                        Click on the bubble icon
-                                        <ion-icon
-                                            name="chatbubble-ellipses-outline"
-                                        ></ion-icon>
-                                        above to create a new chatroom!
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div
-                                v-for="chatroom in chatrooms"
-                                :key="chatroom._id"
-                            >
+                            <div>
                                 <!-- Chat messages and 'is typing...' -->
                                 <div
                                     class="card-body chatboxfix p-0 roomMessages"
@@ -152,7 +123,6 @@
                                             'url(background_trans.png)',
                                     }"
                                     v-bind:id="'messages_room' + chatroom._id"
-                                    v-if="chatroom._id == activeRoom"
                                 >
                                     <ul
                                         ref="chatWindow"
@@ -419,7 +389,7 @@ export default {
 
             this.chatrooms[found].messages.push(message);
 
-            console.log("roomMsgs", this.chatrooms);
+            // console.log("roomMsgs", this.chatrooms);
         });
     },
 
@@ -431,36 +401,22 @@ export default {
             });
         },
         sendMessage() {
+            const message = {
+                roomId: this.activeRoom,
+                content: this.newMessage,
+            }
+            
+            // Send to socket server
+            socket.emit("message", message);
+
+            // Add to UI
             let found = this.getTargetRoomIndex(this.activeRoom);
             this.chatrooms[found].messages.push({
-                user: this.user,
-                message: this.newMessage,
+                ...message,
+                clientId: socket.auth.clientId,
+                _id: ''
             });
-            console.log("sendMessage", this.activeRoom);
-            // axios
-            //     .post("messages", {
-            //         message: this.newMessage,
-            //         room_id: this.activeRoom,
-            //     })
-            //     .then((response) => {
-            //         console.log("sendMessage response", response);
-            //         if (
-            //             response.data.status == "success" &&
-            //             this.chatrooms.length > 1
-            //         ) {
-            //             let found = null;
-            //             for (const indx in this.chatrooms) {
-            //                 if (
-            //                     this.chatrooms[indx].room_id == this.activeRoom
-            //                 ) {
-            //                     found = indx;
-            //                 }
-            //             }
-            //             let room = this.chatrooms[found];
-            //             this.chatrooms.splice(found, 1);
-            //             this.chatrooms.unshift(room);
-            //         }
-            //     });
+
             this.newMessage = "";
         },
         sendTypingEvent() {
