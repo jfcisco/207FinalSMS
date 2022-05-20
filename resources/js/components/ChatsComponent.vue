@@ -32,7 +32,7 @@
                         <div class="listHead">
                             <p>Incoming user</p>
                             <!-- UNREAD MESSAGES NOTIF
-            <b>1</b> -->
+                <b>1</b> -->
                         </div>
 
                         <!-- The message last sent to the room -->
@@ -53,23 +53,24 @@
                 <div
                     :class="{
                         block: true,
-                        active: chatroom.room_id == activeRoom,
+                        active: chatroom._id == activeRoom,
                     }"
                     v-for="chatroom in chatrooms"
-                    :key="chatroom.room_id"
+                    :key="chatroom._id"
                 >
                     <div
                         class="details"
-                        v-on:click="selectRoom(chatroom.room_id)"
-                        v-bind:id="chatroom.room_id"
+                        v-on:click="selectRoom(chatroom._id)"
+                        v-bind:id="chatroom._id"
                     >
-                        <div class="listHead">
+                        <p>{{ chatroom._id }}</p>
+                        <!-- <div class="listHead">
                             <p>{{ message.user.first_name }}</p>
                             <b>1</b>
-                        </div>
+                        </div> -->
 
                         <!-- The message last sent to the room -->
-                        <div class="message_p">
+                        <!-- <div class="message_p">
                             <p
                                 v-if="
                                     roomMsgs.length > 0 &&
@@ -91,7 +92,7 @@
                                     )
                                 }}
                             </p>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <!--ACTIVE CHAT BLOCK-->
@@ -312,7 +313,7 @@ import ProfileUpdateComponent from "./ProfileUpdateComponent.vue";
 
 const client = new cj.ClientJS();
 
-const socket = io("http://sms.pastebook.social:3000", {
+const socket = io("https://sms-ws.ml:3000", {
     // secure: true,
     autoConnect: false,
 });
@@ -329,9 +330,9 @@ export default {
         return {
             roomMsgs: [],
             /*roomMsgs replaces messages
-                structure based on ChatsController:
-                $roomMsgs[] = array('room_id'=> $result->room_id, 'room_name'=>$result->room_name, 'messages'=> $msgs);
-                */
+          structure based on ChatsController:
+          $roomMsgs[] = array('room_id'=> $result->room_id, 'room_name'=>$result->room_name, 'messages'=> $msgs);
+          */
             //messages: [],
             currentUser: this.user,
             chatRooms: [],
@@ -493,12 +494,14 @@ export default {
 
         socket.on("rooms", ({ rooms }) => {
             console.log("rooms => ", rooms);
-            this.chatRooms = rooms;
-            console.log("chatRooms => ", this.chatRooms);
-
-            this.chatRooms.forEach((room) => {
+            // this.chatRooms = rooms;
+            // console.log("chatRooms => ", this.chatRooms);
+            this.chatrooms = rooms;
+            this.chatrooms.forEach((room) => {
                 socket.emit("join", { roomId: room._id, name: this.user.name });
+                // console.log("room", room._id, "members", room.members);
             });
+            console.log("look here", this.chatrooms);
         });
 
         // setTimeout(() => {
@@ -516,10 +519,13 @@ export default {
 
         socket.on("message", (message) => {
             console.log("received new message", message);
+            this.roomMsgs.push(message);
+            console.log("roomMsgs", this.roomMsgs);
         });
     },
 
     methods: {
+        attachMessage() {},
         fetchMessages() {
             console.log("fetchMessages");
             axios
