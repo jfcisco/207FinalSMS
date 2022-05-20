@@ -17,7 +17,7 @@ class ChatWidget extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'created_by',
+        'created_by_id',
         'name',
         'color',
         'position',

@@ -16,11 +16,12 @@ class Message extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'session_id',
-        'created_by',
-        'attachment_path',
-        'message',
-        'is_whisper',
+        'roomId',
+        'clientId',
+        'clientType',
+        'clientName',
+        'content',
+        'isWhisper',
     ];
 
     /**
@@ -29,16 +30,11 @@ class Message extends Model
      * @var array
      */
     protected $casts = [
-        'is_whisper' =>'boolean',
+        'isWhisper' =>'boolean',
     ];
 
-    public function session(): BelongsTo
+    public function room(): BelongsTo
     {
-        return $this->belongsTo(Session::class);
-    }
-
-    public function created_by(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Room::class, 'roomId', 'message_id');
     }
 }
