@@ -118,55 +118,71 @@
                 >
                     <div class="list-unstyled">
                         <div class="card card-default">
-                            <div>
-                                <!-- Chat messages and 'is typing...' -->
-                                <div
-                                    class="card-body chatboxfix p-0 roomMessages"
-                                    :style="{
-                                        'background-image':
-                                            'url(background_trans.png)',
-                                    }"
-                                    v-bind:id="'messages_room' + chatroom._id"
+                            <!-- Chat messages and 'is typing...' -->
+                            <div
+                                class="card-body chatboxfix p-0 content"
+                                :style="{
+                                    'background-image':
+                                        'url(background_trans.png)',
+                                }"
+                                v-bind:id="'messages_room' + chatroom._id"
+                            >
+                                <ul
+                                    ref="chatWindow"
+                                    class="list-unstyled messages"
+                                    style="
+                                        height: 560px;
+                                        overflow-y: scroll;
+                                        overflow-x: hidden;
+                                        padding: 0 1.5rem;
+                                    "
+                                    v-chat-scroll
                                 >
-                                    <ul
-                                        ref="chatWindow"
-                                        class="list-unstyled"
-                                        style="
-                                            height: 560px;
-                                            overflow-y: scroll;
-                                            overflow-x: hidden;
-                                            padding: 0 1.5rem;
-                                        "
-                                        v-chat-scroll
+                                    <!-- Chatroom Messages -->
+                                    <li
+                                        class="py-2"
+                                        v-for="(
+                                            message, index
+                                        ) in chatroom.messages"
+                                        :key="index"
                                     >
-                                        <!-- Chatroom Messages -->
-                                        <li
-                                            class="py-2"
-                                            v-for="(
-                                                message, index
-                                            ) in chatroom.messages"
-                                            :key="index"
+                                        <!-- Only show the text part if it isn't empty  -->
+                                        <div
+                                            v-if="message.content.length > 0"
+                                            class="message"
+                                            :class="{
+                                                'sent-message':
+                                                    message.clientId ===
+                                                    user._id,
+                                                'received-message':
+                                                    !message.clientId ===
+                                                    user._id,
+                                            }"
                                         >
-                                            <!-- Only show the text part if it isn't empty  -->
-                                            <div
-                                                v-if="
-                                                    message.content.length > 0
-                                                "
-                                                class="message"
-                                            >
-                                                <span class="p">
+                                            <!-- <span class="p">
                                                     <strong>
-                                                        <!-- {{ message._id }} -->
+                                                        {{ message._id }}
                                                         {{ message.clientId }}
-                                                        <!-- {{ message.roomId }} -->
+                                                        {{ message.roomId }}
                                                     </strong>
                                                     <br />
                                                     {{ message.content }}
-                                                </span>
+                                                </span> -->
+                                            <div class="name">
+                                                {{
+                                                    message.clientId ===
+                                                    user._id
+                                                        ? "You"
+                                                        : message.clientId
+                                                }}
+                                                <!-- TODO: Ask Raymond if the sender/client's name can also be passed instead of just the clientId -->
                                             </div>
-                                        </li>
-                                    </ul>
-                                </div>
+                                            <div class="text">
+                                                {{ message.content }}
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
                             <!-- CHAT MESSAGE BLOCK -->
                         </div>
@@ -190,8 +206,46 @@
 </template>
 
 <style scoped>
-.attachment {
+/* .attachment {
     max-width: 15rem;
+} */
+.content .messages {
+    overflow-y: scroll;
+    max-height: 320px;
+    margin-bottom: 5px;
+    /* background-color: #ffffff; */
+    font-family: "Raleway", sans-serif;
+}
+.content .messages .message {
+    display: flex;
+    padding: 10px;
+}
+.content .messages .message > div {
+    max-width: 70%;
+    /* background-color: rgb(150, 145, 145); */
+    background-color: rgb(226, 219, 219);
+    font-weight: 500;
+    box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.05);
+    padding: 10px;
+}
+.content .messages .message.sent-message {
+    justify-content: flex-end;
+}
+.content .messages .message.received-message {
+    justify-content: flex-start;
+}
+.content .messages .message .name {
+    font-size: 12px;
+    font-weight: 450;
+    color: #fa6121;
+}
+.content .messages .message .text {
+    word-wrap: break-word;
+}
+.content .messages .update {
+    text-align: center;
+    padding: 10px;
+    font-style: italic;
 }
 </style>
 
