@@ -10,11 +10,12 @@ class MessageResource extends JsonResource
     {
         return [
             'id' => $this->_id,
-            'session_id' => $this->session_id,
-            'created_by' => new UserResource($this->created_by),
-            'attachment_path' => $this->attachment_path,
-            'message' => $this->message,
-            'is_whisper' => $this->is_whisper,
+            'room_id' => $this->roomId,
+            'client_id' => $this->clientId,
+            'client_type' => $this->clientType,
+            'client_name' => $this->clientName,
+            'content' => $this->content,
+            'is_whisper' => $this->isWhisper,
             'created_at' => $this->created_at,
         ];
     }

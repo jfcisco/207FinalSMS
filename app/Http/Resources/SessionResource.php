@@ -10,16 +10,12 @@ class SessionResource extends JsonResource
     {
         return [
             'id' => $this->_id,
-            'chat_widget' => new ChatWidgetResource($this->chat_widget),
-            'visitor' => new UserResource($this->visitor),
-            'agents' => UserResource::collection($this->agents),
-            'socket_id' => $this->socket_id,
-            'role' => $this->role,
-            'ip_address' => $this->ip_address,
-            'browser' => $this->browser,
-            'webpage_source' => $this->webpage_source,
-            'started_at' => $this->started_at,
-            'ended_at' => $this->ended_at,
+            'socket_id' => $this->socketId,
+            'client_id' => $this->clientId,
+            'clientType' => $this->clientType,
+            'visitor' => new VisitorResource($this->clientId),
+            'started_at' => $this->startedAt,
+            'ended_at' => $this->endedAt,
             'created_at' => $this->created_at,
         ];
     }

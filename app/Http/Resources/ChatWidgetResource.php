@@ -9,7 +9,7 @@ class ChatWidgetResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this['_id'],
+            'id' => $this->_id,
             'created_by' => new UserResource($this->created_by),
             'agents' => UserResource::collection($this->agents),
             'name' => $this->name,

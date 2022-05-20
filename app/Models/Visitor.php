@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Jenssegers\Mongodb\Relations\BelongsTo;
 use Jenssegers\Mongodb\Eloquent\Model;
+use Jenssegers\Mongodb\Relations\BelongsTo;
 
 class Visitor extends Model
 {
@@ -16,15 +16,13 @@ class Visitor extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
-        'socket_id',
-        'ip_address',
+        'name',
+        'ipAddress',
         'browser',
-        'webpage_source',
     ];
 
-    public function user(): BelongsTo
+    public function session()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(Session::class, 'clientId', 'id');
     }
 }

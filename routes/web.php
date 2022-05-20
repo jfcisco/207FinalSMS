@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChatWidgetController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitorController;
@@ -38,7 +39,7 @@ Route::middleware('auth')->group(function () {
 
     //region View Routes
     // TODO: Add View Routes here
-    
+
     // Routes for Widget Management front-end
     // Route::get('/widget/create', [WidgetController::class, 'create']);
     Route::get('/widgets/{widgetId?}', [WidgetController::class, 'index'])->name('widget-details');
@@ -55,5 +56,7 @@ Route::prefix('api')->group(function(){
     Route::resource('/messages', MessageController::class);
     Route::resource('sessions', SessionController::class);
     Route::resource('/users', UserController::class);
+    Route::resource('/visitors', VisitorController::class);
+    Route::resource('/rooms', RoomController::class);
 });
 

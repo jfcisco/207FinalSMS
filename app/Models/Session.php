@@ -17,14 +17,12 @@ class Session extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'chat_widget_id',
-        'visitor_id',
-        'socket_id',
-        'ip_address',
-        'browser',
-        'webpage_source',
-        'started_at',
-        'ended_at',
+        'widgetId',
+        'socketId',
+        'clientId',
+        'clientType',
+        'startedAt',
+        'endedAt',
     ];
 
     /**
@@ -33,22 +31,17 @@ class Session extends Model
      * @var array
      */
     protected $casts = [
-        'started_at' =>'datetime',
-        'ended_at' =>'datetime',
+        'startedAt' =>'datetime',
+        'endedAt' =>'datetime',
     ];
 
     public function chat_widget(): BelongsTo
     {
-        return $this->belongsTo(ChatWidget::class);
-    }
-
-    public function agents(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class);
+        return $this->belongsTo(ChatWidget::class, 'widgetId', 'session_id');
     }
 
     public function visitor(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Visitor::class, 'clientId', 'visitor_id');
     }
 }

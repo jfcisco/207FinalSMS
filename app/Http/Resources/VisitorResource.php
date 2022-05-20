@@ -10,7 +10,10 @@ class VisitorResource extends JsonResource
     {
         return [
             'id' => $this->_id,
-            'user' => new UserResource($this->user),
+            'name' => $this->name,
+            'ip_address' => $this->ipAddress,
+            'browser' => $this->browser,
+            'created_at' => $this->created_at,
         ];
     }
 }
