@@ -2,23 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\SessionResource;
 use App\Models\Message;
 use App\Models\Room;
 use App\Models\Session;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class ReportingController extends Controller
 {
     public function dailyChatsVolume()
     {
-        $messages = Message::orderBy('created_at')->orderBy('created_at', 'DESC')->get()->groupBy(function($item) {
+        $messages = Message::orderBy('created_at')->orderBy('created_at', 'DESC')->get()->groupBy(function ($item) {
             return $item->created_at->format('d/M/Y');
         });
 
         $chatVolumeMap = array();
-        foreach($messages as $key => $messge){
+        foreach ($messages as $key => $messge) {
             $day = $key;
             $totalCount = $messge->count();
 
@@ -34,7 +32,7 @@ class ReportingController extends Controller
         $rooms = Room::all();
 
         $answeredChatCount = 0;
-        foreach($rooms as $room){
+        foreach ($rooms as $room) {
             $count = count($room->members);
             if ($count > 1) {
                 $answeredChatCount++;
@@ -49,7 +47,7 @@ class ReportingController extends Controller
         $rooms = Room::all();
 
         $answeredChatCount = 0;
-        foreach($rooms as $room){
+        foreach ($rooms as $room) {
             $count = count($room->members);
             if ($count == 1) {
                 $answeredChatCount++;
@@ -61,18 +59,18 @@ class ReportingController extends Controller
 
     public function todaysLiveSessionsCount()
     {
-        $liveSessionsCount  = Session::where('endAt', null)->where('startAt', '>=', Carbon::now())->get()->count();
+        $liveSessionsCount = Session::where('endAt', null)->where('startAt', '>=', Carbon::now())->get()->count();
         return response(['data' => $liveSessionsCount], 200);
     }
 
     public function todaysHourlyLiveSessionsVolume()
     {
-        $liveSessions  = Session::where('endAt', null)->where('startAt', '>=', Carbon::now())->orderBy('startAt', 'DESC')->get()->groupBy(function($item) {
+        $liveSessions = Session::where('endAt', null)->where('startAt', '>=', Carbon::now())->orderBy('startAt', 'DESC')->get()->groupBy(function ($item) {
             return $this->parseTime($item->startAt);
         });
 
         $liveSessionsMap = array();
-        foreach($liveSessions as $key => $liveSession){
+        foreach ($liveSessions as $key => $liveSession) {
             $day = $key;
             $totalCount = $liveSession->count();
 
@@ -85,12 +83,12 @@ class ReportingController extends Controller
 
     public function dailySessionsVolume()
     {
-        $sessions  = Session::orderBy('startAt')->orderBy('startAt', 'DESC')->get()->groupBy(function($item) {
+        $sessions = Session::orderBy('startAt', 'DESC')->get()->groupBy(function ($item) {
             return $this->parseDate($item->startAt);
         });
 
         $sessionsMap = array();
-        foreach($sessions as $key => $session){
+        foreach ($sessions as $key => $session) {
             $day = $key;
             $totalCount = $session->count();
 
@@ -100,7 +98,6 @@ class ReportingController extends Controller
         }
         return response(['data' => $sessionsMap], 200);
     }
-
 
 
     function parseDate($dateFromMongo)
@@ -113,7 +110,7 @@ class ReportingController extends Controller
         $pieces = explode('"', $pieces[1]);
         $millis = intval($pieces[1]);
 
-        return date('d/M/Y', ($millis/1000));
+        return date('d/M/Y', ($millis / 1000));
     }
 
     function parseTime($dateFromMongo)
@@ -126,7 +123,7 @@ class ReportingController extends Controller
         $pieces = explode('"', $pieces[1]);
         $millis = intval($pieces[1]);
 
-        return date('H', ($millis/1000));
+        return date('H', ($millis / 1000));
     }
 }
 
