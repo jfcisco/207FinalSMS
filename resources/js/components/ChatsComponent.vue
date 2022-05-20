@@ -104,13 +104,18 @@
                 class="mainchat2"
                 style="overflow-y: scroll"
                 v-for="chatroom in chatrooms"
+                v-show="chatroom._id == activeRoom"
                 :key="chatroom._id"
             >
                 <!-- Chat messages-->
-                <div
+                <!-- <div
                     class="card-body chatmessages roomMessages"
                     v-bind:id="'messages_room' + chatroom._id"
                     v-if="chatroom._id == activeRoom"
+                > -->
+                <div
+                    class="card-body chatmessages roomMessages"
+                    v-bind:id="'messages_room' + chatroom._id"
                 >
                     <ul class="list-unstyled" ref="chatWindow" v-chat-scroll>
                         <div class="card card-default">
@@ -172,7 +177,6 @@
             <!--INPUT MESSAGE BOX-->
             <div class="chatbox_input">
                 <input
-                    @keydown="sendTypingEvent"
                     @keyup.enter="sendMessage"
                     v-model="newMessage"
                     type="text"
@@ -370,26 +374,29 @@ export default {
             console.log("look here", this.chatrooms);
         });
 
-        // setTimeout(() => {
-        // Message sent by admin/agent/visitor
-        // socket.emit("message", {
-        //     content: "This is a message from visitor to room",
-        //     roomId: chatRooms[0]._id,
-        // });
-        // Whisper sent only by admin/agent
-        // socket.emit("whisper", {
-        //     content: "This is a whisper from admin/agent to another admin/agent",
-        //     roomId: chatRooms[0]._id,
-        // });
-        // }, 1000);
-
         socket.on("message", (message) => {
-            console.log("received new message", message);
+            // console.log("received new message", message);
             let found = this.getTargetRoomIndex(message.roomId);
 
             this.chatrooms[found].messages.push(message);
 
-            // console.log("roomMsgs", this.chatrooms);
+            console.log("chatrooms", this.chatrooms);
+            // console.log(
+            //     this.chatrooms.forEach((chatroom) =>
+            //         chatroom.messages.forEach((msg) =>
+            //             console.log(
+            //                 "msg content: ",
+            //                 msg.content,
+            //                 "clientId",
+            //                 msg.clientId,
+            //                 "clientType",
+            //                 msg.clientType,
+            //                 "roomId",
+            //                 msg.roomId
+            //             )
+            //         )
+            //     )
+            // );
         });
     },
 
@@ -404,8 +411,8 @@ export default {
             const message = {
                 roomId: this.activeRoom,
                 content: this.newMessage,
-            }
-            
+            };
+
             // Send to socket server
             socket.emit("message", message);
 
@@ -414,21 +421,13 @@ export default {
             this.chatrooms[found].messages.push({
                 ...message,
                 clientId: socket.auth.clientId,
-                _id: ''
+                _id: "",
             });
 
             this.newMessage = "";
         },
         sendTypingEvent() {
             Echo.join("chat").whisper("typing", this.user);
-        },
-        handleAttachmentUpload(attachmentUrl) {
-            let found = this.getTargetRoomIndex(this.activeRoom);
-            this.chatrooms[found].messages.push({
-                user: this.user,
-                message: "",
-                attachment_path: attachmentUrl,
-            });
         },
         fetchChatrooms() {
             console.log("fetchChatrooms");
