@@ -401,13 +401,14 @@ export default {
     },
 
     methods: {
-        // no longer used
         // scrollToChatBottom() {
         //     console.log("scrolling to bottom");
         //     const chatWindows = this.$refs.chatWindow;
         //     console.log("chatWindows", chatWindows);
         //     chatWindows.forEach((window) => {
         //         window.scrollTop = window.scrollHeight;
+        //         console.log("scrollTop", window.scrollTop);
+        //         console.log("scrollHeight", window.scrollHeight);
         //     });
         // },
         sendMessage() {
@@ -429,107 +430,108 @@ export default {
 
             this.newMessage = "";
         },
-        sendTypingEvent() {
-            Echo.join("chat").whisper("typing", this.user);
-        },
-        fetchChatrooms() {
-            console.log("fetchChatrooms");
-            this.loadingChatrooms = true;
-            axios
-                .get("rooms")
-                .then((response) => {
-                    console.log("rooms", response);
-                    if (response.data.length > 0) {
-                        this.chatrooms = response.data;
-                        this.activeRoom = this.chatrooms[0].room_id;
-                    }
-                })
-                .finally(() => {
-                    this.loadingChatrooms = false;
-                });
-        },
+        // sendTypingEvent() {
+        //     Echo.join("chat").whisper("typing", this.user);
+        // },
+        // fetchChatrooms() {
+        //     console.log("fetchChatrooms");
+        //     this.loadingChatrooms = true;
+        //     axios
+        //         .get("rooms")
+        //         .then((response) => {
+        //             console.log("rooms", response);
+        //             if (response.data.length > 0) {
+        //                 this.chatrooms = response.data;
+        //                 this.activeRoom = this.chatrooms[0].room_id;
+        //             }
+        //         })
+        //         .finally(() => {
+        //             this.loadingChatrooms = false;
+        //         });
+        // },
         selectRoom: function (roomId) {
             this.activeRoom = roomId;
+            // this.scrollToChatBottom();
         },
 
         // Function to query the database for a certain user
-        findUser(query) {
-            if (query === "") {
-                // Only send request if there is a search query
-                this.userDropdownOptions = [];
-                return;
-            }
+        // findUser(query) {
+        //     if (query === "") {
+        //         // Only send request if there is a search query
+        //         this.userDropdownOptions = [];
+        //         return;
+        //     }
 
-            // Show the loading bar
-            this.isSearchLoading = true;
-            axios
-                .get("/users", {
-                    params: {
-                        name: query,
-                    },
-                })
-                .then((response) => {
-                    // Set the result of the database query as the options
-                    this.userDropdownOptions = response.data;
-                })
-                .catch((error) => {
-                    // Unexpected error occurred, for now log to console
-                    console.error(error);
-                })
-                .finally(() => {
-                    this.isSearchLoading = false;
-                });
-        },
+        //     // Show the loading bar
+        //     this.isSearchLoading = true;
+        //     axios
+        //         .get("/users", {
+        //             params: {
+        //                 name: query,
+        //             },
+        //         })
+        //         .then((response) => {
+        //             // Set the result of the database query as the options
+        //             this.userDropdownOptions = response.data;
+        //         })
+        //         .catch((error) => {
+        //             // Unexpected error occurred, for now log to console
+        //             console.error(error);
+        //         })
+        //         .finally(() => {
+        //             this.isSearchLoading = false;
+        //         });
+        // },
 
-        findUserNotInRoom(nameQuery, roomId) {
-            if (nameQuery === "") {
-                // Only send request if there is a search query
-                this.newMemberDropdownOptions = [];
-                return;
-            }
+        // findUserNotInRoom(nameQuery, roomId) {
+        //     if (nameQuery === "") {
+        //         // Only send request if there is a search query
+        //         this.newMemberDropdownOptions = [];
+        //         return;
+        //     }
 
-            // Show the loading spinner
-            this.isMemberSearchLoading = true;
-            axios
-                .get("/users", {
-                    params: {
-                        name: nameQuery,
-                        notInRoom: roomId,
-                    },
-                })
-                .then((response) => {
-                    // Set the result of the database query as the options
-                    this.newMemberDropdownOptions = response.data;
-                })
-                .catch((error) => {
-                    // Unexpected error occurred, for now log to console
-                    console.error(error);
-                })
-                .finally(() => {
-                    this.isMemberSearchLoading = false;
-                });
-        },
+        //     // Show the loading spinner
+        //     this.isMemberSearchLoading = true;
+        //     axios
+        //         .get("/users", {
+        //             params: {
+        //                 name: nameQuery,
+        //                 notInRoom: roomId,
+        //             },
+        //         })
+        //         .then((response) => {
+        //             // Set the result of the database query as the options
+        //             this.newMemberDropdownOptions = response.data;
+        //         })
+        //         .catch((error) => {
+        //             // Unexpected error occurred, for now log to console
+        //             console.error(error);
+        //         })
+        //         .finally(() => {
+        //             this.isMemberSearchLoading = false;
+        //         });
+        // },
 
-        addMember(newMember) {
-            axios.post("addMember", {
-                email: newMember.email,
-                room_id: this.activeRoom,
-            });
+        // addMember(newMember) {
+        //     axios.post("addMember", {
+        //         email: newMember.email,
+        //         room_id: this.activeRoom,
+        //     });
 
-            // Inform the chatroom that a new member has been added
-            let found = this.getTargetRoomIndex(this.activeRoom);
-            this.chatrooms[found].messages.push({
-                user: "",
-                message:
-                    newMember.first_name +
-                    " " +
-                    newMember.last_name +
-                    " has been added",
-            });
+        //     // Inform the chatroom that a new member has been added
+        //     let found = this.getTargetRoomIndex(this.activeRoom);
+        //     this.chatrooms[found].messages.push({
+        //         user: "",
+        //         message:
+        //             newMember.first_name +
+        //             " " +
+        //             newMember.last_name +
+        //             " has been added",
+        //     });
 
-            this.newMemberDropdownOptions = [];
-            this.addingMember = false;
-        },
+        //     this.newMemberDropdownOptions = [];
+        //     this.addingMember = false;
+        // },
         getTargetRoomIndex(targetRoom) {
             let found = null;
             for (const indx in this.chatrooms) {
