@@ -33,7 +33,7 @@ class ChatWidgetController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -47,7 +47,7 @@ class ChatWidgetController extends Controller
         }
 
         $chatWidget = new ChatWidget();
-        $chatWidget->created_by_id =  $request->created_by_id;
+        $chatWidget->created_by_id = $request->created_by_id;
         $chatWidget->name = $request->name;
         $chatWidget->color = $request->color;
         $chatWidget->position = $request->position;
@@ -73,7 +73,7 @@ class ChatWidgetController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -85,7 +85,7 @@ class ChatWidgetController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -96,19 +96,36 @@ class ChatWidgetController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        //
+        $chatWidget = ChatWidget::find($id);
+        $chatWidget->name = $request->name;
+        $chatWidget->color = $request->color;
+        $chatWidget->hide_when_offline = $request->hide_when_offline;
+        $chatWidget->hide_when_on_desktop = $request->hide_when_on_desktop;
+        $chatWidget->hide_when_on_mobile = $request->hide_when_on_mobile;
+        $chatWidget->enable_emojis = $request->enable_emojis;
+        $chatWidget->availability_start_time = $request->availability_start_time;
+        $chatWidget->availability_end_time = $request->availability_end_time;
+        $chatWidget->allowed_domains = $request->allowed_domains;
+        $chatWidget->generated_code = $request->generated_code;
+        $chatWidget->direct_chat_link = $request->direct_chat_link;
+        $chatWidget->is_active = $request->is_active;
+        $chatWidget->save();
+
+        return response([
+            'message' => 'Successfully updated chat widget.',
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

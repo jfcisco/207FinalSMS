@@ -71,7 +71,13 @@ class VisitorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $visitor = Visitor::find($id);
+        $visitor->name = $request->name;
+        $visitor->save();
+
+        return response([
+            'message' => 'Successfully updated visitor.',
+        ], 200);
     }
 
     /**

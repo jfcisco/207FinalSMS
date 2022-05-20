@@ -100,7 +100,7 @@ import cj from "clientjs";
 const client = new cj.ClientJS();
 
 // Setup Socket.IO connection
-const socket = io("http://sms.pastebook.social:3000", {
+const socket = io("https://sms-ws.ml:3000", {
     // secure: true,
     autoConnect: false,
 });
@@ -143,6 +143,7 @@ export default {
                 this.room = room;
 
                 this.focusOnMessageInput();
+                console.log("room messages", room.messages);
             }
         });
 
