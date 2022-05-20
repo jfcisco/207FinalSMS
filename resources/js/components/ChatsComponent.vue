@@ -102,7 +102,6 @@
         <div class="col-lg-9 mainchat">
             <div
                 class="mainchat2"
-                style="overflow-y: scroll"
                 v-for="chatroom in chatrooms"
                 v-show="chatroom._id == activeRoom"
                 :key="chatroom._id"
@@ -117,7 +116,7 @@
                     class="card-body chatmessages roomMessages"
                     v-bind:id="'messages_room' + chatroom._id"
                 >
-                    <ul class="list-unstyled" ref="chatWindow" v-chat-scroll>
+                    <div class="list-unstyled">
                         <div class="card card-default">
                             <div>
                                 <!-- Chat messages and 'is typing...' -->
@@ -171,7 +170,7 @@
                             </div>
                             <!-- CHAT MESSAGE BLOCK -->
                         </div>
-                    </ul>
+                    </div>
                 </div>
             </div>
 
@@ -402,12 +401,15 @@ export default {
     },
 
     methods: {
-        scrollToChatBottom() {
-            const chatWindows = this.$refs.chatWindow;
-            chatWindows.forEach((window) => {
-                window.scrollTop = window.scrollHeight;
-            });
-        },
+        // no longer used
+        // scrollToChatBottom() {
+        //     console.log("scrolling to bottom");
+        //     const chatWindows = this.$refs.chatWindow;
+        //     console.log("chatWindows", chatWindows);
+        //     chatWindows.forEach((window) => {
+        //         window.scrollTop = window.scrollHeight;
+        //     });
+        // },
         sendMessage() {
             const message = {
                 roomId: this.activeRoom,
