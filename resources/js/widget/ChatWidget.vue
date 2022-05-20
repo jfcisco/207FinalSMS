@@ -153,16 +153,16 @@ export default {
         });
 
         // An admin/agent has joined the room
-        socket.on("join", (notification) => {
-            const update = this.attachUpdateProperties(notification);
-            this.room.messages.push(update);
-        });
+        // socket.on("join", (notification) => {
+        //     const update = this.attachUpdateProperties(notification);
+        //     this.room.messages.push(update);
+        // });
 
-        // An admin/agent/visitor left the room
-        socket.on("user_disconnect", (notification) => {
-            const update = this.attachUpdateProperties(notification);
-            this.room.messages.push(update);
-        });
+        // // An admin/agent/visitor left the room
+        // socket.on("user_disconnect", (notification) => {
+        //     const update = this.attachUpdateProperties(notification);
+        //     this.room.messages.push(update);
+        // });
 
         // Log any connect_errors
         socket.on("connect_error", (err) => {
