@@ -20,6 +20,7 @@ class UpdateSessionsTable extends Migration
             $table->renameColumn('chat_widget_id', 'widgetId');
             $table->renameColumn('started_at', 'startedAt');
             $table->renameColumn('ended_at', 'endedAt');
+            $table->string('endReason');
             $table->dropColumn('ip_address');
             $table->dropColumn('browser');
             $table->dropColumn('webpage_source');
@@ -40,6 +41,7 @@ class UpdateSessionsTable extends Migration
             $table->renameColumn('chatWidgetId', 'chat_widget_id');
             $table->renameColumn('startedAt', 'started_at');
             $table->renameColumn('endedAt', 'ended_at');
+            $table->dropColumn('endReason');
             $table->string('ip_address')->nullable();
             $table->string('browser')->nullable();
             $table->string('webpage_source')->nullable();

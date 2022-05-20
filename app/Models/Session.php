@@ -21,8 +21,9 @@ class Session extends Model
         'socketId',
         'clientId',
         'clientType',
-        'startedAt',
-        'endedAt',
+        'startAt',
+        'endAt',
+        'endReason',
     ];
 
     /**

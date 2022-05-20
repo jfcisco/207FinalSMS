@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChatWidgetController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
@@ -46,17 +47,31 @@ Route::middleware('auth')->group(function () {
     //endregion
 
     //region Web API Endpoints
-    // TODO: Add Web API Endpoints here
+    Route::prefix('api')->group(function(){
+        Route::resource('/users', UserController::class);
+        Route::resource('/visitors', VisitorController::class);
+        Route::resource('/chat-widgets', ChatWidgetController::class);
+        Route::resource('/messages', MessageController::class);
+        Route::resource('sessions', SessionController::class);
+        Route::resource('/rooms', RoomController::class);
+
+        Route::prefix('reporting')->group(function(){
+            Route::prefix('chats')->group(function(){
+                Route::get('/daily', [ReportingController::class, 'dailyChatsVolume']);
+                Route::get('/answered', [ReportingController::class, 'answeredChatsCount']);
+                Route::get('/missed', [ReportingController::class, 'missedChatsCount']);
+            });
+
+            Route::prefix('sessions')->group(function(){
+                Route::get('/live-today', [ReportingController::class, 'todaysLiveSessionsCount']);
+                Route::get('/hourly-today', [ReportingController::class, 'todaysHourlyLiveSessionsVolume']);
+                Route::get('/daily', [ReportingController::class, 'dailySessionsVolume']);
+            });
+        });
+    });
     //endregion
 });
 
-// TODO: Move inside middleware
-Route::prefix('api')->group(function(){
-    Route::resource('/chat-widgets', ChatWidgetController::class);
-    Route::resource('/messages', MessageController::class);
-    Route::resource('sessions', SessionController::class);
-    Route::resource('/users', UserController::class);
-    Route::resource('/visitors', VisitorController::class);
-    Route::resource('/rooms', RoomController::class);
-});
+
+
 
