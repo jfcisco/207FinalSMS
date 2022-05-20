@@ -2,6 +2,6 @@
 
 @section('content')
     <div class="container-fluid">
-        <chats></chats>
+        <chats :user="{{ Auth::user() }}"></chats>
     </div>
 @endsection

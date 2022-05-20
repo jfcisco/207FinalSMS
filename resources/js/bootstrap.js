@@ -39,66 +39,66 @@ window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 //      disableStats: true,
 //  });
 
-const client = new cj.ClientJS();
-const socket = io("https://sms-ws.ml:3000", {
-    secure: true,
-    autoConnect: false,
-});
+// const client = new cj.ClientJS();
+// const socket = io("https://sms-ws.ml:3000", {
+//     secure: true,
+//     autoConnect: false,
+// });
 
-// The rest are for testing only
-socket.auth = {
-    // For visitors
-    clientId: client.getFingerprint(),
-    clientType: "visitor",
-    clientName: "bisita",
-    widgetId: "widget1",
+// // The rest are for testing only
+// socket.auth = {
+//     // For visitors
+//     clientId: client.getFingerprint(),
+//     clientType: "visitor",
+//     clientName: "bisita",
+//     widgetId: "widget1",
 
-    // For admin/agent
-    // clientId: userId,
-    // clientName: "agentako",
-    // clientType: "user",
-};
-socket.connect();
+//     // For admin/agent
+//     // clientId: userId,
+//     // clientName: "agentako",
+//     // clientType: "user",
+// };
+// socket.connect();
 
-let chatRooms = [];
-socket.on("rooms", ({ rooms }) => {
-    console.log("rooms => ", rooms);
-    chatRooms = rooms;
-});
+// let chatRooms = [];
+// socket.on("rooms", ({ rooms }) => {
+//     console.log("rooms => ", rooms);
+//     chatRooms = rooms;
+// });
 
-setTimeout(() => {
-    // Message sent by admin/agent/visitor
-    socket.emit("message", {
-        content: "This is a message from visitor to room",
-        roomId: chatRooms[0]._id,
-    });
+// setTimeout(() => {
+//     // Message sent by admin/agent/visitor
+//     socket.emit("message", {
+//         content: "This is a message from visitor to room",
+//         roomId: chatRooms[0]._id,
+//     });
 
-    // Whisper sent only by admin/agent
-    socket.emit("whisper", {
-        content: "This is a whisper from admin/agent to another admin/agent",
-        roomId: chatRooms[0]._id,
-    });
-}, 1000);
+//     // Whisper sent only by admin/agent
+//     socket.emit("whisper", {
+//         content: "This is a whisper from admin/agent to another admin/agent",
+//         roomId: chatRooms[0]._id,
+//     });
+// }, 1000);
 
-// admin/agent/visitor should listen to message event
-socket.on("message", (message) => {
-    console.log("received new message", message);
-});
+// // admin/agent/visitor should listen to message event
+// socket.on("message", (message) => {
+//     console.log("received new message", message);
+// });
 
-// only admin/agent should listen to whisper event
-socket.on("whisper", (whisper) => {
-    console.log("received new whisper", whisper);
-});
+// // only admin/agent should listen to whisper event
+// socket.on("whisper", (whisper) => {
+//     console.log("received new whisper", whisper);
+// });
 
-// Join a room
-// socket.emit("join", { roomId: roomId, name: username })
+// // Join a room
+// // socket.emit("join", { roomId: roomId, name: username })
 
-// An admin/agent has joined the room
-socket.on("join", (notification) => {
-    console.log("new joiner", notification);
-});
+// // An admin/agent has joined the room
+// socket.on("join", (notification) => {
+//     console.log("new joiner", notification);
+// });
 
-// An admin/agent/visitor left the room
-socket.on("user_disconnect", (notification) => {
-    console.log("left", notification);
-});
+// // An admin/agent/visitor left the room
+// socket.on("user_disconnect", (notification) => {
+//     console.log("left", notification);
+// });

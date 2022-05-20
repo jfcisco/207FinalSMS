@@ -1,615 +1,751 @@
 <template>
-
-
-<div class="row">
-  <!--MAIN SIDE BAR-->
-  <div class="col-lg-1 mainsidebar">
-    
-    <a class="activemenu" href="/home"><ion-icon name="mail-outline"></ion-icon><span class="menutitle">Messaging</span></a>
-      <a href="#"><ion-icon name="bar-chart-outline"></ion-icon><span class="menutitle">Reporting</span></a>
-      <a href="/widgets"><ion-icon name="copy-outline"></ion-icon><span class="menutitle">Widget</span></a>
-  </div>
-
-  <!--MESSAGE LISTS-->
-
-  <div class="col-lg-2 sidebar" style="overflow-y: scroll">
-    
-    <!--INCOMING SESSIONS-->
-
-    <div class="row py-0 mt-0">
-      
-      <p class="subtitle">Incoming Sessions</p>
-
-      <!--INCOMING CHAT BLOCK-->
-      <!--TO DO: VUE FOR INCOMING MESSAGE TAGGING-->
-
-      <div class="block incoming">
-        <div class="details">
-          <div class="listHead">
-            <p>Incoming user</p>
-            <!-- UNREAD MESSAGES NOTIF 
-            <b>1</b> -->
-          </div>
-
-          <!-- The message last sent to the room -->
-          <div class="message_p">
-            <p>last message sent</p>
-          </div>
-        </div>
-      </div>
-      <!--INCOMING CHAT BLOCK-->
-
-    </div>
-
-    <!--ACTIVE SESSIONS-->
-
     <div class="row">
-      <p class="subtitle sidebartitle">Active Sessions</p>
-        
-        <!--ACTIVE CHAT BLOCK-->
-        <div 
-          :class="{ block: true, active: chatroom.room_id == activeRoom }"
-          v-for="chatroom in chatrooms"
-          :key="chatroom.room_id">
-          <div class="details"
-            v-on:click="selectRoom(chatroom.room_id)"
-            v-bind:id="chatroom.room_id">
-            
-            <div class="listHead">
-              <p>{{ message.user.first_name }}</p> 
-              <b>1</b>
-            </div>
-
-            <!-- The message last sent to the room -->
-            <div class="message_p">
-              <p v-if="roomMsgs.length > 0 && roomMsgs[getTargetRoomIndex(chatroom.room_id)].messages.length > 0">
-              {{
-                // Get the last message and convert to string
-                convertMessageObjectToString(
-                  roomMsgs.find(room => room.room_id === chatroom.room_id).messages.slice(-1)[0]
-                )
-              }}
-              </p>
-            </div>
-          </div>
+        <!--MAIN SIDE BAR-->
+        <div class="col-lg-1 mainsidebar">
+            <a class="activemenu" href="/home"
+                ><ion-icon name="mail-outline"></ion-icon
+                ><span class="menutitle">Messaging</span></a
+            >
+            <a href="#"
+                ><ion-icon name="bar-chart-outline"></ion-icon
+                ><span class="menutitle">Reporting</span></a
+            >
+            <a href="/widgets"
+                ><ion-icon name="copy-outline"></ion-icon
+                ><span class="menutitle">Widget</span></a
+            >
         </div>
-        <!--ACTIVE CHAT BLOCK-->
-    </div>
-  
-  </div>
 
+        <!--MESSAGE LISTS-->
 
-  <!--CHAT DISPLAY-->
-  <div class="col-lg-9 mainchat">
-    <div class="mainchat2" style="overflow-y: scroll;"
-      v-for="chatroom in roomMsgs" :key="chatroom.room_id">
+        <div class="col-lg-2 sidebar" style="overflow-y: scroll">
+            <!--INCOMING SESSIONS-->
 
-      <!-- Chat messages-->
-      <div class="card-body chatmessages roomMessages"
-        v-bind:id="'messages_room' + chatroom.room_id" 
-        v-if="chatroom.room_id == activeRoom">
+            <div class="row py-0 mt-0">
+                <p class="subtitle">Incoming Sessions</p>
 
-        <ul class="list-unstyled" v-if="!addingRoom" ref="chatWindow" v-chat-scroll>
+                <!--INCOMING CHAT BLOCK-->
+                <!--TO DO: VUE FOR INCOMING MESSAGE TAGGING-->
 
-          <div class="card card-default">
-            <!-- Placeholder chat box (if there are no rooms yet) -->
-            <div v-if="roomMsgs.length === 0" class="card-body chatboxfix p-4" :style="{'background-image':'url(background_trans.png)'}" >
-              <div class="d-flex justify-content-center align-items-center h-100">
-                  <p class="fs-3 text-muted" v-if="!loadingChatrooms">Click on the bubble icon <ion-icon name="chatbubble-ellipses-outline"></ion-icon> above to create a new chatroom!</p>
+                <div class="block incoming">
+                    <div class="details">
+                        <div class="listHead">
+                            <p>Incoming user</p>
+                            <!-- UNREAD MESSAGES NOTIF
+            <b>1</b> -->
+                        </div>
+
+                        <!-- The message last sent to the room -->
+                        <div class="message_p">
+                            <p>last message sent</p>
+                        </div>
+                    </div>
                 </div>
+                <!--INCOMING CHAT BLOCK-->
             </div>
 
-            <div v-for="chatroom in roomMsgs" :key="chatroom.room_id">
-              <!-- Chat messages and 'is typing...' -->
-              <div class="card-body chatboxfix p-0 roomMessages" :style="{'background-image':'url(background_trans.png)'}"
-                v-bind:id="'messages_room' + chatroom.room_id"
-                v-if="chatroom.room_id == activeRoom">
-                <ul
-                  v-if="!addingRoom"
-                  ref="chatWindow"
-                  class="list-unstyled"
-                  style="height: 560px; overflow-y: scroll; overflow-x: hidden; padding: 0 1.5rem"
-                  v-chat-scroll
+            <!--ACTIVE SESSIONS-->
+
+            <div class="row">
+                <p class="subtitle sidebartitle">Active Sessions</p>
+
+                <!--ACTIVE CHAT BLOCK-->
+                <div
+                    :class="{
+                        block: true,
+                        active: chatroom.room_id == activeRoom,
+                    }"
+                    v-for="chatroom in chatrooms"
+                    :key="chatroom.room_id"
                 >
-                  <!-- Chatroom Messages -->
-                  <li
-                    class="py-2"
-                    v-for="(message, index) in chatroom.messages"
-                    :key="index"
-                  >
-                    <!-- Only show the text part if it isn't empty  -->
                     <div
-                      v-if="message.message.length > 0"
-                      class="message"
-                      :class="{
-                      my_message: message.user.id === user.id,
-                      friend_message: message.user.id !== user.id
-                    }">
-                      <span class="p">
-                        <strong v-if="message.user.id !== user.id"> {{ message.user.first_name }} {{ message.user.last_name }} : </strong>
-                        {{ message.message }}
-                      </span>
+                        class="details"
+                        v-on:click="selectRoom(chatroom.room_id)"
+                        v-bind:id="chatroom.room_id"
+                    >
+                        <div class="listHead">
+                            <p>{{ message.user.first_name }}</p>
+                            <b>1</b>
+                        </div>
 
+                        <!-- The message last sent to the room -->
+                        <div class="message_p">
+                            <p
+                                v-if="
+                                    roomMsgs.length > 0 &&
+                                    roomMsgs[
+                                        getTargetRoomIndex(chatroom.room_id)
+                                    ].messages.length > 0
+                                "
+                            >
+                                {{
+                                    // Get the last message and convert to string
+                                    convertMessageObjectToString(
+                                        roomMsgs
+                                            .find(
+                                                (room) =>
+                                                    room.room_id ===
+                                                    chatroom.room_id
+                                            )
+                                            .messages.slice(-1)[0]
+                                    )
+                                }}
+                            </p>
+                        </div>
                     </div>
-                    <div v-if="message.attachment_path"
-                      class="message"
-                      :class="{
-                      my_message: message.user.id === user.id,
-                      friend_message: message.user.id !== user.id
-                    }">
-                      <!-- Attachment -->
-                      <span class="p--full">
-                        <strong class="d-block pb-1" v-if="message.user.id !== user.id"> {{ message.user.first_name }} {{ message.user.last_name }} : </strong>
-                        <img
-                          class="img-fluid attachment"
-                          :src="message.attachment_path"
-                          @load="scrollToChatBottom"
-                        />
-                      </span>
-                    </div>
-
-                  </li>
-                </ul>
-
-                <!-- Message shown while adding a room via To Bar: -->
-                <div class="d-flex justify-content-center align-items-center h-100" v-else>
-                  <p class="fs-3 text-muted">Add chat members above, and then press <strong>enter</strong> to create a new chatroom!</p>
                 </div>
-
-                <span class="text-muted" v-if="activeUser"
-                  >{{ activeUser.name }} is typing...</span
-                >
-              </div>
+                <!--ACTIVE CHAT BLOCK-->
             </div>
-            <!-- CHAT MESSAGE BLOCK -->
+        </div>
 
-          </div>
+        <!--CHAT DISPLAY-->
+        <div class="col-lg-9 mainchat">
+            <div
+                class="mainchat2"
+                style="overflow-y: scroll"
+                v-for="chatroom in roomMsgs"
+                :key="chatroom.room_id"
+            >
+                <!-- Chat messages-->
+                <div
+                    class="card-body chatmessages roomMessages"
+                    v-bind:id="'messages_room' + chatroom.room_id"
+                    v-if="chatroom.room_id == activeRoom"
+                >
+                    <ul
+                        class="list-unstyled"
+                        v-if="!addingRoom"
+                        ref="chatWindow"
+                        v-chat-scroll
+                    >
+                        <div class="card card-default">
+                            <!-- Placeholder chat box (if there are no rooms yet) -->
+                            <div
+                                v-if="roomMsgs.length === 0"
+                                class="card-body chatboxfix p-4"
+                                :style="{
+                                    'background-image':
+                                        'url(background_trans.png)',
+                                }"
+                            >
+                                <div
+                                    class="d-flex justify-content-center align-items-center h-100"
+                                >
+                                    <p
+                                        class="fs-3 text-muted"
+                                        v-if="!loadingChatrooms"
+                                    >
+                                        Click on the bubble icon
+                                        <ion-icon
+                                            name="chatbubble-ellipses-outline"
+                                        ></ion-icon>
+                                        above to create a new chatroom!
+                                    </p>
+                                </div>
+                            </div>
 
-        </ul>
-      </div>
+                            <div
+                                v-for="chatroom in roomMsgs"
+                                :key="chatroom.room_id"
+                            >
+                                <!-- Chat messages and 'is typing...' -->
+                                <div
+                                    class="card-body chatboxfix p-0 roomMessages"
+                                    :style="{
+                                        'background-image':
+                                            'url(background_trans.png)',
+                                    }"
+                                    v-bind:id="
+                                        'messages_room' + chatroom.room_id
+                                    "
+                                    v-if="chatroom.room_id == activeRoom"
+                                >
+                                    <ul
+                                        v-if="!addingRoom"
+                                        ref="chatWindow"
+                                        class="list-unstyled"
+                                        style="
+                                            height: 560px;
+                                            overflow-y: scroll;
+                                            overflow-x: hidden;
+                                            padding: 0 1.5rem;
+                                        "
+                                        v-chat-scroll
+                                    >
+                                        <!-- Chatroom Messages -->
+                                        <li
+                                            class="py-2"
+                                            v-for="(
+                                                message, index
+                                            ) in chatroom.messages"
+                                            :key="index"
+                                        >
+                                            <!-- Only show the text part if it isn't empty  -->
+                                            <div
+                                                v-if="
+                                                    message.message.length > 0
+                                                "
+                                                class="message"
+                                                :class="{
+                                                    my_message:
+                                                        message.user.id ===
+                                                        user.id,
+                                                    friend_message:
+                                                        message.user.id !==
+                                                        user.id,
+                                                }"
+                                            >
+                                                <span class="p">
+                                                    <strong
+                                                        v-if="
+                                                            message.user.id !==
+                                                            user.id
+                                                        "
+                                                    >
+                                                        {{
+                                                            message.user
+                                                                .first_name
+                                                        }}
+                                                        {{
+                                                            message.user
+                                                                .last_name
+                                                        }}
+                                                        :
+                                                    </strong>
+                                                    {{ message.message }}
+                                                </span>
+                                            </div>
+                                            <div
+                                                v-if="message.attachment_path"
+                                                class="message"
+                                                :class="{
+                                                    my_message:
+                                                        message.user.id ===
+                                                        user.id,
+                                                    friend_message:
+                                                        message.user.id !==
+                                                        user.id,
+                                                }"
+                                            >
+                                                <!-- Attachment -->
+                                                <span class="p--full">
+                                                    <strong
+                                                        class="d-block pb-1"
+                                                        v-if="
+                                                            message.user.id !==
+                                                            user.id
+                                                        "
+                                                    >
+                                                        {{
+                                                            message.user
+                                                                .first_name
+                                                        }}
+                                                        {{
+                                                            message.user
+                                                                .last_name
+                                                        }}
+                                                        :
+                                                    </strong>
+                                                    <img
+                                                        class="img-fluid attachment"
+                                                        :src="
+                                                            message.attachment_path
+                                                        "
+                                                        @load="
+                                                            scrollToChatBottom
+                                                        "
+                                                    />
+                                                </span>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                    <!-- Message shown while adding a room via To Bar: -->
+                                    <div
+                                        class="d-flex justify-content-center align-items-center h-100"
+                                        v-else
+                                    >
+                                        <p class="fs-3 text-muted">
+                                            Add chat members above, and then
+                                            press <strong>enter</strong> to
+                                            create a new chatroom!
+                                        </p>
+                                    </div>
+
+                                    <span class="text-muted" v-if="activeUser"
+                                        >{{ activeUser.name }} is
+                                        typing...</span
+                                    >
+                                </div>
+                            </div>
+                            <!-- CHAT MESSAGE BLOCK -->
+                        </div>
+                    </ul>
+                </div>
+            </div>
+
+            <!--INPUT MESSAGE BOX-->
+            <div class="chatbox_input">
+                <input
+                    @keydown="sendTypingEvent"
+                    @keyup.enter="sendMessage"
+                    v-model="newMessage"
+                    type="text"
+                    name="message"
+                    placeholder="Enter your message..."
+                    class="form-control"
+                />
+            </div>
+        </div>
     </div>
-
-    <!--INPUT MESSAGE BOX-->
-    <div class="chatbox_input">
-            <input
-              @keydown="sendTypingEvent"
-              @keyup.enter="sendMessage"
-              v-model="newMessage"
-              type="text"
-              name="message"
-              placeholder="Enter your message..."
-              class="form-control"
-            />
-     </div>
-  </div>
-
-
-</div>
-
 </template>
 
 <style scoped>
-  .attachment {
+.attachment {
     max-width: 15rem;
-  }
+}
 </style>
 
-
-
 <script>
-  import FileUploadComponent from './FileUploadComponent.vue';
-  import ProfileUpdateComponent from './ProfileUpdateComponent.vue';
+import FileUploadComponent from "./FileUploadComponent.vue";
+import ProfileUpdateComponent from "./ProfileUpdateComponent.vue";
 
-  const client = new cj.ClientJS();
+const client = new cj.ClientJS();
 
-  const socket = io("https://sms-ws.ml:3000", {
-    secure: true,
+const socket = io("http://sms.pastebook.social:3000", {
+    // secure: true,
     autoConnect: false,
-  });
+});
 
 export default {
-  props: ["user"],
+    props: ["user"],
 
-        components: {
-            FileUploadComponent,
-            ProfileUpdateComponent
-        },
+    components: {
+        FileUploadComponent,
+        ProfileUpdateComponent,
+    },
 
-  data() {
-    return {
-      roomMsgs: [],
-      /*roomMsgs replaces messages
+    data() {
+        return {
+            roomMsgs: [],
+            /*roomMsgs replaces messages
                 structure based on ChatsController:
                 $roomMsgs[] = array('room_id'=> $result->room_id, 'room_name'=>$result->room_name, 'messages'=> $msgs);
                 */
-      //messages: [],
-      newMessage: "",
-      users: [],
-      activeUser: false,
-      typingTimer: false,
-      //chatroom variables
-      chatrooms: [],
-      activeRoom: "",
+            //messages: [],
+            currentUser: this.user,
+            chatRooms: [],
+            newMessage: "",
+            users: [],
+            activeUser: false,
+            typingTimer: false,
+            //chatroom variables
+            chatrooms: [],
+            activeRoom: "",
 
-      // Create room vairables
-      isSearchLoading: false,
-      addingRoom: false,
-      newRoomMembers: [], // Stores members to be added to new room
-      userDropdownOptions: [], // List of available users who may be added to a room
-      loadingChatrooms: true,
+            // Create room vairables
+            isSearchLoading: false,
+            addingRoom: false,
+            newRoomMembers: [], // Stores members to be added to new room
+            userDropdownOptions: [], // List of available users who may be added to a room
+            loadingChatrooms: true,
 
-      // Add chat member variables
-      isMemberSearchLoading: false,
-      addingMember: false,
-      newMemberDropdownOptions: [],
-    };
-  },
-
-  computed: {
-    activeRoomDetails: function() {
-      const activeRoomResult = this.roomMsgs.filter(room => room.room_id == this.activeRoom);
-
-      if (activeRoomResult.length === 0) {
-        return null;
-      }
-      else {
-        return activeRoomResult[0];
-      }
-    }
-  },
-
-  created() {
-    // this.fetchChatrooms();
-    // Echo.join("chat")
-    //   .here((user) => {
-    //     this.users = user;
-    //     this.fetchMessages();
-    //   })
-    //   .joining((user) => {
-    //     this.users.push(user);
-    //   })
-    //   .leaving((user) => {
-    //     this.users = this.users.filter((u) => u.id != user.id);
-    //   })
-    //   .listen(".chatroom.created", (event) => {
-    //     // Add the chatroom created to the user's list of chatrooms
-
-    //     // Only if they're a member of the chatroom
-    //     if (
-    //       event.chatRoom.members.some(
-    //         (member) => member.id === this.$props.user.id
-    //       )
-    //     ) {
-    //       this.chatrooms.unshift({
-    //         room_id: event.chatRoom.room_id,
-    //         room_name: event.chatRoom.room_name,
-    //       });
-
-    //       this.roomMsgs.unshift({
-    //         room_id: event.chatRoom.room_id,
-    //         room_name: event.chatRoom.room_name,
-    //         messages: [],
-    //       });
-    //     }
-    //   })
-    //   .listen(".message", (event) => {
-    //     //check which room the message goes
-    //     let found = this.getTargetRoomIndex(event.room_id);
-    //     if (
-    //       event.room_name == "" &&
-    //       found == null &&
-    //       event.new_member != this.user.id
-    //     ) {
-    //       //no one is being added and user doesn't have the room
-    //       //message is not for the user
-    //       return;
-    //     } else if (
-    //       event.room_name != "" &&
-    //       found == null &&
-    //       event.new_member == this.user.id
-    //     ) {
-    //       //user is being added to the room
-    //       this.chatrooms.unshift({
-    //         room_id: event.room_id,
-    //         room_name: event.room_name,
-    //       });
-    //       this.roomMsgs.unshift({
-    //         room_id: event.room_id,
-    //         room_name: event.room_name,
-    //         messages: [],
-    //       });
-    //       //this.activeRoom = event.room_id;
-    //       found = this.getTargetRoomIndex(event.room_id);
-    //     }
-
-    //     if (found != null) {
-    //       //put the new message received in the right room
-    //       let newMessage = {
-    //         user: event.user,
-    //         message: event.message,
-    //       };
-    //       console.log("Event");
-    //       console.log(event);
-    //       console.log("New Message");
-    //       console.log(newMessage);
-
-    //       // Check if incoming has an attachment
-    //       if (event.attachment_path) {
-    //         newMessage.attachment_path = event.attachment_path;
-    //       }
-
-    //       this.roomMsgs[found].messages.push(newMessage);
-    //       //move up the room with the new message
-    //       let found2 = null;
-    //       for (const indx in this.chatrooms) {
-    //         if (this.chatrooms[indx].room_id == event.room_id) {
-    //           found2 = indx;
-    //         }
-    //       }
-    //       let room = this.chatrooms[found2];
-    //       this.chatrooms.splice(found2, 1);
-    //       this.chatrooms.unshift(room);
-    //     }
-    //   })
-    //   .listenForWhisper("typing", (user) => {
-    //     this.activeUser = user;
-
-    //     if (this.typingTimer) {
-    //       clearTimeout(this.typingTimer);
-    //     }
-
-    //     this.typingTimer = setTimeout(() => {
-    //       this.activeUser = false;
-    //     }, 3000);
-    //   });
-
-    socket.auth = {
-      // For visitors
-      clientId: client.getFingerprint(),
-      clientType: "visitor",
-      clientName: "bisita",
-      widgetId: "widget1",
-
-      // For admin/agent
-      // clientId: userId,
-      // clientName: "agentako",
-      // clientType: "user",
-    };
-
-    socket.connect();
-
-    setTimeout(() => {
-      // Message sent by admin/agent/visitor
-      socket.emit("message", {
-          content: "This is a message from visitor to room",
-          roomId: chatRooms[0]._id,
-      });
-
-      // Whisper sent only by admin/agent
-      socket.emit("whisper", {
-          content: "This is a whisper from admin/agent to another admin/agent",
-          roomId: chatRooms[0]._id,
-      });
-    }, 1000);
-
-    socket.on("message", (message) => {
-      console.log("received new message", message);
-    });
-
-
-  },
-
-  methods: {
-    fetchMessages() {
-        console.log('fetchMessages');
-      axios.get("messages").then((response) => {
-          console.log('messages', response);
-        this.roomMsgs = response.data;
-      }).catch ((e) => {
-          console.log('error', e);
-      });
+            // Add chat member variables
+            isMemberSearchLoading: false,
+            addingMember: false,
+            newMemberDropdownOptions: [],
+        };
     },
-    scrollToChatBottom() {
-      const chatWindows = this.$refs.chatWindow;
-      chatWindows.forEach(window => {
-        window.scrollTop = window.scrollHeight;
-      });
-    },
-    sendMessage() {
-      let found = this.getTargetRoomIndex(this.activeRoom);
-      this.roomMsgs[found].messages.push({
-        user: this.user,
-        message: this.newMessage,
-      });
-      console.log('sendMessage', this.activeRoom);
-      axios
-        .post("messages", {
-          message: this.newMessage,
-          room_id: this.activeRoom,
-        })
-        .then((response) => {
-            console.log('sendMessage response', response);
-          if (response.data.status == "success" && this.chatrooms.length > 1) {
-            let found = null;
-            for (const indx in this.chatrooms) {
-              if (this.chatrooms[indx].room_id == this.activeRoom) {
-                found = indx;
-              }
+
+    computed: {
+        activeRoomDetails: function () {
+            const activeRoomResult = this.roomMsgs.filter(
+                (room) => room.room_id == this.activeRoom
+            );
+
+            if (activeRoomResult.length === 0) {
+                return null;
+            } else {
+                return activeRoomResult[0];
             }
-            let room = this.chatrooms[found];
-            this.chatrooms.splice(found, 1);
-            this.chatrooms.unshift(room);
-          }
+        },
+    },
+
+    created() {
+        // this.fetchChatrooms();
+        // Echo.join("chat")
+        //   .here((user) => {
+        //     this.users = user;
+        //     this.fetchMessages();
+        //   })
+        //   .joining((user) => {
+        //     this.users.push(user);
+        //   })
+        //   .leaving((user) => {
+        //     this.users = this.users.filter((u) => u.id != user.id);
+        //   })
+        //   .listen(".chatroom.created", (event) => {
+        //     // Add the chatroom created to the user's list of chatrooms
+
+        //     // Only if they're a member of the chatroom
+        //     if (
+        //       event.chatRoom.members.some(
+        //         (member) => member.id === this.$props.user.id
+        //       )
+        //     ) {
+        //       this.chatrooms.unshift({
+        //         room_id: event.chatRoom.room_id,
+        //         room_name: event.chatRoom.room_name,
+        //       });
+
+        //       this.roomMsgs.unshift({
+        //         room_id: event.chatRoom.room_id,
+        //         room_name: event.chatRoom.room_name,
+        //         messages: [],
+        //       });
+        //     }
+        //   })
+        //   .listen(".message", (event) => {
+        //     //check which room the message goes
+        //     let found = this.getTargetRoomIndex(event.room_id);
+        //     if (
+        //       event.room_name == "" &&
+        //       found == null &&
+        //       event.new_member != this.user.id
+        //     ) {
+        //       //no one is being added and user doesn't have the room
+        //       //message is not for the user
+        //       return;
+        //     } else if (
+        //       event.room_name != "" &&
+        //       found == null &&
+        //       event.new_member == this.user.id
+        //     ) {
+        //       //user is being added to the room
+        //       this.chatrooms.unshift({
+        //         room_id: event.room_id,
+        //         room_name: event.room_name,
+        //       });
+        //       this.roomMsgs.unshift({
+        //         room_id: event.room_id,
+        //         room_name: event.room_name,
+        //         messages: [],
+        //       });
+        //       //this.activeRoom = event.room_id;
+        //       found = this.getTargetRoomIndex(event.room_id);
+        //     }
+
+        //     if (found != null) {
+        //       //put the new message received in the right room
+        //       let newMessage = {
+        //         user: event.user,
+        //         message: event.message,
+        //       };
+        //       console.log("Event");
+        //       console.log(event);
+        //       console.log("New Message");
+        //       console.log(newMessage);
+
+        //       // Check if incoming has an attachment
+        //       if (event.attachment_path) {
+        //         newMessage.attachment_path = event.attachment_path;
+        //       }
+
+        //       this.roomMsgs[found].messages.push(newMessage);
+        //       //move up the room with the new message
+        //       let found2 = null;
+        //       for (const indx in this.chatrooms) {
+        //         if (this.chatrooms[indx].room_id == event.room_id) {
+        //           found2 = indx;
+        //         }
+        //       }
+        //       let room = this.chatrooms[found2];
+        //       this.chatrooms.splice(found2, 1);
+        //       this.chatrooms.unshift(room);
+        //     }
+        //   })
+        //   .listenForWhisper("typing", (user) => {
+        //     this.activeUser = user;
+
+        //     if (this.typingTimer) {
+        //       clearTimeout(this.typingTimer);
+        //     }
+
+        //     this.typingTimer = setTimeout(() => {
+        //       this.activeUser = false;
+        //     }, 3000);
+        //   });
+
+        socket.auth = {
+            // // For visitors
+            // clientId: client.getFingerprint(),
+            // clientType: "visitor",
+            // clientName: "bisita",
+            // widgetId: "widget1",
+
+            // For admin/agent
+            clientId: this.user._id,
+            clientName: "agentako",
+            clientType: "user",
+        };
+
+        socket.connect();
+
+        socket.on("rooms", ({ rooms }) => {
+            console.log("rooms => ", rooms);
+            this.chatRooms = rooms;
+            console.log("chatRooms => ", this.chatRooms);
+
+            this.chatRooms.forEach((room) => {
+                socket.emit("join", { roomId: room._id, name: this.user.name });
+            });
         });
-      this.newMessage = "";
-    },
-    sendTypingEvent() {
-      Echo.join("chat").whisper("typing", this.user);
-    },
-    handleAttachmentUpload(attachmentUrl) {
-      let found = this.getTargetRoomIndex(this.activeRoom);
-      this.roomMsgs[found].messages.push({
-        user: this.user,
-        message: "",
-        attachment_path: attachmentUrl,
-      });
-    },
-    fetchChatrooms() {
-        console.log('fetchChatrooms');
-      this.loadingChatrooms = true;
-      axios.get("rooms").then((response) => {
-          console.log('rooms', response);
-        if (response.data.length > 0) {
-          this.chatrooms = response.data;
-          this.activeRoom = this.chatrooms[0].room_id;
-        }
-      })
-      .finally(() => {
-        this.loadingChatrooms = false;
-      });
-    },
-    selectRoom: function (roomId) {
-      this.activeRoom = roomId;
-    },
 
-    // Function to query the database for a certain user
-    findUser(query) {
-      if (query === "") {
-        // Only send request if there is a search query
-        this.userDropdownOptions = [];
-        return;
-      }
+        // setTimeout(() => {
+        // Message sent by admin/agent/visitor
+        // socket.emit("message", {
+        //     content: "This is a message from visitor to room",
+        //     roomId: chatRooms[0]._id,
+        // });
+        // Whisper sent only by admin/agent
+        // socket.emit("whisper", {
+        //     content: "This is a whisper from admin/agent to another admin/agent",
+        //     roomId: chatRooms[0]._id,
+        // });
+        // }, 1000);
 
-      // Show the loading bar
-      this.isSearchLoading = true;
-      axios
-        .get("/users", {
-          params: {
-            name: query,
-          },
-        })
-        .then((response) => {
-          // Set the result of the database query as the options
-          this.userDropdownOptions = response.data;
-        })
-        .catch((error) => {
-          // Unexpected error occurred, for now log to console
-          console.error(error);
-        })
-        .finally(() => {
-          this.isSearchLoading = false;
+        socket.on("message", (message) => {
+            console.log("received new message", message);
         });
     },
 
-    findUserNotInRoom(nameQuery, roomId) {
-      if (nameQuery === "") {
-        // Only send request if there is a search query
-        this.newMemberDropdownOptions = [];
-        return;
-      }
+    methods: {
+        fetchMessages() {
+            console.log("fetchMessages");
+            axios
+                .get("messages")
+                .then((response) => {
+                    console.log("messages", response);
+                    this.roomMsgs = response.data;
+                })
+                .catch((e) => {
+                    console.log("error", e);
+                });
+        },
+        scrollToChatBottom() {
+            const chatWindows = this.$refs.chatWindow;
+            chatWindows.forEach((window) => {
+                window.scrollTop = window.scrollHeight;
+            });
+        },
+        sendMessage() {
+            let found = this.getTargetRoomIndex(this.activeRoom);
+            this.roomMsgs[found].messages.push({
+                user: this.user,
+                message: this.newMessage,
+            });
+            console.log("sendMessage", this.activeRoom);
+            // axios
+            //     .post("messages", {
+            //         message: this.newMessage,
+            //         room_id: this.activeRoom,
+            //     })
+            //     .then((response) => {
+            //         console.log("sendMessage response", response);
+            //         if (
+            //             response.data.status == "success" &&
+            //             this.chatrooms.length > 1
+            //         ) {
+            //             let found = null;
+            //             for (const indx in this.chatrooms) {
+            //                 if (
+            //                     this.chatrooms[indx].room_id == this.activeRoom
+            //                 ) {
+            //                     found = indx;
+            //                 }
+            //             }
+            //             let room = this.chatrooms[found];
+            //             this.chatrooms.splice(found, 1);
+            //             this.chatrooms.unshift(room);
+            //         }
+            //     });
+            this.newMessage = "";
+        },
+        sendTypingEvent() {
+            Echo.join("chat").whisper("typing", this.user);
+        },
+        handleAttachmentUpload(attachmentUrl) {
+            let found = this.getTargetRoomIndex(this.activeRoom);
+            this.roomMsgs[found].messages.push({
+                user: this.user,
+                message: "",
+                attachment_path: attachmentUrl,
+            });
+        },
+        fetchChatrooms() {
+            console.log("fetchChatrooms");
+            this.loadingChatrooms = true;
+            axios
+                .get("rooms")
+                .then((response) => {
+                    console.log("rooms", response);
+                    if (response.data.length > 0) {
+                        this.chatrooms = response.data;
+                        this.activeRoom = this.chatrooms[0].room_id;
+                    }
+                })
+                .finally(() => {
+                    this.loadingChatrooms = false;
+                });
+        },
+        selectRoom: function (roomId) {
+            this.activeRoom = roomId;
+        },
 
-      // Show the loading spinner
-      this.isMemberSearchLoading = true;
-      axios
-        .get("/users", {
-          params: {
-            name: nameQuery,
-            notInRoom: roomId,
-          },
-        })
-        .then((response) => {
-          // Set the result of the database query as the options
-          this.newMemberDropdownOptions = response.data;
-        })
-        .catch((error) => {
-          // Unexpected error occurred, for now log to console
-          console.error(error);
-        })
-        .finally(() => {
-          this.isMemberSearchLoading = false;
-        });
+        // Function to query the database for a certain user
+        findUser(query) {
+            if (query === "") {
+                // Only send request if there is a search query
+                this.userDropdownOptions = [];
+                return;
+            }
+
+            // Show the loading bar
+            this.isSearchLoading = true;
+            axios
+                .get("/users", {
+                    params: {
+                        name: query,
+                    },
+                })
+                .then((response) => {
+                    // Set the result of the database query as the options
+                    this.userDropdownOptions = response.data;
+                })
+                .catch((error) => {
+                    // Unexpected error occurred, for now log to console
+                    console.error(error);
+                })
+                .finally(() => {
+                    this.isSearchLoading = false;
+                });
+        },
+
+        findUserNotInRoom(nameQuery, roomId) {
+            if (nameQuery === "") {
+                // Only send request if there is a search query
+                this.newMemberDropdownOptions = [];
+                return;
+            }
+
+            // Show the loading spinner
+            this.isMemberSearchLoading = true;
+            axios
+                .get("/users", {
+                    params: {
+                        name: nameQuery,
+                        notInRoom: roomId,
+                    },
+                })
+                .then((response) => {
+                    // Set the result of the database query as the options
+                    this.newMemberDropdownOptions = response.data;
+                })
+                .catch((error) => {
+                    // Unexpected error occurred, for now log to console
+                    console.error(error);
+                })
+                .finally(() => {
+                    this.isMemberSearchLoading = false;
+                });
+        },
+
+        createRoom() {
+            // Check if there are newRoomMembers
+            if (this.newRoomMembers.length === 0) {
+                alert("Cannot create a room with no other members!");
+                return;
+            }
+
+            // Generate a room name
+            const roomName = this.newRoomMembers
+                .concat(this.$props.user) // Include the current user
+                .map((user) => `${user.first_name} ${user.last_name}`)
+                .join(", ");
+
+            // Get the selected members
+            const members = this.newRoomMembers.map((user) => user.id);
+
+            // Make a request to create a new room
+            axios
+                .post("/newRoom", {
+                    room_name: roomName,
+                    members: members,
+                })
+                .then((response) => {
+                    // Upon successful addition, add the new chatroom to the list
+                    this.chatrooms.unshift({
+                        room_id: response.data.room_id,
+                        room_name: response.data.room_name,
+                    });
+                    this.activeRoom = response.data.room_id;
+                    this.roomMsgs.unshift({
+                        room_id: response.data.room_id,
+                        room_name: response.data.room_name,
+                        messages: [],
+                    });
+                });
+
+            // Reset state
+            this.newRoomMembers = [];
+            this.addingRoom = false;
+        },
+
+        addMember(newMember) {
+            axios.post("addMember", {
+                email: newMember.email,
+                room_id: this.activeRoom,
+            });
+
+            // Inform the chatroom that a new member has been added
+            let found = this.getTargetRoomIndex(this.activeRoom);
+            this.roomMsgs[found].messages.push({
+                user: "",
+                message:
+                    newMember.first_name +
+                    " " +
+                    newMember.last_name +
+                    " has been added",
+            });
+
+            this.newMemberDropdownOptions = [];
+            this.addingMember = false;
+        },
+        getTargetRoomIndex(targetRoom) {
+            let found = null;
+            for (const indx in this.roomMsgs) {
+                if (this.roomMsgs[indx].room_id == targetRoom) {
+                    found = indx;
+                }
+            }
+            return found;
+        },
+
+        // Given a message object, converts it to a string resembling a chat message
+        // This is used for the chat rooms list message preview
+        convertMessageObjectToString(message) {
+            if (!message) return "";
+
+            if (message.attachment_path) {
+                return `${message.user.first_name || ""} ${
+                    message.user.last_name || ""
+                } sent an attachment.`;
+            }
+
+            return `${message.user.first_name || ""} ${
+                message.user.last_name || ""
+            }: ${message.message}`;
+        },
     },
-
-    createRoom() {
-      // Check if there are newRoomMembers
-      if (this.newRoomMembers.length === 0) {
-        alert("Cannot create a room with no other members!");
-        return;
-      }
-
-      // Generate a room name
-      const roomName = this.newRoomMembers
-        .concat(this.$props.user) // Include the current user
-        .map((user) => `${user.first_name} ${user.last_name}`)
-        .join(", ");
-
-      // Get the selected members
-      const members = this.newRoomMembers.map((user) => user.id);
-
-      // Make a request to create a new room
-      axios
-        .post("/newRoom", {
-          room_name: roomName,
-          members: members,
-        })
-        .then((response) => {
-          // Upon successful addition, add the new chatroom to the list
-          this.chatrooms.unshift({
-            room_id: response.data.room_id,
-            room_name: response.data.room_name,
-          });
-          this.activeRoom = response.data.room_id;
-          this.roomMsgs.unshift({
-            room_id: response.data.room_id,
-            room_name: response.data.room_name,
-            messages: [],
-          });
-        });
-
-      // Reset state
-      this.newRoomMembers = [];
-      this.addingRoom = false;
-    },
-
-    addMember(newMember) {
-      axios.post("addMember", {
-        email: newMember.email,
-        room_id: this.activeRoom,
-      });
-
-      // Inform the chatroom that a new member has been added
-      let found = this.getTargetRoomIndex(this.activeRoom);
-      this.roomMsgs[found].messages.push({
-        user: "",
-        message:
-          newMember.first_name + " " + newMember.last_name + " has been added",
-      });
-
-      this.newMemberDropdownOptions = [];
-      this.addingMember = false;
-    },
-    getTargetRoomIndex(targetRoom) {
-      let found = null;
-      for (const indx in this.roomMsgs) {
-        if (this.roomMsgs[indx].room_id == targetRoom) {
-          found = indx;
-        }
-      }
-      return found;
-    },
-
-    // Given a message object, converts it to a string resembling a chat message
-    // This is used for the chat rooms list message preview
-    convertMessageObjectToString(message) {
-      if (!message) return "";
-
-      if (message.attachment_path) {
-        return `${message.user.first_name || ''} ${message.user.last_name || ''} sent an attachment.`;
-      }
-
-      return `${message.user.first_name || ''} ${message.user.last_name || ''}: ${message.message}`;
-    }
-  },
 };
 </script>
-
