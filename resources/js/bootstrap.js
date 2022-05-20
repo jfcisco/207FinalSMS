@@ -48,7 +48,7 @@ const socket = io("https://sms-ws.ml:3000", {
 // The rest are for testing only
 socket.auth = {
     // For visitors
-    clientId: client.getFingerprint(),
+    clientId: `${client.getFingerprint()}`,
     clientType: "visitor",
     clientName: "bisita",
     widgetId: "widget1",
