@@ -143,6 +143,7 @@ export default {
                 this.room = room;
 
                 this.focusOnMessageInput();
+                console.log("room messages", room.messages);
             }
         });
 

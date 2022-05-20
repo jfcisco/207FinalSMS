@@ -161,6 +161,7 @@
                                                         {{ message.clientId }}
                                                         <!-- {{ message.roomId }} -->
                                                     </strong>
+                                                    <br />
                                                     {{ message.content }}
                                                 </span>
                                             </div>
