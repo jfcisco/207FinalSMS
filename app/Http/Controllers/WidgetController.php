@@ -98,11 +98,14 @@ class WidgetController extends Controller
 
     public function create()
     {
+        return view('widget.create');
+    }
+
+    public function store()
+    {
         // TODO: Implement Create Widget form
         $widget = ChatWidget::create([
             'name' => 'Sample Widget'
         ]);
-
-        return redirect('/widget/2');
     }
 }

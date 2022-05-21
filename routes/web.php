@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     // TODO: Add View Routes here
 
     // Routes for Widget Management front-end
-    // Route::get('/widget/create', [WidgetController::class, 'create']);
+    Route::get('/widgets/create', [WidgetController::class, 'create'])->name('create-widget');
     Route::get('/widgets/{widgetId?}', [WidgetController::class, 'index'])->name('widget-details');
     //endregion
 

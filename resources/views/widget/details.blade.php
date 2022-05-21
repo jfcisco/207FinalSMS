@@ -29,12 +29,19 @@
                         <input class="form-control" type="text" name="widget-id" id="widget-id" readonly value="{{ $currentWidget->_id }}">
                     </div>
         
-                    {{-- <div class="row mb-2">
+                    <div class="row mb-2">
                         <div class="form-check">
                             <label class="col form-check-label" for="widget-status">Widget Status</label>
                             <input class="col form-check-input" type="checkbox" name="widget-status" id="widget-status" checked="{{ $currentWidget->is_active }}">
                         </div>
-                    </div> --}}
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="form-check">
+                            <label class="col form-check-label" for="widget-status">Widget Status</label>
+                            <input class="col form-check-input" type="checkbox" name="widget-status" id="widget-status" checked="{{ $currentWidget->is_active }}">
+                        </div>
+                    </div> 
         
                     {{-- TODO: Fill out the rest of the widget form's fields --}}
                 </div>
