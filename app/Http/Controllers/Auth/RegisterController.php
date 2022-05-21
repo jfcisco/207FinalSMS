@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Contracts\BindingResolutionException;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
-use Illuminate\Contracts\BindingResolutionException;
 use Illuminate\Support\Str;
 
 
@@ -48,7 +47,7 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     public function validator(array $data)
@@ -57,15 +56,15 @@ class RegisterController extends Controller
             'name' => ['required', 'string'],
             'email' => ['string', 'email', 'unique:users'],
             'password' => ['string', 'min:8', 'confirmed'],
-            'role' => ['required', 'string', ],
+            'role' => ['required', 'string',],
         ]);
     }
 
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
-     * @return \App\Models\User
+     * @param array $data
+     * @return User
      */
     public function create(array $data)
     {

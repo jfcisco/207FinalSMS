@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\ChatWidget;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * User-facing Functionalities for Widget Management
@@ -27,15 +26,14 @@ class WidgetController extends Controller
         if ($widgets->count() === 0) {
             return view('widget.details', [
                 'widgets' => [],
-            ]); 
+            ]);
         }
 
         // Get the widget to be shown
         if (is_null($widgetId)) {
             // Show the first available widget
             $widget = $widgets->first();
-        }
-        else {
+        } else {
             $widget = $widgets->find($widgetId);
         }
 
@@ -72,7 +70,7 @@ class WidgetController extends Controller
     }
 
     /**
-     * Generates the script file that loads and displays a widget 
+     * Generates the script file that loads and displays a widget
      */
     public function generateScript($userId, $widgetId)
     {
@@ -80,17 +78,17 @@ class WidgetController extends Controller
 
         // Generate a view for the script
         $view = view()->make('widget.widget-script', [
-                'baseUrl' => env('APP_URL'),
-                'userId' => $userId,
-                'widgetId' => $widgetId  
-            ])->withHeaders([
-                // Make browsers interpret this as JavaScript
-                'Content-Type' => 'application/javascript',
+            'baseUrl' => env('APP_URL'),
+            'userId' => $userId,
+            'widgetId' => $widgetId
+        ])->withHeaders([
+            // Make browsers interpret this as JavaScript
+            'Content-Type' => 'application/javascript',
 
-                // Enable CORS for this resource
-                'Access-Control-Allow-Origin' => '*'
-            ]);
-    
+            // Enable CORS for this resource
+            'Access-Control-Allow-Origin' => '*'
+        ]);
+
         return $view->render();
 
         // Reference: https://laracasts.com/discuss/channels/laravel/returning-a-dynamic-compiled-javascript-file-from-a-laravel-route
