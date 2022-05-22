@@ -1,5 +1,3 @@
-hello
-
 <template>
     <div class="row">
         <!--MAIN SIDE BAR-->
@@ -8,7 +6,7 @@ hello
                 ><ion-icon name="mail-outline"></ion-icon
                 ><span class="menutitle">Messaging</span></a
             >
-            <a class="activemenu" href="/reports"
+            <a  class="activemenu" href="/reports"
                 ><ion-icon name="bar-chart-outline"></ion-icon
                 ><span class="menutitle">Reporting</span></a
             >
@@ -18,17 +16,14 @@ hello
             >
         </div>
 
-
         <!--MESSAGE LISTS-->
 
-        <div class="col py-4 px-5" style="background-color: #627894; color: whitesmoke;">
-            <!--INCOMING SESSIONS-->
-
+        <div class="sidebar col py-4 px-5">
 
             <!--ACTIVE SESSIONS-->
 
             <div class="row">
-                <p class="menutitle">Active Sessions</p>
+                <p class="subtitle sidebartitle">Active Sessions</p>
 
                 <!--ACTIVE CHAT BLOCK-->
                 <div
@@ -49,12 +44,11 @@ hello
 
                         </div>
 
-
                     </div>
                 </div>
-                <!--ACTIVE CHAT BLOCK-->
             </div>
         </div>
+
     </div>
 </template>
 
@@ -141,6 +135,7 @@ export default {
     created() {
 
         socket.auth = {
+
             // For admin/agent
             clientId: this.user._id,
             clientName: "agentako",
@@ -217,7 +212,7 @@ export default {
             this.activeRoom = roomId;
             // this.scrollToChatBottom();
         },
- 
+
         getTargetRoomIndex(targetRoom) {
             let found = null;
             for (const indx in this.chatrooms) {
