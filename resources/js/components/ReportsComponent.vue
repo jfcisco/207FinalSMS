@@ -6,7 +6,7 @@
                 ><ion-icon name="mail-outline"></ion-icon
                 ><span class="menutitle">Messaging</span></a
             >
-            <a  class="activemenu" href="/reports"
+            <a class="activemenu" href="/reports"
                 ><ion-icon name="bar-chart-outline"></ion-icon
                 ><span class="menutitle">Reporting</span></a
             >
@@ -16,39 +16,69 @@
             >
         </div>
 
-        <!--MESSAGE LISTS-->
+        <!--reports LISTS-->
 
-        <div class="sidebar col py-4 px-5">
+        <div class="col-lg-2 sidebar" style="overflow-y: scroll">
+
+
+            <div class="row py-0 mt-0">
+                <p class="subtitle">Chat Volume</p>
+
+
+
+                <div class="block">
+                    <div class="details">
+                        <div class="listHead">
+                            <p>Live Visitors</p>
+                        </div>
+                        <div class="listHead">
+                            <p>Live Chats</p>
+                        </div>                        
+
+                    </div>
+                </div>
+                <!--INCOMING CHAT BLOCK-->
+            </div>
 
             <!--ACTIVE SESSIONS-->
 
             <div class="row">
-                <p class="subtitle sidebartitle">Active Sessions</p>
-
-                <!--ACTIVE CHAT BLOCK-->
-                <div
-                    :class="{
-                        block: true,
-                        active: chatroom._id == activeRoom,
-                    }"
-                    v-for="chatroom in chatrooms"
-                    :key="chatroom._id"
-                >
-                    <div
-                        class="details"
-                        v-on:click="selectRoom(chatroom._id)"
-                        v-bind:id="chatroom._id"
-                    >
+                <p class="subtitle sidebartitle">Historical Analytics</p>
+                <div class="block">
+                    <div class="details">
                         <div class="listHead">
-                            <p>{{ chatroom._id }}</p>
-
+                            <p>Chat Volume</p>
                         </div>
-
+                        <div class="listHead">
+                            <p>Missed Chats</p>
+                        </div>                        
+                        <div class="listHead">
+                            <p>Offline Messages</p>
+                        </div>
+                        <div class="listHead">
+                            <p>Average Chat Duration</p>
+                        </div>                          
                     </div>
                 </div>
             </div>
         </div>
 
+        <!--CHAT DISPLAY-->
+        <div class="col-lg-9 mainchat">
+            <div
+                v-for="chatroom in chatrooms"
+                :key="chatroom._id"
+            >
+                <div>
+                    <span>Socket ID: {{ chatroom._id }}</span>
+                    <span>IP Address: {{ chatroom._id }}</span>
+                    <span>Browser: {{ chatroom._id }}</span>
+                    <span>Link to Chat: {{ chatroom._id }}</span>
+                    <span>Duration: {{ chatroom._id }}</span>
+                </div>
+            </div>
+
+        </div>
     </div>
 </template>
 
@@ -135,7 +165,6 @@ export default {
     created() {
 
         socket.auth = {
-
             // For admin/agent
             clientId: this.user._id,
             clientName: "agentako",
