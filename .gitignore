@@ -16,3 +16,6 @@ yarn-error.log
 public/js/app.js
 public/js/embed.js
 public/css/app.css
+public/mix-manifest.json
+package-lock.json
+public/mix-manifest.json

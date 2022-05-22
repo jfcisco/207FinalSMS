@@ -6,7 +6,7 @@
                 ><ion-icon name="mail-outline"></ion-icon
                 ><span class="menutitle">Messaging</span></a
             >
-            <a href="#"
+            <a href="/reports"
                 ><ion-icon name="bar-chart-outline"></ion-icon
                 ><span class="menutitle">Reporting</span></a
             >

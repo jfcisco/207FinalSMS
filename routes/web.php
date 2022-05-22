@@ -35,6 +35,7 @@ Route::get('/embed/{userId}/{widgetId}', [WidgetController::class, 'generateScri
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index']);
+    Route::get('/reports', [ReportsController::class, 'index']);
 
     //region View Routes
     // TODO: Add View Routes here

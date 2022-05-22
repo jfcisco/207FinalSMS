@@ -11,6 +11,11 @@ use Illuminate\Support\Collection;
 
 class ReportsController extends Controller
 {
+    public function index()
+    {
+        return view('reports');
+    }
+
     public function dailyChats(Request $request)
     {
         $startDate = $request->start_date == null ? null : Carbon::parse($request->start_date);
