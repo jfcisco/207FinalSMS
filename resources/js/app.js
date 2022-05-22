@@ -39,9 +39,7 @@ const app = new Vue({
 });
 
 
-
-
-    function toggleheaderleft() {
+function toggleheaderleft() {
       var x = document.getElementById("message_main");
       var y = document.getElementById("whisper");
       if (x.style.display === "none") {
