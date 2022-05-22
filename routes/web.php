@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\ChatWidgetController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\VisitorController;
+use App\Http\Controllers\WidgetController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Events\StatusLinked;
-use App\Events\Message;
-use App\Http\Controllers\ChatsController;
-use App\Http\Controllers\ProfileController;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,20 +23,58 @@ use Illuminate\Http\Response;
 |
 */
 
+Route::get('/', function () {
+    return redirect('/home');
+})->middleware('auth');
+
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\ChatsController::class, 'index'])->name('home');
+//region Anonymous Routes
+Route::get('/embed/{userId}/{widgetId}', [WidgetController::class, 'generateScript']);
+//endregion
 
-Route::get('/messages', [ChatsController::class, 'fetchMessages']);
-Route::post('/messages', [ChatsController::class, 'sendMessage']);
+Route::middleware('auth')->group(function () {
+    Route::get('/home', [HomeController::class, 'index']);
+    Route::get('/reports', [ReportsController::class, 'index']);
 
-//adrian chatroom addition
-Route::get('/rooms', [App\Http\Controllers\ChatsController::class, 'fetchChatrooms']);
-Route::post('/newRoom', [ChatsController::class, 'addRoom']);
-Route::post('/addMember', [ChatsController::class, 'addMember']);
-Route::get('/test', [ChatsController::class, 'test']);
+    //region View Routes
+    // TODO: Add View Routes here
 
-Route::get('/edit-profile', [ProfileController::class, 'showTestPage']);
-Route::get('/profile', [ProfileController::class, 'getProfile']);
-Route::post('/profile', [ProfileController::class, 'updateProfile']);
-Route::get('/users', [ProfileController::class, 'searchProfile']);
+    // Routes for Widget Management front-end
+    // Route::get('/widget/create', [WidgetController::class, 'create']);
+    Route::get('/widgets/{widgetId?}', [WidgetController::class, 'index'])->name('widget-details');
+    //endregion
+
+    //region Web API Endpoints
+    Route::prefix('api')->group(function () {
+        Route::resource('users', UserController::class);
+        Route::resource('visitors', VisitorController::class);
+        Route::resource('chat-widgets', ChatWidgetController::class);
+        Route::resource('messages', MessageController::class);
+        Route::resource('sessions', SessionController::class);
+        Route::resource('rooms', RoomController::class);
+
+        Route::prefix('reports')->group(function () {
+            Route::prefix('chats')->group(function () {
+                Route::post('daily', [ReportsController::class, 'dailyChats']);
+                Route::get('todays-hourly', [ReportsController::class, 'todaysHourlyChats']);
+                Route::get('todays-answered', [ReportsController::class, 'todaysAnsweredChatsCount']);
+                Route::get('answered', [ReportsController::class, 'answeredChatsCount']);
+                Route::get('todays-missed', [ReportsController::class, 'todaysMissedChatsCount']);
+                Route::get('missed', [ReportsController::class, 'missedChatsCount']);
+            });
+
+            Route::prefix('sessions')->group(function () {
+                Route::post('daily', [ReportsController::class, 'dailySessions']);
+                Route::get('todays-hourly', [ReportsController::class, 'todaysHourlySessions']);
+                Route::get('todays-live', [ReportsController::class, 'todaysLiveSessions']);
+            });
+        });
+    });
+    //endregion
+});
+
+
+
+
+

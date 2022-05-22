@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UsePathForAttachments extends Migration
+class CreateVisitorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class UsePathForAttachments extends Migration
      */
     public function up()
     {
-        Schema::table('messages', function (Blueprint $table) {
-            $table->dropColumn('attachment');
-            $table->string('attachment_path', 255)->nullable();
+        Schema::table('visitors', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('ipAddress')->nullable();
+            $table->string('browser')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -26,7 +29,6 @@ class UsePathForAttachments extends Migration
      */
     public function down()
     {
-        $table->dropColumn('attachment_path');
-        $table->binary('attachment')->nullable();
+        Schema::dropIfExists('visitors');
     }
 }
