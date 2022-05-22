@@ -18,13 +18,15 @@ class ReportsController extends Controller
 
     public function dailyChats(Request $request)
     {
-        $startDate = $request->start_date == null ? null : Carbon::parse($request->start_date);
-        $endDate = $request->end_date == null ? null : Carbon::parse($request->end_date);
-
         $dayOfWeek = Carbon::now()->dayOfWeek;
-        $dates = $this->generateDates($startDate ?? Carbon::now()->subDays($dayOfWeek - 1), $endDate ?? Carbon::now());
+        $startDate = $request->start_date == null ? Carbon::today()->subDays($dayOfWeek) : Carbon::parse($request->start_date);
+        $endDate = $request->end_date == null ? Carbon::today() : Carbon::parse($request->end_date);
 
-        $messages = Message::orderBy('created_at')->orderBy('created_at', 'DESC')->get()->groupBy(function ($item) {
+        $dates = $this->generateDates($startDate, $endDate);
+
+        $messages = Message::where('created_at', '>=', $startDate)
+            ->where('created_at', '<', $endDate->addDay())
+            ->orderBy('created_at', 'DESC')->get()->groupBy(function ($item) {
             return $item->created_at->toDateString();
         });
 
@@ -39,30 +41,18 @@ class ReportsController extends Controller
         return response(['data' => $dates], 200);
     }
 
-    public function generateDates($startDate, $endDate): Collection
-    {
-        $dates = collect();
-        $startDate = $startDate->copy();
-
-        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
-            $dates->put($date->toDateString(), 0);
-        }
-
-        return $dates;
-    }
-
     public function todaysHourlyChats()
     {
-        $timeNowInHour = Carbon::now()->hour;
         $hours = collect();
-        $startTime = Carbon::now()->subHours($timeNowInHour);
-        $endTime = Carbon::now();
 
-        for ($date = $startTime; $date->lte($endTime); $date->addHour()) {
+        $startTimeIterator = Carbon::today();
+        $endTimeIterator = Carbon::now();
+
+        for ($date = $startTimeIterator; $date->lte($endTimeIterator); $date->addHour()) {
             $hours->put($date->format('h A'), 0);
         }
 
-        $messages = Message::orderBy('created_at')->orderBy('created_at', 'DESC')->get()->groupBy(function ($item) {
+        $messages = Message::where('created_at', '>=', Carbon::today())->orderBy('created_at')->get()->groupBy(function ($item) {
             return $item->created_at->format('h A');
         });
 
@@ -145,16 +135,17 @@ class ReportsController extends Controller
 
     public function todaysHourlySessions()
     {
-        $timeNowInHour = Carbon::now()->hour;
         $hours = collect();
-        $startTime = Carbon::now()->subHours($timeNowInHour);
-        $endTime = Carbon::now();
 
-        for ($date = $startTime; $date->lte($endTime); $date->addHour()) {
+        $startTimeIterator = Carbon::today();
+        $endTimeIterator = Carbon::now();
+
+        for ($date = $startTimeIterator; $date->lte($endTimeIterator); $date->addHour()) {
             $hours->put($date->format('h A'), 0);
         }
 
-        $sessions = Session::orderBy('startAt')->orderBy('startAt', 'DESC')->get()->groupBy(function ($item) {
+        $sessions = Session::where('startAt', '>=', Carbon::today())
+            ->orderBy('startAt')->get()->groupBy(function ($item) {
             return $this->parseTime($item->startAt);
         });
 
@@ -169,28 +160,17 @@ class ReportsController extends Controller
         return response(['data' => $hours], 200);
     }
 
-    function parseTime($dateFromMongo)
-    {
-        ob_start();
-        var_dump($dateFromMongo);
-        $str = ob_get_clean();
-
-        $pieces = explode("string", $str);
-        $pieces = explode('"', $pieces[1]);
-        $millis = intval($pieces[1]);
-
-        return date('h A', ($millis / 1000));
-    }
-
     public function dailySessions(Request $request)
     {
-        $startDate = $request->start_date == null ? null : Carbon::parse($request->start_date);
-        $endDate = $request->end_date == null ? null : Carbon::parse($request->end_date);
-
         $dayOfWeek = Carbon::now()->dayOfWeek;
-        $dates = $this->generateDates($startDate ?? Carbon::now()->subDays($dayOfWeek - 1), $endDate ?? Carbon::now());
+        $startDate = $request->start_date == null ? Carbon::today()->subDays($dayOfWeek) : Carbon::parse($request->start_date);
+        $endDate = $request->end_date == null ? Carbon::today() : Carbon::parse($request->end_date);
 
-        $sessions = Session::orderBy('startAt')->orderBy('startAt', 'DESC')->get()->groupBy(function ($item) {
+        $dates = $this->generateDates($startDate, $endDate);
+
+        $sessions = Session::where('startAt', '>=', $startDate)
+            ->where('startAt', '<', $endDate->addDay())
+        ->orderBy('startAt', 'DESC')->get()->groupBy(function ($item) {
             return $this->parseDate($item->startAt);
         });
 
@@ -203,6 +183,24 @@ class ReportsController extends Controller
         }
 
         return response(['data' => $dates], 200);
+    }
+
+    public function todaysLiveSessions()
+    {
+        $liveSessionsCount = Session::where('endAt', null)->where('startAt', '>=', Carbon::today())->get()->count();
+        return response(['data' => $liveSessionsCount], 200);
+    }
+
+    public function generateDates($startDate, $endDate): Collection
+    {
+        $dates = collect();
+        $startDate = $startDate->copy();
+
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+            $dates->put($date->toDateString(), 0);
+        }
+
+        return $dates;
     }
 
     function parseDate($dateFromMongo)
@@ -218,10 +216,17 @@ class ReportsController extends Controller
         return date('Y-m-d', ($millis / 1000));
     }
 
-    public function todaysLiveSessions()
+    function parseTime($dateFromMongo)
     {
-        $liveSessionsCount = Session::where('endAt', null)->where('startAt', '>=', Carbon::now())->get()->count();
-        return response(['data' => $liveSessionsCount], 200);
+        ob_start();
+        var_dump($dateFromMongo);
+        $str = ob_get_clean();
+
+        $pieces = explode("string", $str);
+        $pieces = explode('"', $pieces[1]);
+        $millis = intval($pieces[1]);
+
+        return date('h A', ($millis / 1000));
     }
 }
 

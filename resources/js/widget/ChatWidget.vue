@@ -1,9 +1,13 @@
 <template>
     <div>
-        <!-- TO DO: Styling for the End Conversation button. -->
+        <!-- HEADER -->
         <h2>
-            Conversation
-            <!--<button id=exit-chat onClick="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i></button>-->
+            <ul>
+                <li>Conversation</li>
+                <!-- TO DO: Edit behavior of the button to End Chat -->
+                <li style="float:right"><button id=exit-chat onClick="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i><span class="tooltiptext">End chat</span></button>
+                </li>
+            </ul>
         </h2>
 
         <!--CHAT MESSAGES BOX-->
@@ -55,6 +59,42 @@
 <style scoped>
 /* CSS rules can be added here */
 
+h2 ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+h2 ul li{
+  display: inline;
+}
+h2 ul li button{
+  background-color: #466289;
+  border: none;
+  color: white;
+}
+h2 ul li button:hover{
+  background-color: lightgray;
+  cursor: pointer;
+  color:#FA6121;
+}
+h2 ul li button .tooltiptext{
+  visibility: hidden;
+  width: 65px;
+  background-color: lightgrey;
+  color: black;
+  text-align: center;
+  border-radius: 2px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 10%;
+  left: 80%;
+}
+h2 ul li button:hover .tooltiptext{
+  visibility: visible;
+}
 .content .messages {
     overflow-y: scroll;
     max-height: 320px;
@@ -107,7 +147,7 @@ const socket = io("https://sms-ws.ml:3000", {
 
 export default {
     props: ["visitorName"],
-
+    
     data() {
         return {
             isVisible: true,
@@ -216,6 +256,9 @@ export default {
                 const messageInputRef = this.$refs.messageInput;
                 messageInputRef.focus();
             });
+        },
+        endConversation() {
+            //TO DO: Add code to end conversation
         },
     },
 };

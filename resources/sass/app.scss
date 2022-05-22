@@ -293,6 +293,55 @@ b{
 	height:80px;
 }
 
+//WHISPER SETTINGS
+#whisper input{
+	background-color: #fa6121;
+	color: whitesmoke;
+
+}
+
+#whisper ::placeholder{
+	
+	color: whitesmoke;
+	
+}
+
+.whisper{
+	color: #fa6121;
+	border: 0px;
+	background-color: #e9edee;
+  padding: 20px;
+  text-decoration: none;
+  font-size: 35px;
+  align-items: center;
+  display: flex;
+  border-radius: 5px;
+  gap: 10px;
+  margin-left:10px;
+  cursor: pointer;
+}
+
+
+.whisper2{
+	color: #627894;
+	border: 0px;
+	background-color: #e9edee;
+  padding: 20px;
+  text-decoration: none;
+  font-size: 35px;
+  align-items: center;
+  display: flex;
+  border-radius: 5px;
+  gap: 10px;
+  margin-left:10px;
+  cursor: pointer;
+}
+
+.whisper_text{
+	color: darkgrey;
+	font-style: italic;
+}
+
 // ADDITIONAL MODAL FORMATTING
 
 .add-modal-container{
