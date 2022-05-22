@@ -204,18 +204,6 @@ body{
 }
 
 
-b{
-	background:#fa6121;
-	color: #fff;
-	min-width:  20px;
-	height:  20px;
-	border-radius: 50%;
-	display: flex;
-	justify-content:  center;
-	align-items: center;
-	font-size:  0.75em;
-
-}
 
 
 /*MAIN CHAT AREA*/
@@ -229,23 +217,21 @@ b{
 	margin-top: 20px;
 }
 
-.mainchat2 {
-  background-color: #e9edee;
-  height: 80vh;
-  position: relative;
+.chatboxfix{
+	height: 70vh;
 }
 
-.mainchat2::-webkit-scrollbar-track {
+.chatboxfix::-webkit-scrollbar-track {
   border: 1px solid e9edee;
   padding: 2px 0;
   background-color: #e9edee;
 }
 
-.mainchat2::-webkit-scrollbar {
+.chatboxfix::-webkit-scrollbar {
   width: 10px;
 }
 
-.mainchat2::-webkit-scrollbar-thumb {
+.chatboxfix::-webkit-scrollbar-thumb {
   border-radius: 10px;
   box-shadow: inset 0 0 6px rgba(0,0,0,.3);
   background-color: #fa6121;
@@ -253,24 +239,32 @@ b{
 }
 
 
+
 .message{
 	position:  relative;
 	display:  flex;
 	width:  100%;
 	padding: 2px;
-	margin-bottom:3px;
 	
 }
 
-.my_message{
+.content .messages .message.sent-message{
+position:  relative;
+	display:  flex;
+	width:  100%;
+	padding: 2px;
 	color: #466289;
-	
 }
 
-.friend_message{
+.content .messages .message.received-message{
+position:  relative;
+	display:  flex;
+	width:  100%;
+	padding: 2px;
 	color: #fa6121;
 	
 }
+
 
 .chatbox_input{
 	position: absolute;
@@ -293,7 +287,7 @@ b{
 	height:80px;
 }
 
-//WHISPER SETTINGS
+//WHISPER COMPONENTS
 #whisper input{
 	background-color: #fa6121;
 	color: whitesmoke;

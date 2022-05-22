@@ -66,15 +66,15 @@
         <!--CHAT DISPLAY-->
         <div class="col-lg-9 mainchat">
             <div
-                v-for="chatroom in chatrooms"
-                :key="chatroom._id"
+                v-for="socketReport in socketReports"
+                :key="socketReport.socketId"
             >
                 <div>
-                    <span>Socket ID: {{ chatroom._id }}</span>
-                    <span>IP Address: {{ chatroom._id }}</span>
-                    <span>Browser: {{ chatroom._id }}</span>
-                    <span>Link to Chat: {{ chatroom._id }}</span>
-                    <span>Duration: {{ chatroom._id }}</span>
+                    <span>Socket ID: {{ socketReport.socketId }}</span>
+                    <span>IP Address: {{ socketReport.ipAddress }}</span>
+                    <span>Browser: {{ socketReport.browser }}</span>
+                    <span>Link to Chat: {{ socketReport.roomId }}</span>
+                    <span>Duration: {{ socketReport.startAt }}</span>
                 </div>
             </div>
 
@@ -141,25 +141,12 @@ export default {
     data() {
         return {
             currentUser: this.user,
-            newMessage: "",
-            users: [],
-            chatrooms: [],
-            activeRoom: "",
+            socketReports: [],
         };
     },
 
     computed: {
-        activeRoomDetails: function () {
-            const activeRoomResult = this.chatrooms.filter(
-                (room) => room._id == this.activeRoom
-            );
-
-            if (activeRoomResult.length === 0) {
-                return null;
-            } else {
-                return activeRoomResult[0];
-            }
-        },
+        //
     },
 
     created() {
@@ -173,100 +160,21 @@ export default {
 
         socket.connect();
 
-        socket.on("rooms", ({ rooms }) => {
-            console.log("rooms => ", rooms);
+        socket.on("report", ({ report }) => {
+            console.log("report => ", report);
             // this.chatRooms = rooms;
             // console.log("chatRooms => ", this.chatRooms);
-            this.chatrooms = _.unionBy(
-                rooms,
-                this.chatrooms,
-                (room) => room._id
-            );
-            this.chatrooms.forEach((room) => {
-                socket.emit("join", { roomId: room._id, name: this.user.name });
-                // console.log("room", room._id, "members", room.members);
-            });
-            console.log("look here", this.chatrooms);
-        });
-
-        socket.on("message", (message) => {
-            // console.log("received new message", message);
-            let found = this.getTargetRoomIndex(message.roomId);
-
-            this.chatrooms[found].messages.push(message);
-
-            console.log("chatrooms", this.chatrooms);
-            // console.log(
-            //     this.chatrooms.forEach((chatroom) =>
-            //         chatroom.messages.forEach((msg) =>
-            //             console.log(
-            //                 "msg content: ",
-            //                 msg.content,
-            //                 "clientId",
-            //                 msg.clientId,
-            //                 "clientType",
-            //                 msg.clientType,
-            //                 "roomId",
-            //                 msg.roomId
-            //             )
-            //         )
-            //     )
-            // );
+            this.socketReports.push(report);
+            console.log("look here", this.socketReports);
         });
     },
 
     methods: {
 
-        sendMessage() {
-            const message = {
-                roomId: this.activeRoom,
-                content: this.newMessage,
-            };
-
-            // Send to socket server
-            socket.emit("message", message);
-
-            // Add to UI
-            let found = this.getTargetRoomIndex(this.activeRoom);
-            this.chatrooms[found].messages.push({
-                ...message,
-                clientId: socket.auth.clientId,
-                _id: "",
-            });
-
-            this.newMessage = "";
-        },
-
-        selectRoom: function (roomId) {
-            this.activeRoom = roomId;
-            // this.scrollToChatBottom();
-        },
-
-        getTargetRoomIndex(targetRoom) {
-            let found = null;
-            for (const indx in this.chatrooms) {
-                if (this.chatrooms[indx]._id == targetRoom) {
-                    found = indx;
-                }
-            }
-            return found;
-        },
-
-        // Given a message object, converts it to a string resembling a chat message
-        // This is used for the chat rooms list message preview
-        convertMessageObjectToString(message) {
-            if (!message) return "";
-
-            if (message.attachment_path) {
-                return `${message.user.first_name || ""} ${
-                    message.user.last_name || ""
-                } sent an attachment.`;
-            }
-
-            return `${message.user.first_name || ""} ${
-                message.user.last_name || ""
-            }: ${message.message}`;
-        },
+        // selectRoom: function (roomId) {
+        //     this.activeRoom = roomId;
+        //     // this.scrollToChatBottom();
+        // },
     },
 };
 </script>

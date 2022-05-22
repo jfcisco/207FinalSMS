@@ -107,15 +107,8 @@
                       'sent-message': message.clientId === user._id,
                       'received-message': !message.clientId === user._id,
                     }">
-                            
-                    <div class="p">
-                      {{ message.clientId === user._id
-                          ? "You" : message.clientId
-                      }}
-                    </div>
-                    <div class="text"> 
-                      {{ message.content }} 
-                    </div>
+                        <b>{{ message.clientId === user._id ? "You" : message.clientId}} :</b> 
+                        {{ message.content }}
                   </div>
                 </li>
                 <!-- CHAT MESSAGE LINE END -->
@@ -130,10 +123,13 @@
         <ion-icon class="whisper" name="volume-mute-outline" id="headerToggle" onclick="toggleheaderleft()"></ion-icon>
         
         <input
-          type="text"
-          name="message"
-          placeholder="Enter your message..."
-          class="form-control"
+          @keydown="sendTypingEvent"
+            @keyup.enter="sendMessage"
+            v-model="newMessage"
+            type="text"
+            name="message"
+            placeholder="Enter your message..."
+            class="form-control"
         />
       </div>
       <!--MAIN INPUT MESSAGE BOX END-->
@@ -144,10 +140,13 @@
         <ion-icon class="whisper2" name="volume-high-outline" id="headerToggle" onclick="toggleheaderleft()"></ion-icon>
             
         <input
-          type="text"
-          name="message"
-          placeholder="Enter your message..."
-          class="form-control"
+            @keydown="sendTypingEvent"
+            @keyup.enter="sendMessage"
+            v-model="newMessage"
+            type="text"
+            name="message"
+            placeholder="Enter your message..."
+            class="form-control"
         />
       
       </div>
@@ -185,12 +184,12 @@
     box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.05);
     padding: 10px;
 }
-.content .messages .message.sent-message {
+/*.content .messages .message.sent-message {
     justify-content: flex-end;
 }
 .content .messages .message.received-message {
     justify-content: flex-start;
-}
+}*/
 .content .messages .message .name {
     font-size: 12px;
     font-weight: 450;
