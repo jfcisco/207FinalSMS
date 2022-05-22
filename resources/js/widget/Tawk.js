@@ -115,7 +115,7 @@ export class Tawk {
                 box-shadow: 0 0 18px 8px rgba(0, 0, 0, 0.1), 0 0 32px 32px rgba(0, 0, 0, 0.08);
                 background-color: #E9EDEE;
                 width: 400px;
-                right: -25px;
+                right: -5px;
                 bottom: 75px;
                 max-height: 500px;
                 position: absolute;
@@ -257,7 +257,7 @@ export class Tawk {
     }
 
     startConversation(formSubmission) {
-        // TO DO: Add exit chat button
+        // Dependency to add the End Chat button
         const gIconsHeader = document.createElement('link');
         gIconsHeader.innerHTML = '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">'
         document.head.appendChild(gIconsHeader);
@@ -278,9 +278,4 @@ export class Tawk {
         this.vue.$mount(this.messageContainer);
         this.messageContainer = this.vue.$el;
     }
-
-    // endConversation() {
-    //     this.sessionStarted = false;
-    // }
-
 }
