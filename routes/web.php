@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('api')->group(function () {
         Route::resource('users', UserController::class);
         Route::resource('visitors', VisitorController::class);
-        Route::resource('/hat-widgets', ChatWidgetController::class);
+        Route::resource('chat-widgets', ChatWidgetController::class);
         Route::resource('messages', MessageController::class);
         Route::resource('sessions', SessionController::class);
         Route::resource('rooms', RoomController::class);
