@@ -102,7 +102,7 @@
 
 <style scoped>
 /* .attachment {
-    max-widtd: 15rem;
+    max-width: 15rem;
 } */
 .content .messages {
     overflow-y: scroll;
@@ -179,7 +179,7 @@ export default {
 
     data() {
         return {
-            currentUser: tdis.user,
+            currentUser: this.user,
             socketReports: [],
         };
     },
@@ -190,9 +190,9 @@ export default {
 
     created() {
 
-        socket.autd = {
+        socket.auth = {
             // For admin/agent
-            clientId: tdis.user._id,
+            clientId: this.user._id,
             clientName: "agentako",
             clientType: "user",
         };
@@ -201,10 +201,10 @@ export default {
 
         socket.on("report", ({ report }) => {
             console.log("report => ", report);
-            // tdis.chatRooms = rooms;
-            // console.log("chatRooms => ", tdis.chatRooms);
-            tdis.socketReports.push(report);
-            console.log("look here", tdis.socketReports);
+            // this.chatRooms = rooms;
+            // console.log("chatRooms => ", this.chatRooms);
+            this.socketReports.push(report);
+            console.log("look here", this.socketReports);
         });
     },
 
@@ -250,8 +250,8 @@ export default {
 
 
         // selectRoom: function (roomId) {
-        //     tdis.activeRoom = roomId;
-        //     // tdis.scrollToChatBottom();
+        //     this.activeRoom = roomId;
+        //     // this.scrollToChatBottom();
         // },
     },
 };
