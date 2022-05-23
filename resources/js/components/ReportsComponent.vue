@@ -74,7 +74,7 @@
                     <span>IP Address: {{ socketReport.ipAddress }}</span>
                     <span>Browser: {{ socketReport.browser }}</span>
                     <span>Link to Chat: {{ socketReport.roomId }}</span>
-                    <span>Duration: {{ socketReport.startAt }}</span>
+                    <span>Duration: {{ socketReport.time }}</span>
                 </div>
             </div>
 
@@ -169,6 +169,8 @@
 
 const client = new cj.ClientJS();
 
+//for localhost testing
+//const socket = io("http://localhost:3000", {
 const socket = io("https://sms-ws.ml:3000", {
     // secure: true,
     autoConnect: false,
@@ -185,7 +187,7 @@ export default {
     },
 
     computed: {
-        //
+
     },
 
     created() {
@@ -200,15 +202,27 @@ export default {
         socket.connect();
 
         socket.on("report", ({ report }) => {
-            console.log("report => ", report);
-            // this.chatRooms = rooms;
-            // console.log("chatRooms => ", this.chatRooms);
             this.socketReports.push(report);
-            console.log("look here", this.socketReports);
         });
+        socket.on("report-disconnect", ({ socketId }) => {
+            this.socketReports = this.socketReports.filter(reports => reports.socketId != socketId.socketId);
+        });
+
+        setInterval(()=>{
+            this.timeUpdate();
+        }, 1000);
+
     },
 
     methods: {
+        timeUpdate(){
+            this.socketReports.forEach(function(report){
+                var diff = new Date(new Date() - new Date(report.startAt));
+                //report.time = diff.getUTCHours() + ":" + diff.getMinutes() + ":" + diff.getSeconds();
+                
+                report.time = diff.toISOString().substr(11, 8);
+            });
+        },
         async getChatVolume(start, end) {
             let post = await fetch("/api/reports/chats/daily/", {
                 method: "POST",
