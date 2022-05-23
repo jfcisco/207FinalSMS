@@ -45,7 +45,6 @@ class ChatWidget extends Model
         'enable_emojis' =>'boolean',
         'availability_start_time' =>'datetime',
         'availability_end_time' =>'datetime',
-        'allowed_domains' =>'array',
         'is_active' =>'boolean',
     ];
 
