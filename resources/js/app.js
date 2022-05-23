@@ -23,6 +23,7 @@ Vue.use(VueChatScroll);
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('chats', require('./components/ChatsComponent.vue').default);
+Vue.component('reports', require('./components/ReportsComponent.vue').default);
 Vue.component('profile-edit-form', require('./components/ProfileUpdateComponent.vue').default);
 Vue.component('vue-multiselect', window.VueMultiselect.default)
 
@@ -39,41 +40,46 @@ const app = new Vue({
 
 
 function toggleheaderleft() {
-  var origHeader = document.getElementById('orig');
-  var toBar = document.getElementById('toBar');
-  
-  var displaySetting = origHeader.style.display;
+      var x = document.getElementById("message_main");
+      var y = document.getElementById("whisper");
+      if (x.style.display === "none") {
+        x.style.display = "flex";
+        y.style.display ="none";
+      } else {
+        x.style.display = "none";
+        y.style.display ="flex";
+      }
+    }
 
-  var button = document.getElementById('headerToggle').addEventListener("click", hello);;
-
-  
-  if (displaySetting == 'flex') {
-    
-    origHeader.style.display = 'none';
-    toBar.style.display='flex';
-  }
-  else {
-    origHeader.style.display = 'flex';
-    toBar.style.display='none';
-    
-  }
-}
-
+     
 /* Code used to copy widget code to the clipboard */
 function copyContentsToClipboard(event) {
   // Source: https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
   const copyText = event.target;
-  
-  // copyText.select();
-  // copyText.setSelection(0, 99999);
 
-  navigator.clipboard.writeText(copyText.textContent);
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
 
-  alert("Copied text!");
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(copyText.textContent);
+    alert("Copied text!");
+  }
+  else {
+    console.error("Clipboard unavailable due to insecure context, or browser limitations.");
+
+    const unavailableClipboardAlert = document.querySelector("#unavailable-clipboard");
+
+    unavailableClipboardAlert.classList.remove("d-none");
+    unavailableClipboardAlert.classList.add("d-block");
+  }
 }
 
 const widgetCode = document.querySelector(".widget-code");
 
 if (widgetCode) {
   widgetCode.addEventListener("click", copyContentsToClipboard);
+  
+  if (bootstrap.Tooltip) {
+    new bootstrap.Tooltip(widgetCode);
+  }
 }

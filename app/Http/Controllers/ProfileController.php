@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Manages user profile-related logic like updating of profile pictures and names.
@@ -21,12 +21,13 @@ class ProfileController extends Controller
     {
         return view('edit-profile-test');
     }
-    
-    /** 
-     * Finds a list of users whose full name matches thes search query, 
+
+    /**
+     * Finds a list of users whose full name matches thes search query,
      * excluding the currently logged-in user.
-     */ 
-    public function searchProfile(Request $request) {
+     */
+    public function searchProfile(Request $request)
+    {
         $name = $request->input('name');
 
         // Check if additional 'notInRoom' filter is requested
@@ -37,14 +38,13 @@ class ProfileController extends Controller
             return User::whereDoesntHave('rooms', function (Builder $query) use ($roomId) {
                 $query->where('members.room_id', '=', $roomId);
             })->where('id', '!=', auth()->user()->id)
-            ->where(function ($query) use ($name) {
-                $query->where('first_name', 'like', '%' . $name . '%');
-                $query->orWhere('last_name', 'like', '%' . $name . '%');
-            })
-            ->limit(15)
-            ->get();
-        }
-        else {
+                ->where(function ($query) use ($name) {
+                    $query->where('first_name', 'like', '%' . $name . '%');
+                    $query->orWhere('last_name', 'like', '%' . $name . '%');
+                })
+                ->limit(15)
+                ->get();
+        } else {
             return User::where('id', '!=', auth()->user()->id)
                 ->where(function ($query) use ($name) {
                     $query->where('first_name', 'like', '%' . $name . '%');
@@ -56,7 +56,8 @@ class ProfileController extends Controller
     }
 
     // Retrieves the current user's profile
-    public function getProfile() {
+    public function getProfile()
+    {
         $currentUser = auth()->user();
 
         return [
@@ -75,16 +76,16 @@ class ProfileController extends Controller
             'lastName' => 'required',
             'profilePicture' => 'image|mimes:jpeg,jpg,png|max:4096'
         ]);
-        
+
         // If the request does not pass validation, inform the user
         if ($validator->fails()) {
-            return response($validator->errors(), 400); 
+            return response($validator->errors(), 400);
         }
 
         // Retrieve input data from the request
         $firstName = $request->input('firstName');
         $lastName = $request->input('lastName');
-        
+
         // Update the user's record in the database
         $user = auth()->user();
         $user->first_name = $firstName;
@@ -97,7 +98,7 @@ class ProfileController extends Controller
         }
 
         $user->save();
-        
+
         // Echo back the request as a successful response
         return [
             "id" => $user->id,

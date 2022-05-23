@@ -110,26 +110,16 @@
 
 <script>
     function toggleheaderleft() {
-
-    var origHeader = document.getElementById('orig');
-    var toBar = document.getElementById('toBar');
-
-    var displaySetting = origHeader.style.display;
-
-    var button = document.getElementById('headerToggle').addEventListener("click", toggleheaderleft);;
-
-
-    if (displaySetting == 'flex') {
-
-      origHeader.style.display = 'none';
-      toBar.style.display='flex';
+      var x = document.getElementById("message_main");
+      var y = document.getElementById("whisper");
+      if (x.style.display === "none") {
+        x.style.display = "flex";
+        y.style.display ="none";
+      } else {
+        x.style.display = "none";
+        y.style.display ="flex";
+      }
     }
-    else {
-      origHeader.style.display = 'flex';
-      toBar.style.display='none';
-
-    }
-  }
 </script>
 </body>
 </html>

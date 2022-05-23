@@ -3,16 +3,14 @@
 use App\Http\Controllers\ChatWidgetController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
-use App\Http\Controllers\ReportingController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitorController;
+use App\Http\Controllers\WidgetController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ChatsController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\WidgetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +35,7 @@ Route::get('/embed/{userId}/{widgetId}', [WidgetController::class, 'generateScri
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index']);
+    Route::get('/reports', [ReportsController::class, 'index']);
 
     //region View Routes
     // TODO: Add View Routes here
@@ -47,30 +46,34 @@ Route::middleware('auth')->group(function () {
     //endregion
 
     //region Web API Endpoints
-    Route::prefix('api')->group(function(){
-        Route::resource('/users', UserController::class);
-        Route::resource('/visitors', VisitorController::class);
-        Route::resource('/chat-widgets', ChatWidgetController::class);
-        Route::resource('/messages', MessageController::class);
+    Route::prefix('api')->group(function () {
+        Route::resource('users', UserController::class);
+        Route::resource('visitors', VisitorController::class);
+        Route::resource('chat-widgets', ChatWidgetController::class);
+        Route::resource('messages', MessageController::class);
         Route::resource('sessions', SessionController::class);
-        Route::resource('/rooms', RoomController::class);
+        Route::resource('rooms', RoomController::class);
 
-        Route::prefix('reporting')->group(function(){
-            Route::prefix('chats')->group(function(){
-                Route::get('/daily', [ReportingController::class, 'dailyChatsVolume']);
-                Route::get('/answered', [ReportingController::class, 'answeredChatsCount']);
-                Route::get('/missed', [ReportingController::class, 'missedChatsCount']);
+        Route::prefix('reports')->group(function () {
+            Route::prefix('chats')->group(function () {
+                Route::post('daily', [ReportsController::class, 'dailyChats']);
+                Route::get('todays-hourly', [ReportsController::class, 'todaysHourlyChats']);
+                Route::get('todays-answered', [ReportsController::class, 'todaysAnsweredChatsCount']);
+                Route::get('answered', [ReportsController::class, 'answeredChatsCount']);
+                Route::get('todays-missed', [ReportsController::class, 'todaysMissedChatsCount']);
+                Route::get('missed', [ReportsController::class, 'missedChatsCount']);
             });
 
-            Route::prefix('sessions')->group(function(){
-                Route::get('/live-today', [ReportingController::class, 'todaysLiveSessionsCount']);
-                Route::get('/hourly-today', [ReportingController::class, 'todaysHourlyLiveSessionsVolume']);
-                Route::get('/daily', [ReportingController::class, 'dailySessionsVolume']);
+            Route::prefix('sessions')->group(function () {
+                Route::post('daily', [ReportsController::class, 'dailySessions']);
+                Route::get('todays-hourly', [ReportsController::class, 'todaysHourlySessions']);
+                Route::get('todays-live', [ReportsController::class, 'todaysLiveSessions']);
             });
         });
     });
     //endregion
 });
+
 
 
 
