@@ -263,7 +263,7 @@ export class Tawk {
         document.head.appendChild(gIconsHeader);
         
         // Set up Vue component
-        this.messageContainer.innerHTML = `<chat-widget></chat-widget>`;
+        this.messageContainer.innerHTML = `<chat-widget visitor-name="${formSubmission.name}"></chat-widget>`;
         Vue.use(VueChatScroll);
         this.vue = new Vue({
             components: {

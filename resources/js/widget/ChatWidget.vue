@@ -141,7 +141,7 @@ const client = new cj.ClientJS();
 
 // Setup Socket.IO connection
 const socket = io("https://sms-ws.ml:3000", {
-    // secure: true,
+    secure: true,
     autoConnect: false,
 });
 
@@ -165,7 +165,7 @@ export default {
         socket.auth = {
             clientId: client.getFingerprint(),
             clientType: "visitor",
-            clientName: this.$props.visitorName,
+            clientName: this.visitorName,
             widgetId: "widget1",
         };
 
