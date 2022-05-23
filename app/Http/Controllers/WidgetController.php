@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatWidget;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /**
  * User-facing Functionalities for Widget Management
@@ -72,9 +74,21 @@ class WidgetController extends Controller
     /**
      * Generates the script file that loads and displays a widget
      */
-    public function generateScript($userId, $widgetId)
+    public function generateScript(Request $request, $userId, $widgetId)
     {
         // Note: For this to work, laravel-mix (through npm) should have generated a widget-script.php file in the resources/views/widget folder
+        
+        // Check request origin with widget's allowed domains
+        $origin = $request->header('origin');
+        $allowedDomains = collect(ChatWidget::find($widgetId)->allowed_domains);
+
+        if ($allowedDomains->count() > 0) {
+            // Reject any requests from unauthorized domains with 403 Forbidden
+            if (!$origin || $allowedDomains->doesntContain($origin)) {
+                Log::warning("Blocked request from $origin for widget ID $widgetId");
+                abort(403);
+            }
+        }
 
         // Generate a view for the script
         $view = view()->make('widget.widget-script', [
