@@ -123,7 +123,6 @@
         <ion-icon class="whisper" name="volume-mute-outline" id="headerToggle" onclick="toggleheaderleft()"></ion-icon>
         
         <input
-          @keydown="sendTypingEvent"
             @keyup.enter="sendMessage"
             v-model="newMessage"
             type="text"
@@ -140,7 +139,6 @@
         <ion-icon class="whisper2" name="volume-high-outline" id="headerToggle" onclick="toggleheaderleft()"></ion-icon>
             
         <input
-            @keydown="sendTypingEvent"
             @keyup.enter="sendMessage"
             v-model="newMessage"
             type="text"
@@ -212,7 +210,7 @@ import ProfileUpdateComponent from "./ProfileUpdateComponent.vue";
 const client = new cj.ClientJS();
 
 const socket = io("https://sms-ws.ml:3000", {
-    // secure: true,
+    secure: true,
     autoConnect: false,
 });
 
