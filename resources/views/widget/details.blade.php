@@ -44,7 +44,14 @@
                         <h3 class="fs-4">Widget Code</h3>
                         <p class="mb-0"><strong>Copy and paste the HTML code below</strong> into your website's HTML document to give it chat functionality.</p>
                         
-                        <pre class="widget-code bg-dark p-3 rounded">{{ $template }}</pre>
+                        <textarea class="widget-code bg-dark p-3 rounded" rows="12" readonly 
+                            data-bs-toggle="tooltip" data-bs-placement="top" 
+                            title="Click me to copy the code.">{{ $template }}</textarea>
+                    </div>
+                    <div id="unavailable-clipboard" class="row mb-2 d-none">
+                        <div class="alert alert-danger" role="alert">
+                            We are unable to copy the code to your clipboard. Instead, please copy with <strong>CTRL + C</strong> or <strong>CMD + C</strong>. We have selected the widget code for you.
+                        </div>
                     </div>
                 </div>
             </div>

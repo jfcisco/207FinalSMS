@@ -56,17 +56,30 @@ function toggleheaderleft() {
 function copyContentsToClipboard(event) {
   // Source: https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
   const copyText = event.target;
-  
-  // copyText.select();
-  // copyText.setSelection(0, 99999);
 
-  navigator.clipboard.writeText(copyText.textContent);
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
 
-  alert("Copied text!");
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(copyText.textContent);
+    alert("Copied text!");
+  }
+  else {
+    console.error("Clipboard unavailable due to insecure context, or browser limitations.");
+
+    const unavailableClipboardAlert = document.querySelector("#unavailable-clipboard");
+
+    unavailableClipboardAlert.classList.remove("d-none");
+    unavailableClipboardAlert.classList.add("d-block");
+  }
 }
 
 const widgetCode = document.querySelector(".widget-code");
 
 if (widgetCode) {
   widgetCode.addEventListener("click", copyContentsToClipboard);
+  
+  if (bootstrap.Tooltip) {
+    new bootstrap.Tooltip(widgetCode);
+  }
 }
