@@ -22,16 +22,16 @@
 
 
             <div class="row py-0 mt-0">
-                <p class="subtitle">Chat Volume</p>
+                <p class="subtitle">Live Analytics</p>
 
 
 
                 <div class="block">
                     <div class="details">
-                        <div class="listHead">
+                        <div class="listdead">
                             <p>Live Visitors</p>
                         </div>
-                        <div class="listHead">
+                        <div class="listdead">
                             <p>Live Chats</p>
                         </div>                        
 
@@ -46,16 +46,16 @@
                 <p class="subtitle sidebartitle">Historical Analytics</p>
                 <div class="block">
                     <div class="details">
-                        <div class="listHead">
+                        <div class="listdead">
                             <p>Chat Volume</p>
                         </div>
-                        <div class="listHead">
+                        <div class="listdead">
                             <p>Missed Chats</p>
                         </div>                        
-                        <div class="listHead">
+                        <div class="listdead">
                             <p>Offline Messages</p>
                         </div>
-                        <div class="listHead">
+                        <div class="listdead">
                             <p>Average Chat Duration</p>
                         </div>                          
                     </div>
@@ -76,6 +76,24 @@
                     <span>Link to Chat: {{ socketReport.roomId }}</span>
                     <span>Duration: {{ socketReport.startAt }}</span>
                 </div>
+            </div>
+
+            <div class="chat-container">
+                <h1>Hystorical Analytics</h1>
+                <p>Chat Volume</p>
+                <input type="date" id="start_date_input">
+                <input type="date" id="end_date_input">
+                <button @click="getDates">Submit</button>
+                <table id="chat-container-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Chat Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chat-container-body">
+                    </tbody>
+                </table>
             </div>
 
         </div>
@@ -124,6 +142,27 @@
     padding: 10px;
     font-style: italic;
 }
+
+.chat-container {
+    padding: 10px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 1cm;
+}
+
+#chat-container-table {
+    width: 100%;
+    margin-top: 1cm;
+}
+
+#chat-container-table thead {
+    height: 40px;
+    background-color: #F7F7F9;
+}
+
+#chat-container-table tbody tr {
+    border-bottom: 1px solid;
+}
 </style>
 
 <script>
@@ -170,6 +209,45 @@ export default {
     },
 
     methods: {
+        async getChatVolume(start, end) {
+            let post = await fetch("/api/reports/chats/daily/", {
+                method: "POST",
+                body: {
+                    "start_date": start,
+                    "end_date": end
+                }
+            });
+
+            let data = await post.json();
+
+            return data;
+        },
+
+        async getDates(event) {
+            let tableElem = document.getElementById("chat-container-body");
+            tableElem.innerHTML = "";
+
+            let start_date = document.getElementById("start_date_input").value;
+            let end_date = document.getElementById("end_date_input").value;
+            let data = await this.getChatVolume(start_date, end_date);
+            
+            console.log("==========================");
+            console.log("start: " + start_date);
+            console.log("end: " + end_date);
+            console.log(data.data);
+            
+            let reversedKeys = Object.keys(data.data).reverse();
+
+            reversedKeys.forEach((key) => {
+                tableElem.innerHTML += `<tr style="border-bottom: 1px solid;">
+                    <td>${key}</td>
+                    <td>${data.data[key]}</td>
+                </tr>`;
+            });
+                
+
+        }
+
 
         // selectRoom: function (roomId) {
         //     this.activeRoom = roomId;
