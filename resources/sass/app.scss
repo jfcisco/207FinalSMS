@@ -240,15 +240,8 @@ body{
 
 
 
-.message{
-	position:  relative;
-	display:  flex;
-	width:  100%;
-	padding: 2px;
-	
-}
 
-.content .messages .message.sent-message{
+.receivedmessage{
 position:  relative;
 	display:  flex;
 	width:  100%;
@@ -256,7 +249,7 @@ position:  relative;
 	color: #466289;
 }
 
-.content .messages .message.received-message{
+.sentmessage{
 position:  relative;
 	display:  flex;
 	width:  100%;

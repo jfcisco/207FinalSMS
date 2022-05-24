@@ -99,16 +99,16 @@
                   class="py-2"
                   v-for="(message, index) in chatroom.messages"
                   :key="index">
-              
+                    
                   <div
                     v-if="message.content.length > 0"
-                    class="message"
                     :class="{
-                      'sent-message': message.clientId === user._id,
-                      'received-message': !message.clientId === user._id,
+                      sentmessage: message.clientId == user._id,
+                      receivedmessage: message.clientId !== user._id
                     }">
                         <b>{{ message.clientId === user._id ? "You" : message.clientId}} :</b> 
                         {{ message.content }}
+
                   </div>
                 </li>
                 <!-- CHAT MESSAGE LINE END -->
@@ -540,6 +540,7 @@ export default {
         //     this.newMemberDropdownOptions = [];
         //     this.addingMember = false;
         // },
+
         getTargetRoomIndex(targetRoom) {
             let found = null;
             for (const indx in this.chatrooms) {
