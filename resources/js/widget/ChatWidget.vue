@@ -163,7 +163,7 @@ export default {
     created() {
         // Setup auth for connection
         socket.auth = {
-            clientId: client.getFingerprint(),
+            clientId: client.getFingerprint().toString(),
             clientType: "visitor",
             clientName: this.visitorName,
             widgetId: "widget1",
