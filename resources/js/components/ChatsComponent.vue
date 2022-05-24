@@ -66,6 +66,8 @@
 
           <!--room id/username section-->
           <div class="listHead">
+            <p><strong>{{ chatroom.members[0].clientName }}</strong></p>
+            <br>
             <p>{{ chatroom._id }}</p>
           </div>
           <!--room id/username section-->
@@ -381,7 +383,7 @@ export default {
           rooms,
           this.chatrooms,
           // room is undefined | not needed | why did jasper place this here?
-          // (room) => room._id
+          (room) => room._id
         );
         console.log("chatRooms => ", this.chatrooms);
 
