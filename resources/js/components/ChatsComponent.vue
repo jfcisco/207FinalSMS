@@ -68,16 +68,16 @@
           <div class="listHead">
             <strong>{{ chatroom.members[0].clientName }}</strong>
           </div>
+          <!-- delete in the future -->
           <div class="listHead">
-            <span>{{ chatroom.members[0].clientName }}</span>
             <p>{{ chatroom._id }}</p>
           </div>
+          <!-- delete in the future -->
 
           <!-- The message last sent to the room -->
           <div class="message_p">
             <p>last message sent</p>
           </div>
-          <!-- The message last sent to the room -->
 
         </div>
       </div>
@@ -114,8 +114,17 @@
                     v-if="message.content.length > 0"
                     :class="{
                       sentmessage: message.clientId == user._id,
-                      receivedmessage: message.clientId !== user._id
-                    }">
+                      receivedmessage: message.clientId !== user._id,
+                    }"
+                    >
+                  <!-- <div
+                    v-if="message.content.length > 0"
+                    :class="{
+                      sentmessage: message.clientId == user._id,
+                      receivedmessage: message.clientId !== user._id,
+                      whisper_text: message.isWhisper
+                    }"
+                  > -->
                         <b>{{ message.clientId === user._id ? "You" : message.clientName }} :</b>
                         {{ message.content }}
 
@@ -415,7 +424,7 @@ export default {
         // },
         sendMessage() {
 
-          // console.log(event.target);
+          console.log("event", event.target.parentElement.id);
           // if (event.target.parentElement.id === "message_main") {
             // normal message
           // }
