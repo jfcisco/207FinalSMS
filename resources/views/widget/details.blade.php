@@ -15,9 +15,27 @@
             @if (count($widgets) === 0)
             <p>You have no widgets yet!</p>
             @else
-            {{-- TODO: Add widget selection component --}}
-            {{-- TODO: Add link to create a widget --}}
-            <div class="row gx-5 gy-2">
+            <div class="row mx-auto mb-2">
+                {{-- Widget Selection --}}
+                <div class="col-9">
+                    <select class="form-select">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+
+                {{-- View Widget --}}
+                <div class="col">
+                    <button class="btn btn-secondary w-100">View</button>
+                </div>
+
+                {{-- Create Widget --}}
+                <div class="col">
+                    <a class="btn btn-primary w-100" href="/widgets/create">Add Widget</a>
+                </div>
+            </div>
+
+            <div class="row gx-5 gy-2 mx-auto">
                 <div class="col-lg">
                     <div class="row mb-3">
                         <label class="fs-5" for="widget-name">Widget Name</label>
