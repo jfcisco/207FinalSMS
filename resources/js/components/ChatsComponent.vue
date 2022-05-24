@@ -66,18 +66,19 @@
 
           <!--room id/username section-->
           <div class="listHead">
-            <p><strong>{{ chatroom.members[0].clientName }}</strong></p>
-            <br>
+            <strong>{{ chatroom.members[0].clientName }}</strong>
+          </div>
+          <div class="listHead">
+            <span>{{ chatroom.members[0].clientName }}</span>
             <p>{{ chatroom._id }}</p>
           </div>
-          <!--room id/username section-->
-          
+
           <!-- The message last sent to the room -->
           <div class="message_p">
             <p>last message sent</p>
           </div>
           <!-- The message last sent to the room -->
-        
+
         </div>
       </div>
       <!--ACTIVE CHAT BLOCK END-->
@@ -97,7 +98,7 @@
         class="card-body chatmessages roomMessages"
         v-bind:id="'messages_room' + chatroom._id">
 
-          <div><h4>{{ chatroom._id }}</h4></div>
+          <div><h4>{{ chatroom.members[0].clientName }}</h4></div>
 
           <!--CHATBOX START-->
           <div class="chatboxfix" style="overflow-y: scroll; overflow-x: hidden;">
@@ -115,7 +116,7 @@
                       sentmessage: message.clientId == user._id,
                       receivedmessage: message.clientId !== user._id
                     }">
-                        <b>{{ message.clientId === user._id ? "You" : message.clientId}} :</b>
+                        <b>{{ message.clientId === user._id ? "You" : message.clientName }} :</b>
                         {{ message.content }}
 
                   </div>
@@ -413,6 +414,14 @@ export default {
         //     });
         // },
         sendMessage() {
+
+          // console.log(event.target);
+          // if (event.target.parentElement.id === "message_main") {
+            // normal message
+          // }
+          // else {
+            // whisper message
+          // }
             const message = {
                 roomId: this.activeRoom,
                 content: this.newMessage,
