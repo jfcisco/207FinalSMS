@@ -66,7 +66,7 @@
 
           <!--room id/username section-->
           <div class="listHead">
-            <strong>{{ chatroom.members[0].clientName }}</strong>
+            <p>{{ chatroom.members[0].clientName }}</p>
           </div>
           <!-- delete in the future -->
           <div class="listHead">
