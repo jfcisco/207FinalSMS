@@ -218,194 +218,178 @@ export default {
     props: ["user"],
 
     components: {
-        FileUploadComponent,
-        ProfileUpdateComponent,
+      FileUploadComponent,
+      ProfileUpdateComponent,
     },
 
     data() {
-        return {
-            currentUser: this.user,
-            newMessage: "",
-            users: [],
-            chatrooms: [],
-            activeRoom: "",
-        };
+      return {
+        currentUser: this.user,
+        newMessage: "",
+        users: [],
+        chatrooms: [],
+        activeRoom: "",
+      };
     },
 
     computed: {
-        activeRoomDetails: function () {
-            const activeRoomResult = this.chatrooms.filter(
-                (room) => room._id == this.activeRoom
-            );
+      activeRoomDetails: function () {
+        const activeRoomResult = this.chatrooms.filter(
+          (room) => room._id == this.activeRoom
+        );
 
-            if (activeRoomResult.length === 0) {
-                return null;
-            } else {
-                return activeRoomResult[0];
-            }
-        },
+        if (activeRoomResult.length === 0) {
+          return null;
+        } else {
+          return activeRoomResult[0];
+        }
+      },
     },
 
     created() {
-        // this.fetchChatrooms();
-        // Echo.join("chat")
-        //   .here((user) => {
-        //     this.users = user;
-        //     this.fetchMessages();
-        //   })
-        //   .joining((user) => {
-        //     this.users.push(user);
-        //   })
-        //   .leaving((user) => {
-        //     this.users = this.users.filter((u) => u.id != user.id);
-        //   })
-        //   .listen(".chatroom.created", (event) => {
-        //     // Add the chatroom created to the user's list of chatrooms
+      // this.fetchChatrooms();
+      // Echo.join("chat")
+      //   .here((user) => {
+      //     this.users = user;
+      //     this.fetchMessages();
+      //   })
+      //   .joining((user) => {
+      //     this.users.push(user);
+      //   })
+      //   .leaving((user) => {
+      //     this.users = this.users.filter((u) => u.id != user.id);
+      //   })
+      //   .listen(".chatroom.created", (event) => {
+      //     // Add the chatroom created to the user's list of chatrooms
 
-        //     // Only if they're a member of the chatroom
-        //     if (
-        //       event.chatRoom.members.some(
-        //         (member) => member.id === this.$props.user.id
-        //       )
-        //     ) {
-        //       this.chatrooms.unshift({
-        //         room_id: event.chatRoom.room_id,
-        //         room_name: event.chatRoom.room_name,
-        //       });
+      //     // Only if they're a member of the chatroom
+      //     if (
+      //       event.chatRoom.members.some(
+      //         (member) => member.id === this.$props.user.id
+      //       )
+      //     ) {
+      //       this.chatrooms.unshift({
+      //         room_id: event.chatRoom.room_id,
+      //         room_name: event.chatRoom.room_name,
+      //       });
 
-        //       this.roomMsgs.unshift({
-        //         room_id: event.chatRoom.room_id,
-        //         room_name: event.chatRoom.room_name,
-        //         messages: [],
-        //       });
-        //     }
-        //   })
-        //   .listen(".message", (event) => {
-        //     //check which room the message goes
-        //     let found = this.getTargetRoomIndex(event.room_id);
-        //     if (
-        //       event.room_name == "" &&
-        //       found == null &&
-        //       event.new_member != this.user.id
-        //     ) {
-        //       //no one is being added and user doesn't have the room
-        //       //message is not for the user
-        //       return;
-        //     } else if (
-        //       event.room_name != "" &&
-        //       found == null &&
-        //       event.new_member == this.user.id
-        //     ) {
-        //       //user is being added to the room
-        //       this.chatrooms.unshift({
-        //         room_id: event.room_id,
-        //         room_name: event.room_name,
-        //       });
-        //       this.roomMsgs.unshift({
-        //         room_id: event.room_id,
-        //         room_name: event.room_name,
-        //         messages: [],
-        //       });
-        //       //this.activeRoom = event.room_id;
-        //       found = this.getTargetRoomIndex(event.room_id);
-        //     }
+      //       this.roomMsgs.unshift({
+      //         room_id: event.chatRoom.room_id,
+      //         room_name: event.chatRoom.room_name,
+      //         messages: [],
+      //       });
+      //     }
+      //   })
+      //   .listen(".message", (event) => {
+      //     //check which room the message goes
+      //     let found = this.getTargetRoomIndex(event.room_id);
+      //     if (
+      //       event.room_name == "" &&
+      //       found == null &&
+      //       event.new_member != this.user.id
+      //     ) {
+      //       //no one is being added and user doesn't have the room
+      //       //message is not for the user
+      //       return;
+      //     } else if (
+      //       event.room_name != "" &&
+      //       found == null &&
+      //       event.new_member == this.user.id
+      //     ) {
+      //       //user is being added to the room
+      //       this.chatrooms.unshift({
+      //         room_id: event.room_id,
+      //         room_name: event.room_name,
+      //       });
+      //       this.roomMsgs.unshift({
+      //         room_id: event.room_id,
+      //         room_name: event.room_name,
+      //         messages: [],
+      //       });
+      //       //this.activeRoom = event.room_id;
+      //       found = this.getTargetRoomIndex(event.room_id);
+      //     }
 
-        //     if (found != null) {
-        //       //put the new message received in the right room
-        //       let newMessage = {
-        //         user: event.user,
-        //         message: event.message,
-        //       };
-        //       console.log("Event");
-        //       console.log(event);
-        //       console.log("New Message");
-        //       console.log(newMessage);
+      //     if (found != null) {
+      //       //put the new message received in the right room
+      //       let newMessage = {
+      //         user: event.user,
+      //         message: event.message,
+      //       };
+      //       console.log("Event");
+      //       console.log(event);
+      //       console.log("New Message");
+      //       console.log(newMessage);
 
-        //       // Check if incoming has an attachment
-        //       if (event.attachment_path) {
-        //         newMessage.attachment_path = event.attachment_path;
-        //       }
+      //       // Check if incoming has an attachment
+      //       if (event.attachment_path) {
+      //         newMessage.attachment_path = event.attachment_path;
+      //       }
 
-        //       this.roomMsgs[found].messages.push(newMessage);
-        //       //move up the room with the new message
-        //       let found2 = null;
-        //       for (const indx in this.chatrooms) {
-        //         if (this.chatrooms[indx].room_id == event.room_id) {
-        //           found2 = indx;
-        //         }
-        //       }
-        //       let room = this.chatrooms[found2];
-        //       this.chatrooms.splice(found2, 1);
-        //       this.chatrooms.unshift(room);
-        //     }
-        //   })
-        //   .listenForWhisper("typing", (user) => {
-        //     this.activeUser = user;
+      //       this.roomMsgs[found].messages.push(newMessage);
+      //       //move up the room with the new message
+      //       let found2 = null;
+      //       for (const indx in this.chatrooms) {
+      //         if (this.chatrooms[indx].room_id == event.room_id) {
+      //           found2 = indx;
+      //         }
+      //       }
+      //       let room = this.chatrooms[found2];
+      //       this.chatrooms.splice(found2, 1);
+      //       this.chatrooms.unshift(room);
+      //     }
+      //   })
+      //   .listenForWhisper("typing", (user) => {
+      //     this.activeUser = user;
 
-        //     if (this.typingTimer) {
-        //       clearTimeout(this.typingTimer);
-        //     }
+      //     if (this.typingTimer) {
+      //       clearTimeout(this.typingTimer);
+      //     }
 
-        //     this.typingTimer = setTimeout(() => {
-        //       this.activeUser = false;
-        //     }, 3000);
-        //   });
+      //     this.typingTimer = setTimeout(() => {
+      //       this.activeUser = false;
+      //     }, 3000);
+      //   });
 
-        socket.auth = {
-            // // For visitors
-            // clientId: client.getFingerprint(),
-            // clientType: "visitor",
-            // clientName: "bisita",
-            // widgetId: "widget1",
+      socket.auth = {
+        // // For visitors
+        // clientId: client.getFingerprint(),
+        // clientType: "visitor",
+        // clientName: "bisita",
+        // widgetId: "widget1",
 
-            // For admin/agent
-            clientId: this.user._id,
-            clientName: "agentako",
-            clientType: "user",
-        };
+        // For admin/agent
+        clientId: this.user._id,
+        clientName: "agentako",
+        clientType: "user",
+      };
 
-        socket.connect();
+      socket.connect();
 
-        socket.on("rooms", ({ rooms }) => {
-            console.log("rooms => ", rooms);
-            // this.chatRooms = rooms;
-            // console.log("chatRooms => ", this.chatRooms);
-            this.chatrooms = _.unionBy(
-                rooms,
-                this.chatrooms,
-                (room) => room._id
-            );
-            this.chatrooms.forEach((room) => {
-                socket.emit("join", { roomId: room._id, name: this.user.name });
-                // console.log("room", room._id, "members", room.members);
-            });
-            console.log("look here", this.chatrooms);
+      socket.on("rooms", ({ rooms }) => {
+        console.log("socket.on rooms")
+        console.log("rooms => ", rooms);
+
+        this.chatrooms = _.unionBy(
+          rooms,
+          this.chatrooms,
+          // room is undefined | not needed | why did jasper place this here?
+          // (room) => room._id
+        );
+        console.log("chatRooms => ", this.chatrooms);
+
+        // join all rooms in chatrooms
+        this.chatrooms.forEach((room) => {
+          socket.emit("join", { roomId: room._id, name: this.currentUser.name });
+          console.log("roomId", room._id, "name", this.currentUser.name, "members", room.members);
         });
+      });
 
-        socket.on("message", (message) => {
-            // console.log("received new message", message);
-            let found = this.getTargetRoomIndex(message.roomId);
-
-            this.chatrooms[found].messages.push(message);
-
-            console.log("chatrooms", this.chatrooms);
-            // console.log(
-            //     this.chatrooms.forEach((chatroom) =>
-            //         chatroom.messages.forEach((msg) =>
-            //             console.log(
-            //                 "msg content: ",
-            //                 msg.content,
-            //                 "clientId",
-            //                 msg.clientId,
-            //                 "clientType",
-            //                 msg.clientType,
-            //                 "roomId",
-            //                 msg.roomId
-            //             )
-            //         )
-            //     )
-            // );
-        });
+      socket.on("message", (message) => {
+        console.log("message received", message);
+        let found = this.getTargetRoomIndex(message.roomId);
+        this.chatrooms[found].messages.push(message);
+      });
     },
 
     methods: {
