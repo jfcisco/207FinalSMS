@@ -125,7 +125,7 @@
                       whisper_text: message.isWhisper
                     }"
                   > -->
-                        <b>{{ message.clientId === user._id ? "You" : message.clientName }} :</b>
+                        <b>{{ message.clientId === user._id ? "You: " : `${chatroom.members[0].clientName}: ` }}</b>
                         {{ message.content }}
 
                   </div>
