@@ -24,6 +24,10 @@ Vue.use(VueChatScroll);
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('chats', require('./components/ChatsComponent.vue').default);
 Vue.component('reports', require('./components/ReportsComponent.vue').default);
+Vue.component('VisitorsToday', require('./components/Visuals/VisitorsToday.vue').default);
+Vue.component('AnsweredChat', require('./components/Visuals/AnsweredChat.vue').default);
+Vue.component('MissedChat', require('./components/Visuals/MissedChat.vue').default);
+Vue.component('HourlyVisitor', require('./components/Visuals/HourlyVisitor.vue').default);
 Vue.component('profile-edit-form', require('./components/ProfileUpdateComponent.vue').default);
 Vue.component('vue-multiselect', window.VueMultiselect.default)
 
