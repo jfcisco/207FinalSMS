@@ -34,7 +34,6 @@
               <p>Incoming user</p>
             </div>
             <!--room id/username section-->
-
             <!-- The message last sent to the room -->
             <div class="message_p">
               <p>last message sent</p>
@@ -65,10 +64,18 @@
           v-on:click="selectRoom(chatroom._id)"
           v-bind:id="chatroom._id">
 
+          <!--room id/username section-->
           <div class="listHead">
             <p>{{ chatroom._id }}</p>
           </div>
-
+          <!--room id/username section-->
+          
+          <!-- The message last sent to the room -->
+          <div class="message_p">
+            <p>last message sent</p>
+          </div>
+          <!-- The message last sent to the room -->
+        
         </div>
       </div>
       <!--ACTIVE CHAT BLOCK END-->
