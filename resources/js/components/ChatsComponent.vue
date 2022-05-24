@@ -1,6 +1,6 @@
 <template>
 <div class="row">
-  
+
   <!--MAIN SIDE BAR START-->
   <div class="col-lg-1 mainsidebar">
     <a class="activemenu" href="/home">
@@ -16,7 +16,7 @@
       <span class="menutitle">Widget</span>
     </a>
   </div>
-  <!--MAIN SIDE BAR END--> 
+  <!--MAIN SIDE BAR END-->
 
   <!--MESSAGE LISTS START-->
   <div class="col-lg-2 sidebar" style="overflow-y: scroll">
@@ -24,11 +24,11 @@
     <!--INCOMING SESSIONS SECTION START-->
     <div class="row py-0 mt-0">
       <p class="subtitle">Incoming Sessions</p>
-      
+
       <!--INCOMING CHAT BLOCK START-->
         <div class="block incoming">
           <div class="details">
-            
+
             <!--room id/username section-->
             <div class="listHead">
               <p>Incoming user</p>
@@ -43,10 +43,10 @@
           </div>
         </div>
       <!--INCOMING CHAT BLOCK END-->
-    
+
     </div>
     <!--INCOMING SESSIONS SECTION END-->
-  
+
     <!--ACTIVE SESSIONS START-->
     <div class="row">
       <p class="subtitle sidebartitle">Active Sessions</p>
@@ -57,9 +57,9 @@
           block: true,
           active: chatroom._id == activeRoom,
         }"
-        v-for="chatroom in chatrooms"                    
+        v-for="chatroom in chatrooms"
         :key="chatroom._id">
-                    
+
         <div
           class="details"
           v-on:click="selectRoom(chatroom._id)"
@@ -87,41 +87,41 @@
       <div
         class="card-body chatmessages roomMessages"
         v-bind:id="'messages_room' + chatroom._id">
-          
+
           <div><h4>{{ chatroom._id }}</h4></div>
 
           <!--CHATBOX START-->
           <div class="chatboxfix" style="overflow-y: scroll; overflow-x: hidden;">
             <ul class="list-unstyled">
-                
+
                 <!-- CHAT MESSAGE LINE START -->
                 <li
                   class="py-2"
                   v-for="(message, index) in chatroom.messages"
                   :key="index">
-                    
+
                   <div
                     v-if="message.content.length > 0"
                     :class="{
                       sentmessage: message.clientId == user._id,
                       receivedmessage: message.clientId !== user._id
                     }">
-                        <b>{{ message.clientId === user._id ? "You" : message.clientId}} :</b> 
+                        <b>{{ message.clientId === user._id ? "You" : message.clientId}} :</b>
                         {{ message.content }}
 
                   </div>
                 </li>
                 <!-- CHAT MESSAGE LINE END -->
-            </ul>   
-          </div> 
+            </ul>
+          </div>
           <!--CHATBOX END-->
       </div>
-                            
+
       <!--MAIN INPUT MESSAGE BOX START-->
       <div class="chatbox_input" id="message_main" style="display:flex">
-        
+
         <ion-icon class="whisper" name="volume-mute-outline" id="headerToggle" onclick="toggleheaderleft()"></ion-icon>
-        
+
         <input
             @keyup.enter="sendMessage"
             v-model="newMessage"
@@ -135,9 +135,9 @@
 
       <!--WHISPER INPUT MESSAGE BOX START-->
       <div class="chatbox_input" id="whisper" style="display:none">
-            
+
         <ion-icon class="whisper2" name="volume-high-outline" id="headerToggle" onclick="toggleheaderleft()"></ion-icon>
-            
+
         <input
             @keyup.enter="sendMessage"
             v-model="newMessage"
@@ -146,10 +146,10 @@
             placeholder="Enter your message..."
             class="form-control"
         />
-      
+
       </div>
       <!--WHISPER INPUT MESSAGE BOX END-->
-    
+
     </div>
   </div>
     <!--MAIN CHAT WINDOW END-->
