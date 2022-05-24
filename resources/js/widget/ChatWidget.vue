@@ -147,7 +147,7 @@ const socket = io("https://sms-ws.ml:3000", {
 
 export default {
     props: ["visitorName"],
-    
+
     data() {
         return {
             isVisible: true,
@@ -163,7 +163,7 @@ export default {
     created() {
         // Setup auth for connection
         socket.auth = {
-            clientId: client.getFingerprint().toString(),
+            clientId: `${client.getFingerprint()}`,
             clientType: "visitor",
             clientName: this.visitorName,
             widgetId: "widget1",
@@ -172,6 +172,8 @@ export default {
         socket.connect();
 
         socket.on("rooms", ({ rooms }) => {
+            console.log("socket.on rooms")
+            console.log("rooms=>", rooms)
             if (!this.room._id) {
                 // Get the room and its accompanying information
                 let room = rooms[0];
@@ -220,6 +222,7 @@ export default {
                 content: this.message,
                 roomId: this.room._id,
             };
+            console.log("room._id=> ", this.room._id);
 
             socket.emit("message", newMessage);
 
