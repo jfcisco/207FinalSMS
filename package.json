@@ -1,11 +1,14 @@
 {
     "private": true,
     "scripts": {
+        "predev": "npm install",
         "dev": "npm run development",
         "development": "mix",
+        "prewatch": "npm install",
         "watch": "mix watch",
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
+        "preprod": "npm install",
         "prod": "npm run production",
         "production": "mix --production"
     },
