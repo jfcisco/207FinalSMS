@@ -180,8 +180,9 @@ export default {
 
                 // Process the room's messages, attaching additional properties we need
                 room.messages = room.messages.map((msg) =>
-                    this.attachMessageProperties(msg)
+                    this.attachMessageProperties(room, msg)
                 );
+
                 this.room = room;
 
                 this.focusOnMessageInput();
@@ -191,7 +192,7 @@ export default {
 
         // Listen to any sent messages
         socket.on("message", (message) => {
-            const chatMessage = this.attachMessageProperties(message);
+            const chatMessage = this.attachMessageProperties(this.room, message);
             this.room.messages.push(chatMessage);
         });
 
@@ -245,10 +246,10 @@ export default {
         },
 
         // Helper method to attach properties to a `message` instance so that we can display it properly
-        attachMessageProperties(message) {
+        attachMessageProperties(room, message) {
             return {
                 ...message,
-                senderName: this.findMemberNameByClientId(message.clientId),
+                senderName: this.findMemberNameByClientId(room, message.clientId),
                 isUpdate: false,
                 fromSelf: message.clientId === socket.auth.clientId,
             };
@@ -262,8 +263,8 @@ export default {
             };
         },
 
-        findMemberNameByClientId(clientId) {
-            for (let member of this.room.members) {
+        findMemberNameByClientId(room, clientId) {
+            for (let member of room.members) {
                 if (member.clientId === clientId) {
                     return member.clientName;
                 }
