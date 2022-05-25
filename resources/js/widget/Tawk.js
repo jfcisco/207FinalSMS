@@ -1,11 +1,29 @@
 import Vue from 'vue'; 
 import VueChatScroll from "vue-chat-scroll";
 
+// Options used for converting date/time to string using .toLocaleTimeString()
+const localeTimeFormat = {
+    hour: '2-digit',
+    minute: '2-digit'
+}
+
 export class Tawk {
-    constructor({ position = 'bottom-right'} = {}) {
+    constructor({ position = 'bottom-right',
+        baseUrl, 
+        hasScheduledAvailability,
+        availabilityStartTime,
+        availabilityEndTime } = {}
+    ) {
+        this.baseUrl = baseUrl;
         this.position = this.getPosition(position);
         this.open = false;
         this.sessionStarted = false;
+
+        // Variables for availability schedule
+        this.hasScheduledAvailability = hasScheduledAvailability;
+        this.availabilityStartTime = availabilityStartTime;
+        this.availabilityEndTime = availabilityEndTime;
+
         this.initialise();
         this.createStyles();
     }
@@ -29,12 +47,12 @@ export class Tawk {
         buttonContainer.classList.add('button-container')
 
         const chatIcon = document.createElement('img');
-        chatIcon.src = '<?php echo $baseUrl; ?>/assets/chat.svg';
+        chatIcon.src = `${this.baseUrl}/assets/chat.svg`;
         chatIcon.classList.add('icon');
         this.chatIcon = chatIcon;
 
         const closeIcon = document.createElement('img');
-        closeIcon.src = '<?php echo $baseUrl; ?>/assets/cross.svg';
+        closeIcon.src = `${this.baseUrl}/assets/cross.svg`;
         closeIcon.classList.add('icon', 'hidden');
         this.closeIcon = closeIcon;
 
@@ -92,7 +110,7 @@ export class Tawk {
 
         const afterhoursmessage = document.createElement('div');
         afterhoursmessage.classList.add('content');
-        afterhoursmessage.textContent = `Our agents are available from 8:00am to 5:00pm Manila time.  Let's chat again during those hours!`;
+        afterhoursmessage.textContent = `Our agents are available from ${this.availabilityStartTime.toLocaleTimeString([], localeTimeFormat)} to ${this.availabilityEndTime.toLocaleTimeString([], localeTimeFormat)}.  Let's chat again during those hours!`;
 
         this.messageContainer.appendChild(title);
         this.messageContainer.appendChild(afterhoursmessage);
@@ -294,15 +312,21 @@ export class Tawk {
         this.messageContainer = this.vue.$el;
     }
 
-    checkTime(){
+    checkTime() {
         // LOGIC FOR AFTER HOURS MESSAGE
-        // TO DO: Make the hardcoded values 7 and 17 editable via the dashboard
-        var now = new Date();
-        var hour = now.getHours();
-        if (hour > 7 && hour <17) {
+        if (!this.hasScheduledAvailability) {
             this.createMessageContainerContent();
-        } else {
-            this.createMessageContainerContentAfterHours();
+        }
+        else {
+            var now = new Date().getTime();
+            var startTime = this.availabilityStartTime.getTime();
+            var endTime = this.availabilityEndTime.getTime();
+            
+            if (now > startTime && now < endTime) {
+                this.createMessageContainerContent();
+            } else {
+                this.createMessageContainerContentAfterHours();
+            }
         }
     }
 }

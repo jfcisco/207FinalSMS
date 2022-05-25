@@ -86,13 +86,6 @@ class WidgetController extends Controller
             abort(404);
         }
 
-        // Check if the current time allows the widget to be shown
-        if (!$this->isAvailableNow($widget)) {
-            Log::info("Requested widget ID $widgetId is unavailable at this time.");
-            // Return service unavailable status code
-            abort(503);
-        }
-
         // Check request origin with widget's allowed domains
         $origin = $request->header('origin');
         $allowedDomains = collect($widget->allowed_domains);
@@ -105,11 +98,26 @@ class WidgetController extends Controller
             }
         }
 
+        $widgetAvailabilitySchedule = $this->getAvailabilitySchedule($widget);
+
         // Generate a view for the script
         $view = view()->make('widget.widget-script', [
+            // App Details
             'baseUrl' => env('APP_URL'),
+
+            // Widget and Creator User IDs
+            'widgetId' => $widgetId,
             'userId' => $userId,
-            'widgetId' => $widgetId
+
+            // Availability Schedule Information
+            // Note: Times are converted to the ISO 8601 format because this is compatible with JavaScript
+            'hasScheduledAvailability' => json_encode($widgetAvailabilitySchedule['isActive']),
+            'availabilityStartTime' => ($widgetAvailabilitySchedule['availStart'] 
+                ? $widgetAvailabilitySchedule['availStart']->toIso8601String()
+                : ""),
+            'availabilityEndTime' => ($widgetAvailabilitySchedule['availEnd']
+                ? $widgetAvailabilitySchedule['availEnd']->toIso8601String()
+                : ""),
         ])->withHeaders([
             // Make browsers interpret this as JavaScript
             'Content-Type' => 'application/javascript',
@@ -124,9 +132,9 @@ class WidgetController extends Controller
     }
 
     /**
-     * Checks if the present time falls within the widget's availability start and end time,
+     * Checks if the present time falls within the widget's availability start and end time.
      */
-    private function isAvailableNow($widget) 
+    private function getAvailabilitySchedule($widget) 
     {    
         // TODO: Store availability_timezone widget details
         // Notes: Start time and End time are assumed to be stored in UTC
@@ -134,7 +142,11 @@ class WidgetController extends Controller
         
         // Widget doesn't have a set availability schedule
         if (!$widget->availability_start_time || !$widget->availability_end_time) {
-            return true;
+            return [
+                'isActive' => false,
+                'availStart' => null,
+                'availEnd' => null
+            ];
         }
 
         // Create carbon instances of widget availability schedules
@@ -143,15 +155,14 @@ class WidgetController extends Controller
         $availStart = $widget->availability_start_time->setTimezone('UTC');
         $availEnd = $widget->availability_end_time->setTimezone('UTC');
         
-        $now = Carbon::now($timeZone);
         $startTime = Carbon::createFromTime($availStart->hour, $availStart->minute, 0, $timeZone);
         $endTime = Carbon::createFromTime($availEnd->hour, $availEnd->minute, 0, $timeZone);
 
-        Log::debug("Now: " . $now->toDayDateTimeString());
-        Log::debug("Start: " . $startTime->toDayDateTimeString());
-        Log::debug("End: " . $endTime->toDayDateTimeString());
-
-        return $now->isBetween($startTime, $endTime);
+        return [
+            'isActive' => true,
+            'availStart' => $startTime,
+            'availEnd' => $endTime
+        ];
     }
 
     public function create()
