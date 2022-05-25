@@ -60,7 +60,7 @@ export class Tawk {
         form.classList.add('content');
         
         const welcome = document.createElement('div');
-        form.classList.add('welcome');
+        welcome.classList.add('welcome');
         welcome.textContent = `Enter your name and start chatting with us.`;
 
         const name = document.createElement('input');
@@ -88,30 +88,14 @@ export class Tawk {
     createMessageContainerContentAfterHours() {
         this.messageContainer.innerHTML = '';
         const title = document.createElement('h2');
-        title.textContent = `We're not here, drop us an email`;
+        title.textContent = `We're not here...`;
 
-        const form = document.createElement('form');
-        form.classList.add('content');
-        const email = document.createElement('input');
-        email.required = true;
-        email.id = 'email';
-        email.type = 'email';
-        email.placeholder = 'Enter your email address';
-
-        const message = document.createElement('textarea');
-        message.required = true;
-        message.id = 'message';
-        message.placeholder = 'Your message';
- 
-        const btn = document.createElement('button');
-        btn.textContent = 'Submit';
-        form.appendChild(email);
-        form.appendChild(message);
-        form.appendChild(btn);
-        form.addEventListener('submit', this.submitEmail.bind(this));
+        const afterhoursmessage = document.createElement('div');
+        afterhoursmessage.classList.add('content');
+        afterhoursmessage.textContent = `Our agents are available from 8:00am to 5:00pm Manila time.  Let's chat again during those hours!`;
 
         this.messageContainer.appendChild(title);
-        this.messageContainer.appendChild(form);
+        this.messageContainer.appendChild(afterhoursmessage);
 
     }
 
@@ -234,13 +218,6 @@ export class Tawk {
                 border: 2px;
                 width: 95%;
             }
-            .message-container form textarea {
-                height: 100px;
-                padding: 10px;
-            }
-            .message-container form textarea::placeholder {
-                font-family: 'Raleway', sans-serif;
-            }
             .message-container form button {
                 font-family: 'Raleway', sans-serif;
                 font-weight: bold;
@@ -315,18 +292,6 @@ export class Tawk {
         // Mount it to message-container
         this.vue.$mount(this.messageContainer);
         this.messageContainer = this.vue.$el;
-    }
-    submitEmail(event) {
-        // TO DO: Send the offline message & email address to the dashboard
-        event.preventDefault();
-        const formSubmission = {
-            email: event.srcElement.querySelector('#email').value, 
-            message: event.srcElement.querySelector('#message').value,
-        };
-
-        this.messageContainer.innerHTML = '<h2>Thanks for your submission.</h2><p class="content">Someone will be in touch with your shortly regarding your enquiry';
-        
-        console.log(formSubmission);
     }
 
     checkTime(){
