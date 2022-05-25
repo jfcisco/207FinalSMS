@@ -31,8 +31,7 @@
                         :key="index"
                     >
                         <div class="name">
-                            {{ message.fromSelf ? "You" : message.clientId }}
-                            <!-- TODO: Ask Raymond if the sender/client's name can also be passed instead of just the clientId -->
+                            {{ message.fromSelf ? "You" : message.senderName }}
                         </div>
                         <div class="text">{{ message.content }}</div>
                     </div>
@@ -156,6 +155,7 @@ export default {
                 // Room default values
                 _id: null,
                 messages: [],
+                members: []
             },
         };
     },
@@ -195,11 +195,18 @@ export default {
             this.room.messages.push(chatMessage);
         });
 
-        // An admin/agent has joined the room
-        // socket.on("join", (notification) => {
-        //     const update = this.attachUpdateProperties(notification);
-        //     this.room.messages.push(update);
-        // });
+        // Received notification that an admin/agent has joined the room
+        socket.on("join", (notification) => {
+            const update = this.attachUpdateProperties(notification);
+            this.room.messages.push(update);
+        });
+
+        // Received information about user that joined
+        socket.on("user_joined", (user) => {
+            if (user.roomId === this.room._id) {
+                this.room.members.push(user);
+            }
+        });
 
         // // An admin/agent/visitor left the room
         // socket.on("user_disconnect", (notification) => {
@@ -241,6 +248,7 @@ export default {
         attachMessageProperties(message) {
             return {
                 ...message,
+                senderName: this.findMemberNameByClientId(message.clientId),
                 isUpdate: false,
                 fromSelf: message.clientId === socket.auth.clientId,
             };
@@ -252,6 +260,16 @@ export default {
                 isUpdate: true,
                 content: notification,
             };
+        },
+
+        findMemberNameByClientId(clientId) {
+            for (let member of this.room.members) {
+                if (member.clientId === clientId) {
+                    return member.clientName;
+                }
+            }
+
+            return "Unknown";
         },
 
         focusOnMessageInput() {
