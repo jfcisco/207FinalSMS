@@ -98,6 +98,13 @@
                         <div class="widget-block">
                             <label class="chat-label">Time Zone</label>  
                             <select name="availability_timezone" id="time-zone" class="form-select form-control-widget-full">
+                                <option disabled
+                                @if (!old('availability_timezone', $currentWidget->availability_timezone))
+                                selected="selected"
+                                @endif
+                                >
+                                    -- Select a timezone --
+                                </option>
                                 @foreach ($timezones as $region => $list)
                                     <optgroup label="{{$region}}">
                                         @foreach ($list as $timezone => $name)
@@ -244,9 +251,13 @@
                 </div>
 
                 @if (Auth::user()->role === "admin")
-                <div class="row">
-                    <button type="submit">Save Changes</button>
-                    <input type="reset" value="Reset">
+                <div class="row my-4 mx-auto">
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-light w-100">Save Changes</button>
+                    </div>
+                    <div class="col-4">
+                        <input type="reset" value="Reset" class="btn btn-dark w-100">
+                    </div>
                 </div>
                 @endif
             </form>

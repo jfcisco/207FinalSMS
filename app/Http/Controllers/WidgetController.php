@@ -234,11 +234,12 @@ class WidgetController extends Controller
 
         /* Update Availability Schedule */
         if ($request->filled(['availability_start_time', 'availability_end_time'])) {
-            $availTimezone = $request->input('availability_timezone', 'Asia/Hong_Kong');
+            $widgetToUpdate->availability_timezone = $request->input('availability_timezone', 'Asia/Hong_Kong');
             $widgetToUpdate->availability_start_time = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('availability_start_time'), 'UTC');
             $widgetToUpdate->availability_end_time = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('availability_end_time'), 'UTC');
         }
         else {
+            $widgetToUpdate->unset('availability_timezone');
             $widgetToUpdate->unset('availability_start_time');
             $widgetToUpdate->unset('availability_end_time');
         }
