@@ -16,6 +16,11 @@ class ReportsController extends Controller
         return view('reports');
     }
 
+    public function live()
+    {
+        return view('livereports');
+    }
+
     public function dailyChats(Request $request)
     {
         $dayOfWeek = Carbon::now()->dayOfWeek;

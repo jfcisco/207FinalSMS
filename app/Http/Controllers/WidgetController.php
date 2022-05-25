@@ -6,6 +6,7 @@ use App\Models\ChatWidget;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Carbon;
 
 /**
  * User-facing Functionalities for Widget Management
@@ -77,10 +78,17 @@ class WidgetController extends Controller
     public function generateScript(Request $request, $userId, $widgetId)
     {
         // Note: For this to work, laravel-mix (through npm) should have generated a widget-script.php file in the resources/views/widget folder
-        
+
+        $widget = ChatWidget::find($widgetId);
+
+        // Widget cannot be found
+        if (!$widget) {
+            abort(404);
+        }
+
         // Check request origin with widget's allowed domains
         $origin = $request->header('origin');
-        $allowedDomains = collect(ChatWidget::find($widgetId)->allowed_domains);
+        $allowedDomains = collect($widget->allowed_domains);
 
         if ($allowedDomains->count() > 0) {
             // Reject any requests from unauthorized domains with 403 Forbidden
@@ -90,11 +98,26 @@ class WidgetController extends Controller
             }
         }
 
+        $widgetAvailabilitySchedule = $this->getAvailabilitySchedule($widget);
+
         // Generate a view for the script
         $view = view()->make('widget.widget-script', [
+            // App Details
             'baseUrl' => env('APP_URL'),
+
+            // Widget and Creator User IDs
+            'widgetId' => $widgetId,
             'userId' => $userId,
-            'widgetId' => $widgetId
+
+            // Availability Schedule Information
+            // Note: Times are converted to the ISO 8601 format because this is compatible with JavaScript
+            'hasScheduledAvailability' => json_encode($widgetAvailabilitySchedule['isActive']),
+            'availabilityStartTime' => ($widgetAvailabilitySchedule['availStart'] 
+                ? $widgetAvailabilitySchedule['availStart']->toIso8601String()
+                : ""),
+            'availabilityEndTime' => ($widgetAvailabilitySchedule['availEnd']
+                ? $widgetAvailabilitySchedule['availEnd']->toIso8601String()
+                : ""),
         ])->withHeaders([
             // Make browsers interpret this as JavaScript
             'Content-Type' => 'application/javascript',
@@ -106,6 +129,40 @@ class WidgetController extends Controller
         return $view->render();
 
         // Reference: https://laracasts.com/discuss/channels/laravel/returning-a-dynamic-compiled-javascript-file-from-a-laravel-route
+    }
+
+    /**
+     * Checks if the present time falls within the widget's availability start and end time.
+     */
+    private function getAvailabilitySchedule($widget) 
+    {    
+        // TODO: Store availability_timezone widget details
+        // Notes: Start time and End time are assumed to be stored in UTC
+        // Their date parts must be the same, suggestion: 1/1/1970
+        
+        // Widget doesn't have a set availability schedule
+        if (!$widget->availability_start_time || !$widget->availability_end_time) {
+            return [
+                'isActive' => false,
+                'availStart' => null,
+                'availEnd' => null
+            ];
+        }
+
+        // Create carbon instances of widget availability schedules
+        $timeZone = $widget->availability_timezone ?? "Asia/Hong_Kong";
+        // Convert both to UTC for uniformity in comparison
+        $availStart = $widget->availability_start_time->setTimezone('UTC');
+        $availEnd = $widget->availability_end_time->setTimezone('UTC');
+        
+        $startTime = Carbon::createFromTime($availStart->hour, $availStart->minute, 0, $timeZone);
+        $endTime = Carbon::createFromTime($availEnd->hour, $availEnd->minute, 0, $timeZone);
+
+        return [
+            'isActive' => true,
+            'availStart' => $startTime,
+            'availEnd' => $endTime
+        ];
     }
 
     public function create()
