@@ -32,8 +32,8 @@
                     >
                         <div class="name">
                             {{ message.fromSelf ? "You" : message.senderName }}
+                            <div class="text">{{ message.content }}</div>
                         </div>
-                        <div class="text">{{ message.content }}</div>
                     </div>
                 </template>
             </div>
@@ -118,11 +118,16 @@ h2 ul li button:hover .tooltiptext{
     justify-content: flex-start;
 }
 .content .messages .message .name {
-    font-size: 12px;
+    font-size: 10px;
+    padding-bottom: 5px;
     color: #fa6121;
+    font-weight: bold;
 }
 .content .messages .message .text {
     word-wrap: break-word;
+    font-size: 14px;
+    color: black;
+    font-weight: normal;
 }
 .content .messages .update {
     text-align: center;
