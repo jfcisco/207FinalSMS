@@ -45,15 +45,7 @@ export class Tawk {
         this.messageContainer = document.createElement('div');
         this.messageContainer.classList.add('hidden', 'message-container');
         
-        // LOGIC FOR AFTER HOURS MESSAGE
-        // TO DO: Make the hardcoded values 7 and 17 editable via the dashboard
-        var now = new Date();
-        var hour = now.getHours();
-        if (hour > 7 && hour <17) {
-            this.createMessageContainerContent();
-        } else {
-            this.createMessageContainerContentAfterHours();
-        }
+        this.checkTime();
 
         container.appendChild(this.messageContainer);
         container.appendChild(buttonContainer);
@@ -278,7 +270,7 @@ export class Tawk {
             if (nameField) nameField.focus();
         } else {
             if (!this.sessionStarted) {
-                this.createMessageContainerContent();
+                this.checkTime();
             }
 
             // TO DO: Need to insert a check if the visitor has already started a conversation.
@@ -335,5 +327,17 @@ export class Tawk {
         this.messageContainer.innerHTML = '<h2>Thanks for your submission.</h2><p class="content">Someone will be in touch with your shortly regarding your enquiry';
         
         console.log(formSubmission);
+    }
+
+    checkTime(){
+        // LOGIC FOR AFTER HOURS MESSAGE
+        // TO DO: Make the hardcoded values 7 and 17 editable via the dashboard
+        var now = new Date();
+        var hour = now.getHours();
+        if (hour > 7 && hour <17) {
+            this.createMessageContainerContent();
+        } else {
+            this.createMessageContainerContentAfterHours();
+        }
     }
 }
