@@ -45,7 +45,15 @@ export class Tawk {
         this.messageContainer = document.createElement('div');
         this.messageContainer.classList.add('hidden', 'message-container');
         
-        this.createMessageContainerContent();
+        // LOGIC FOR AFTER HOURS MESSAGE
+        // TO DO: Make the hardcoded values 7 and 17 editable via the dashboard
+        var now = new Date();
+        var hour = now.getHours();
+        if (hour > 7 && hour <17) {
+            this.createMessageContainerContent();
+        } else {
+            this.createMessageContainerContentAfterHours();
+        }
 
         container.appendChild(this.messageContainer);
         container.appendChild(buttonContainer);
@@ -79,6 +87,36 @@ export class Tawk {
         form.appendChild(space);
         form.appendChild(btn);
         form.addEventListener('submit', this.submit.bind(this));
+
+        this.messageContainer.appendChild(title);
+        this.messageContainer.appendChild(form);
+
+    }
+
+    createMessageContainerContentAfterHours() {
+        this.messageContainer.innerHTML = '';
+        const title = document.createElement('h2');
+        title.textContent = `We're not here, drop us an email`;
+
+        const form = document.createElement('form');
+        form.classList.add('content');
+        const email = document.createElement('input');
+        email.required = true;
+        email.id = 'email';
+        email.type = 'email';
+        email.placeholder = 'Enter your email address';
+
+        const message = document.createElement('textarea');
+        message.required = true;
+        message.id = 'message';
+        message.placeholder = 'Your message';
+ 
+        const btn = document.createElement('button');
+        btn.textContent = 'Submit';
+        form.appendChild(email);
+        form.appendChild(message);
+        form.appendChild(btn);
+        form.addEventListener('submit', this.submitEmail.bind(this));
 
         this.messageContainer.appendChild(title);
         this.messageContainer.appendChild(form);
@@ -204,6 +242,13 @@ export class Tawk {
                 border: 2px;
                 width: 95%;
             }
+            .message-container form textarea {
+                height: 100px;
+                padding: 10px;
+            }
+            .message-container form textarea::placeholder {
+                font-family: 'Raleway', sans-serif;
+            }
             .message-container form button {
                 font-family: 'Raleway', sans-serif;
                 font-weight: bold;
@@ -264,10 +309,11 @@ export class Tawk {
         
         // Set up Vue component
         this.messageContainer.innerHTML = `<chat-widget visitor-name="${formSubmission.name}"></chat-widget>`;
+
         Vue.use(VueChatScroll);
         this.vue = new Vue({
             components: {
-                'chat-widget': require('./ChatWidget.vue').default 
+                'chat-widget': require('./ChatWidget.vue').default
             },
             propsData: {
                 visitorName: formSubmission.name
@@ -277,5 +323,17 @@ export class Tawk {
         // Mount it to message-container
         this.vue.$mount(this.messageContainer);
         this.messageContainer = this.vue.$el;
+    }
+    submitEmail(event) {
+        // TO DO: Send the offline message & email address to the dashboard
+        event.preventDefault();
+        const formSubmission = {
+            email: event.srcElement.querySelector('#email').value, 
+            message: event.srcElement.querySelector('#message').value,
+        };
+
+        this.messageContainer.innerHTML = '<h2>Thanks for your submission.</h2><p class="content">Someone will be in touch with your shortly regarding your enquiry';
+        
+        console.log(formSubmission);
     }
 }
