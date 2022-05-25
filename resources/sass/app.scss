@@ -52,7 +52,7 @@ body{
 
 /* Sidebar links */
 .mainsidebar a {
-  
+
   color: whitesmoke;
   padding: 20px;
   text-decoration: none;
@@ -71,7 +71,7 @@ body{
 /* Active/current link */
 .mainsidebar a.activemenu {
   background-color: #627894;
-  color: whitesmoke;
+  // color: whitesmoke;
 
   border-radius: 10px 0px 0px 10px;
 }
@@ -79,7 +79,7 @@ body{
 /* Links on mouse-over */
 .mainsidebar a:hover:not(.activemenu) {
   background-color: #627894;
-  color: #e9edee;
+  // color: #e9edee;
   border-radius: 10px 0px 0px 10px;
   transition: 0.18s linear;
 }
@@ -120,7 +120,7 @@ body{
   border-radius: 10px;
   box-shadow: inset 0 0 6px rgba(0,0,0,.3);
   background-color: #fa6121;
-  
+
 }
 
 .sidebar .block{
@@ -235,20 +235,13 @@ body{
   border-radius: 10px;
   box-shadow: inset 0 0 6px rgba(0,0,0,.3);
   background-color: #fa6121;
-  
+
 }
 
 
 
-.message{
-	position:  relative;
-	display:  flex;
-	width:  100%;
-	padding: 2px;
-	
-}
 
-.content .messages .message.sent-message{
+.receivedmessage{
 position:  relative;
 	display:  flex;
 	width:  100%;
@@ -256,13 +249,13 @@ position:  relative;
 	color: #466289;
 }
 
-.content .messages .message.received-message{
+.sentmessage{
 position:  relative;
 	display:  flex;
 	width:  100%;
 	padding: 2px;
 	color: #fa6121;
-	
+
 }
 
 
@@ -279,7 +272,7 @@ position:  relative;
 }
 
 .chatbox_input input{
-	
+
 	border:  none;
 	outline:  none;
 	border-radius: 15px;
@@ -295,9 +288,9 @@ position:  relative;
 }
 
 #whisper ::placeholder{
-	
+
 	color: whitesmoke;
-	
+
 }
 
 .whisper{
@@ -379,7 +372,7 @@ position:  relative;
 	border: none;
 	padding:  15px 15px;
 	justify-content: left;
-	
+
 }
 
 .loginbutton{

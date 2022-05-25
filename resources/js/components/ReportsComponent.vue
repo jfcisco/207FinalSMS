@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <!--MAIN SIDE BAR-->
-        <div class="col-lg-1 mainsidebar">
+        <div class="col-lg-2 mainsidebar">
             <a href="/home"
                 ><ion-icon name="mail-outline"></ion-icon
                 ><span class="menutitle">Messaging</span></a
@@ -37,10 +37,10 @@
 
                     </div>
                 </div>
-                <!--INCOMING CHAT BLOCK-->
+                
             </div>
 
-            <!--ACTIVE SESSIONS-->
+            
 
             <div class="row">
                 <p class="subtitle sidebartitle">Historical Analytics</p>
@@ -64,7 +64,7 @@
         </div>
 
         <!--CHAT DISPLAY-->
-        <div class="col-lg-9 mainchat">
+        <div class="col-lg-8 mainchat">
             <div
                 v-for="socketReport in socketReports"
                 :key="socketReport.socketId"
@@ -74,11 +74,93 @@
                     <span>IP Address: {{ socketReport.ipAddress }}</span>
                     <span>Browser: {{ socketReport.browser }}</span>
                     <span>Link to Chat: {{ socketReport.roomId }}</span>
-                    <span>Duration: {{ socketReport.startAt }}</span>
+                    <span>Duration: {{ socketReport.time }}</span>
                 </div>
             </div>
 
             <div class="chat-container">
+                <div class="row">
+                <h1>Live Analytics</h1>
+                <!-- Report Cards and Charts -->
+                <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <div><h5 class="card-title">Visitors  </h5></div><br/>
+                    <div class="row">
+
+                    <div class="col-sm-6">
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Today</h5>
+                          <p class="card-text"><VisitorsToday></VisitorsToday></p>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Chats  </h5><br/>
+                    <div class="row">
+                    <div class="col-sm-6">
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Answered</h5>
+                          <p class="card-text"><AnsweredChat></AnsweredChat></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Missed</h5>
+                          <p class="card-text"><MissedChat></MissedChat></p>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+      <br/>
+      <br/>
+
+      <div class="row">
+            <div class="col-sm-6"> 
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Visitors per hour</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <HourlyVisitor></HourlyVisitor>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6"> 
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Chats per hour</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                    <p>-- Insert Chart Here -- </p>           
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <br/>
+        <br/>
+
                 <h1>Hystorical Analytics</h1>
                 <p>Chat Volume</p>
                 <input type="date" id="start_date_input">
@@ -169,14 +251,27 @@
 
 const client = new cj.ClientJS();
 
+//for localhost testing
+//const socket = io("http://localhost:3000", {
 const socket = io("https://sms-ws.ml:3000", {
     // secure: true,
     autoConnect: false,
 });
 
+import VisitorsToday from './Visuals/VisitorsToday.vue';
+import AnsweredChat from './Visuals/AnsweredChat.vue';
+import MissedChat from './Visuals/MissedChat.vue';
+import axios from 'axios';
+import HourlyVisitor from './Visuals/HourlyVisitor.vue';
+
 export default {
     props: ["user"],
-
+    components:{
+    VisitorsToday,
+    AnsweredChat,
+    MissedChat,
+    HourlyVisitor
+},
     data() {
         return {
             currentUser: this.user,
@@ -185,7 +280,7 @@ export default {
     },
 
     computed: {
-        //
+
     },
 
     created() {
@@ -200,15 +295,27 @@ export default {
         socket.connect();
 
         socket.on("report", ({ report }) => {
-            console.log("report => ", report);
-            // this.chatRooms = rooms;
-            // console.log("chatRooms => ", this.chatRooms);
             this.socketReports.push(report);
-            console.log("look here", this.socketReports);
         });
+        socket.on("report-disconnect", ({ socketId }) => {
+            this.socketReports = this.socketReports.filter(reports => reports.socketId != socketId.socketId);
+        });
+
+        setInterval(()=>{
+            this.timeUpdate();
+        }, 1000);
+
     },
 
     methods: {
+        timeUpdate(){
+            this.socketReports.forEach(function(report){
+                var diff = new Date(new Date() - new Date(report.startAt));
+                //report.time = diff.getUTCHours() + ":" + diff.getMinutes() + ":" + diff.getSeconds();
+                
+                report.time = diff.toISOString().substr(11, 8);
+            });
+        },
         async getChatVolume(start, end) {
             let post = await fetch("/api/reports/chats/daily/", {
                 method: "POST",
