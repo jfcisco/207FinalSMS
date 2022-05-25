@@ -76,6 +76,7 @@
 
           <!-- The message last sent to the room -->
           <div class="message_p">
+              
             <p>last message sent</p>
           </div>
 
@@ -101,7 +102,7 @@
           <div><h4>{{ chatroom.members[0].clientName }}</h4></div>
 
           <!--CHATBOX START-->
-          <div class="chatboxfix" style="overflow-y: scroll; overflow-x: hidden;">
+          <div class="chatboxfix" ref="chatWindow" v-chat-scroll style="overflow-y: scroll; overflow-x: hidden;">
             <ul class="list-unstyled">
 
                 <!-- CHAT MESSAGE LINE START -->
@@ -119,12 +120,12 @@
                     >
                   <!-- <div
                     v-if="message.content.length > 0"
+
                     :class="{
                       sentmessage: message.clientId == user._id,
                       receivedmessage: message.clientId !== user._id,
                       whisper_text: message.isWhisper
-                    }"
-                  > -->
+                    }"> -->
                         <b>{{ message.clientId === user._id ? "You: " : `${chatroom.members[0].clientName}: ` }}</b>
                         {{ message.content }}
 
@@ -178,49 +179,6 @@
 
 
 
-<style scoped>
-/* .attachment {
-    max-width: 15rem;
-} */
-.content .messages {
-    overflow-y: scroll;
-    max-height: 320px;
-    margin-bottom: 5px;
-    /* background-color: #ffffff; */
-    font-family: "Raleway", sans-serif;
-}
-.content .messages .message {
-    display: flex;
-    padding: 10px;
-}
-.content .messages .message > div {
-    max-width: 70%;
-    /* background-color: rgb(150, 145, 145); */
-    background-color: rgb(226, 219, 219);
-    font-weight: 500;
-    box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.05);
-    padding: 10px;
-}
-/*.content .messages .message.sent-message {
-    justify-content: flex-end;
-}
-.content .messages .message.received-message {
-    justify-content: flex-start;
-}*/
-.content .messages .message .name {
-    font-size: 12px;
-    font-weight: 450;
-    color: #fa6121;
-}
-.content .messages .message .text {
-    word-wrap: break-word;
-}
-.content .messages .update {
-    text-align: center;
-    padding: 10px;
-    font-style: italic;
-}
-</style>
 
 <script>
 import FileUploadComponent from "./FileUploadComponent.vue";
@@ -412,16 +370,16 @@ export default {
     },
 
     methods: {
-        // scrollToChatBottom() {
-        //     console.log("scrolling to bottom");
-        //     const chatWindows = this.$refs.chatWindow;
-        //     console.log("chatWindows", chatWindows);
-        //     chatWindows.forEach((window) => {
-        //         window.scrollTop = window.scrollHeight;
-        //         console.log("scrollTop", window.scrollTop);
-        //         console.log("scrollHeight", window.scrollHeight);
-        //     });
-        // },
+        scrollToChatBottom() {
+             console.log("scrolling to bottom");
+             const chatWindows = this.$refs.chatWindow;
+             console.log("chatWindows", chatWindows);
+             chatWindows.forEach((window) => {
+                 window.scrollTop = window.scrollHeight;
+                 console.log("scrollTop", window.scrollTop);
+                 console.log("scrollHeight", window.scrollHeight);
+             });
+        },
         sendMessage() {
 
           console.log("event", event.target.parentElement.id);
@@ -470,7 +428,7 @@ export default {
         // },
         selectRoom: function (roomId) {
             this.activeRoom = roomId;
-            // this.scrollToChatBottom();
+            this.scrollToChatBottom();
         },
 
         // Function to query the database for a certain user
@@ -579,4 +537,6 @@ export default {
         },
     },
 };
+
+
 </script>
