@@ -148,6 +148,7 @@
 
   <!--MAIN CHAT WINDOW START-->
   <div class="col-lg-9 mainchat">
+
     <div
       class="mainchat2"
       v-for="chatroom in chatrooms"
@@ -204,49 +205,39 @@
           </div>
           <!--CHATBOX END-->
       </div>
-
-      <!--MAIN INPUT MESSAGE BOX START-->
-      <div class="chatbox_input" id="message_main" style="display:flex">
-
-        <ion-icon class="whisper" name="volume-high-outline" id="headerToggle1" onclick="toggleheaderleft()"></ion-icon>
-
-        <input
-            @keyup.enter="sendMessage"
-            v-model="message"
-            type="text"
-            name="message"
-            placeholder="Enter your message..."
-            class="form-control"
-        />
-      </div>
-      <!--MAIN INPUT MESSAGE BOX END-->
-
-      <!--WHISPER INPUT MESSAGE BOX START-->
-      <div class="chatbox_input" id="whisper" style="display:none">
-
-        <ion-icon class="whisper2" name="volume-mute-outline" id="headerToggle2" onclick="toggleheaderleft()"></ion-icon>
-
-        <input
-            @keyup.enter="sendMessage"
-            v-model="message"
-            type="text"
-            name="message"
-            placeholder="Enter your message..."
-            class="form-control"
-        />
-
-      </div>
-      <!--WHISPER INPUT MESSAGE BOX END-->
-
     </div>
+
+    <!--MAIN INPUT MESSAGE BOX START-->
+    <div class="chatbox_input" id="message_main" style="display:flex">
+      <ion-icon class="whisper" name="volume-high-outline" id="headerToggle1" onclick="toggleheaderleft()"></ion-icon>
+      <input
+          @keyup.enter="sendMessage"
+          v-model="message"
+          type="text"
+          name="message"
+          placeholder="Enter your message..."
+          class="form-control"/>
+    </div>
+    <!--MAIN INPUT MESSAGE BOX END-->
+
+    <!--WHISPER INPUT MESSAGE BOX START-->
+    <div class="chatbox_input" id="whisper" style="display:none">
+      <ion-icon class="whisper2" name="volume-mute-outline" id="headerToggle2" onclick="toggleheaderleft()"></ion-icon>
+      <input
+          @keyup.enter="sendMessage"
+          v-model="message"
+          type="text"
+          name="message"
+          placeholder="Enter your message..."
+          class="form-control"/>
+    </div>
+    <!--WHISPER INPUT MESSAGE BOX END-->
+
   </div>
-    <!--MAIN CHAT WINDOW END-->
+  <!--MAIN CHAT WINDOW END-->
 
 </div> <!--ROW END-->
 </template>
-
-
-
 
 <script>
 import FileUploadComponent from "./FileUploadComponent.vue";
