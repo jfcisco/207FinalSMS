@@ -150,74 +150,8 @@
 
   <div class="col-lg-9 mainchat">
 
-    <div
-      class="mainchat2"
-      v-for="chatroom in chatrooms"
-      v-show="chatroom._id == activeRoom"
-      :key="chatroom._id">
-
-      <div
-        class="card-body chatmessages roomMessages"
-        v-bind:id="'messages_room' + chatroom._id">
-
-          <!-- JOIN FEATURE AVAILABLE ONLY IF CURRENT USER IS NOT ALREADY ASSIGNED -->
-          <button
-            id="join-btn"
-            style="display: flex"
-            v-if="chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
-            v-on:click="joinRoom(chatroom._id)">
-            JOIN
-          </button>
-
-          <div><h4>{{ chatroom.members[0].clientName }}</h4></div>
-          <div><h5 style="font-weight: 500; font-style: italic;">
-            Assigned:
-            {{
-              chatroom.members
-              .filter(member => member.clientType === "user")
-              .reduce((result, member) => result + `${member.clientName} `,""
-              )
-            }}
-          </h5></div>
-
-          <!--CHATBOX START-->
-          <div class="chatboxfix" ref="chatWindow" v-chat-scroll style="overflow-y: scroll; overflow-x: hidden;">
-            <ul class="list-unstyled">
-
-                <!-- CHAT MESSAGE LINE START -->
-                <li
-                  class="py-2"
-                  v-for="(message, index) in chatroom.messages"
-                  :key="index">
-
-                    <!-- <div
-                      v-if="message.content.length > 0"
-                      :class="{
-                        sentmessage: message.clientId == user._id,
-                        receivedmessage: message.clientId !== user._id,
-                      }"
-                    > -->
-                    <div
-                      v-if="message.content.length > 0"
-
-                      :class="{
-                        sentmessage: message.clientId == user._id,
-                        receivedmessage: message.clientId !== user._id,
-                        whisper_text: message.isWhisper
-                      }"
-                    >
-                        <b>{{ message.clientId === user._id ? "You: " : `${chatroom.members[0].clientName}: ` }}</b>
-                        <p>&nbsp;{{message.content }}</p>
-                    </div>
-                </li>
-                <!-- CHAT MESSAGE LINE END -->
-            </ul>
-          </div>
-          <!--CHATBOX END-->
-      </div>
-    </div>
-
     <!--MAIN INPUT MESSAGE BOX START-->
+    
     <div class="chatbox_input" id="message_main" style="display:flex">
       <ion-icon class="whisper" name="volume-high-outline" id="headerToggle1" onclick="toggleheaderleft()"></ion-icon>
       <input
@@ -242,6 +176,70 @@
           class="form-control"/>
     </div>
     <!--WHISPER INPUT MESSAGE BOX END-->
+
+    <!-- CHAT WINDOW START -->
+    <div
+      class="mainchat2"
+      v-for="chatroom in chatrooms"
+      v-show="chatroom._id == activeRoom"
+      :key="chatroom._id">
+
+      <div
+        class="card-body chatmessages roomMessages"
+        v-bind:id="'messages_room' + chatroom._id">
+
+          <div>
+          <h4>{{ chatroom.members[0].clientName }}</h4>
+          </div>
+          
+          <div class="mb-3"><h5 style="font-weight: 500; font-style: italic;">
+            Assigned:
+            {{
+              chatroom.members
+              .filter(member => member.clientType === "user")
+              .reduce((result, member) => result + `${member.clientName} `,""
+              )
+            }}
+          </h5></div>
+
+          <!--CHATBOX START-->
+          <div class="chatboxfix" ref="chatWindow" v-chat-scroll style="overflow-y: scroll; overflow-x: hidden;">
+            <ul class="list-unstyled">
+
+                <!-- CHAT MESSAGE LINE START -->
+                <li
+                  v-for="(message, index) in chatroom.messages"
+                  :key="index">
+                    <div
+                      v-if="message.content.length > 0"
+
+                      :class="{
+                        sentmessage: message.clientId == user._id,
+                        receivedmessage: message.clientId !== user._id,
+                        whisper_text: message.isWhisper
+                      }"
+                    >
+                        <b>{{ message.clientId === user._id ? "You: " : `${chatroom.members[0].clientName}: ` }}</b>
+                        <p>&nbsp;{{message.content }}</p>
+                    </div>
+                </li>
+                <!-- CHAT MESSAGE LINE END -->
+            </ul>
+          </div>
+          <!--CHATBOX END-->
+          
+          <!-- JOIN FEATURE AVAILABLE ONLY IF CURRENT USER IS NOT ALREADY ASSIGNED -->
+          <button 
+            class="joinbutton"
+            id="join-btn"
+            style="display: flex"
+            v-if="chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
+            v-on:click="joinRoom(chatroom._id)">
+            <span class="joinroom">Click to join room</span>
+          </button>
+      
+      </div>
+    </div>
 
   </div>
   <!--MAIN CHAT WINDOW END-->
