@@ -17,7 +17,9 @@
                 <!--CHAT MESSAGE/CHAT UPDATE-->
                 <template v-for="(message, index) in room.messages">
                     <!-- Check if the message is just an update -->
-                    <div class="update" v-if="message.isUpdate" :key="index">
+                    <div class="update" v-if="message.isUpdate"
+                    v-show="!message.isWhisper"
+                    :key="index">
                         {{ message.content }}
                     </div>
 
