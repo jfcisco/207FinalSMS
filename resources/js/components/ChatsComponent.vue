@@ -179,7 +179,7 @@
                       }"
                     >
                         <b>{{ message.clientId === user._id ? "You: " : `${chatroom.members[0].clientName}: ` }}</b>
-                        {{ message.content }}
+                        <p>&nbsp;{{message.content }}</p>
                     </div>
                 </li>
                 <!-- CHAT MESSAGE LINE END -->
@@ -191,7 +191,7 @@
       <!--MAIN INPUT MESSAGE BOX START-->
       <div class="chatbox_input" id="message_main" style="display:flex">
 
-        <ion-icon class="whisper" name="volume-mute-outline" id="headerToggle" onclick="toggleheaderleft()"></ion-icon>
+        <ion-icon class="whisper" name="volume-high-outline" id="headerToggle1" onclick="toggleheaderleft()"></ion-icon>
 
         <input
             @keyup.enter="sendMessage"
@@ -207,7 +207,7 @@
       <!--WHISPER INPUT MESSAGE BOX START-->
       <div class="chatbox_input" id="whisper" style="display:none">
 
-        <ion-icon class="whisper2" name="volume-high-outline" id="headerToggle" onclick="toggleheaderleft()"></ion-icon>
+        <ion-icon class="whisper2" name="volume-mute-outline" id="headerToggle2" onclick="toggleheaderleft()"></ion-icon>
 
         <input
             @keyup.enter="sendMessage"
@@ -517,28 +517,31 @@ export default {
       event.preventDefault();
       this.selectRoom(roomId);
 
-      // delete
+      // delete this
       console.log("currentUser", this.currentUser)
       let foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
       console.log("found chatroom before joining", ({"_id": foundRoom["_id"], "members": foundRoom["members"], "messages": foundRoom["messages"]}))
+      // delete this
 
       let confirmAction = confirm("Are you sure you want to join this room?");
 
       // join the selected room
       if (confirmAction) {
-        let found = this.getTargetRoomIndex(roomId);
-
+        this.joinRoom(roomId)
         alert("Successfully joined this room")
-        // test code for testing ui of joining an incoming room
-        this.chatrooms[found].members.push(
-          {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
-        )
-        console.log("found chatroom after joining", this.chatrooms[found])
-
-        // insert socket.io code for joining a room
-        // socket.emit("join", { roomId: room._id, name: this.currentUser.name });
-
       }
+    },
+
+    joinRoom: function(roomId) {
+      let found = this.getTargetRoomIndex(roomId);
+
+      this.chatrooms[found].members.push(
+          {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
+      )
+      console.log("found chatroom after joining", this.chatrooms[found])
+
+      // insert socket.io code for joining a room
+      // socket.emit("join", { roomId: room._id, name: this.currentUser.name });
     },
 
     // Function to query the database for a certain user
