@@ -59,7 +59,7 @@
           <!--room id/username section-->
           <!-- The message last sent to the room -->
           <div class="message_p">
-            <p>last message sent</p>
+            <p>last message: {{ chatroom.messages[chatroom.messages.length - 1].content }}</p>
           </div>
           <!-- The message last sent to the room -->
 
@@ -118,7 +118,7 @@
 
           <!-- The message last sent to the room -->
           <div class="message_p">
-            <p>last message sent</p>
+            <p>last message: {{ chatroom.messages[chatroom.messages.length - 1].content }}</p>
           </div>
         </div>
 
