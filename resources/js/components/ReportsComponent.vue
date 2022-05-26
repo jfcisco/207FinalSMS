@@ -87,42 +87,45 @@
 
         <!--CHAT DISPLAY-->
         <div class="col-lg-8 mainchat">
-            <div
-                v-for="socketReport in socketReports"
-                :key="socketReport.socketId"
-            >
-                <div>
-                    <span>Socket ID: {{ socketReport.socketId }}</span>
-                    <span>IP Address: {{ socketReport.ipAddress }}</span>
-                    <span>Browser: {{ socketReport.browser }}</span>
-                    <span>Website: {{ socketReport.fromURL }}</span>
-                    <span>Link to Chat: {{ socketReport.roomId }}</span>
-                    <span>Duration: {{ socketReport.time }}</span>
-                </div>
-            </div>
+
 
             <div class="chat-container">
                 <div class="row">
                 <h1>Live Analytics</h1>
-                <!-- Report Cards and Charts -->
-                <div class="col-sm-6">
-              <div class="card">
-                <div class="card-body">
-                  <div><h5 class="card-title">Visitors  </h5></div><br/>
-                    <div class="row">
-
-                    <div class="col-sm-6">
-                      <div class="card">
-                        <div class="card-body">
-                          <h5 class="card-title">Today</h5>
-                          <p class="card-text"><VisitorsToday></VisitorsToday></p>
+                <div>
+                    <div><h5 class="card-title">Live Session  </h5></div>
+                    <div
+                        v-for="socketReport in socketReports"
+                        :key="socketReport.socketId"
+                    >
+                        <div>
+                            <span>Socket ID: {{ socketReport.socketId }}</span>
+                            <span>IP Address: {{ socketReport.ipAddress }}</span>
+                            <span>Browser: {{ socketReport.browser }}</span>
+                            <span>Website: {{ socketReport.fromURL }}</span>
+                            <span>Link to Chat: {{ socketReport.roomId }}</span>
+                            <span>Duration: {{ socketReport.time }}</span>
                         </div>
-                      </div>
+                    </div>                    
+                </div>
+                <!-- Report Cards and Charts -->
+                <div class="col-sm-6">                  
+                    <div class="card">
+                        <div class="card-body">
+                            <div><h5 class="card-title">Visitors  </h5></div><br/>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Today</h5>
+                                            <p class="card-text"><VisitorsToday></VisitorsToday></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
-              </div>
-            </div>
             <div class="col-sm-6">
               <div class="card">
                 <div class="card-body">
@@ -275,8 +278,8 @@
 const client = new cj.ClientJS();
 
 //for localhost testing
-//const socket = io("http://localhost:3000", {
-const socket = io("https://sms-ws.ml:3000", {
+const socket = io("http://localhost:3000", {
+//const socket = io("https://sms-ws.ml:3000", {
     //secure: true,
     autoConnect: false,
 });
@@ -333,9 +336,7 @@ export default {
     methods: {
         timeUpdate(){
             this.socketReports.forEach(function(report){
-                var diff = new Date(new Date() - new Date(report.startAt));
-                //report.time = diff.getUTCHours() + ":" + diff.getMinutes() + ":" + diff.getSeconds();
-                
+                var diff = new Date(new Date() - new Date(report.startAt));                
                 report.time = diff.toISOString().substr(11, 8);
             });
         },
