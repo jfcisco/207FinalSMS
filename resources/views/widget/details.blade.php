@@ -230,9 +230,6 @@
                     <div class="col-4">
                         <button type="submit" class="btn btn-light w-100">Save Changes</button>
                     </div>
-                    <div class="col-4">
-                        <input type="reset" value="Reset" class="btn btn-dark w-100">
-                    </div>
                 </div>
                 @endif
             </form>
