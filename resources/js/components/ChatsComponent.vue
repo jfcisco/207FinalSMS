@@ -54,12 +54,20 @@
             <p>{{ chatroom.members[0].clientName }}</p>
           </div>
           <div class="listHead">
-            <p>Incoming user: {{ chatroom._id }}</p>
+            <p>room._id: {{ chatroom._id }}</p>
           </div>
           <!--room id/username section-->
           <!-- The message last sent to the room -->
           <div class="message_p">
-            <p>last message: {{ chatroom.messages[chatroom.messages.length - 1].content }}</p>
+            <p>
+              {{
+                `${
+                  chatroom.members
+                  .filter(member => member.clientId === chatroom.messages[chatroom.messages.length - 1].clientId)
+                  [0].clientName
+                }: `
+              }}
+              {{ chatroom.messages[chatroom.messages.length - 1].content }}</p>
           </div>
           <!-- The message last sent to the room -->
 
@@ -118,7 +126,16 @@
 
           <!-- The message last sent to the room -->
           <div class="message_p">
-            <p>last message: {{ chatroom.messages[chatroom.messages.length - 1].content }}</p>
+            <p>
+              {{
+                `${
+                  chatroom.members
+                  .filter(member => member.clientId === chatroom.messages[chatroom.messages.length - 1].clientId)
+                  [0].clientName
+                }: `
+              }}
+              {{ chatroom.messages[chatroom.messages.length - 1].content }}
+            </p>
           </div>
         </div>
 
