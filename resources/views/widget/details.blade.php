@@ -95,41 +95,16 @@
     
                     <div class="col-lg-6">
                         <h4 class="chat-subheader">Scheduler</h4> 
-                        <div class="widget-block">
-                            <label class="chat-label">Time Zone</label>  
-                            <select name="availability_timezone" id="time-zone" class="form-select form-control-widget-full">
-                                <option disabled
-                                @if (!old('availability_timezone', $currentWidget->availability_timezone))
-                                selected="selected"
-                                @endif
-                                >
-                                    -- Select a timezone --
-                                </option>
-                                @foreach ($timezones as $region => $list)
-                                    <optgroup label="{{$region}}">
-                                        @foreach ($list as $timezone => $name)
-                                            <option value="{{$timezone}}"
-                                                @if ($timezone === old('availability_timezone', $currentWidget->availability_timezone))
-                                                selected="selected"
-                                                @endif
-                                            >
-                                                {{$name}}
-                                            </option>
-                                        @endforeach
-                                    </optgroup>
-                                @endforeach
-                            </select>
-                        </div>
+                        {{-- Custom scheduler component  --}}
+                        <widget-scheduler-picker
+                            :timezones="{{json_encode($timezones)}}"
 
-                        <div class="widget-block">
-                            <label class="chat-label" for="availability-start-time">Start Time</label>
-                            <input class="form-control form-control-widget-full" type="time" name="availability_start_time" id="availability-start-time" value="{{ $currentWidget->availability_start_time ? $currentWidget->availability_start_time->setTimezone('UTC')->format('H:i') : "" }}">
-                        </div>
-    
-                        <div class="widget-block">
-                            <label class="chat-label" for="availability-end-time">End Time</label>
-                            <input class="form-control form-control-widget-full" type="time" name="availability_end_time" id="availability-end-time" value="{{ $currentWidget->availability_end_time ? $currentWidget->availability_end_time->setTimezone('UTC')->format('H:i') : "" }}">
-                        </div>
+                            initial-selected-timezone="{{old('availability_timezone', $currentWidget->availability_timezone)}}"
+                            
+                            initial-start-time="{{ $currentWidget->availability_start_time ? $currentWidget->availability_start_time->setTimezone('UTC')->format('H:i') : "" }}"
+
+                            initial-end-time="{{ $currentWidget->availability_end_time ? $currentWidget->availability_end_time->setTimezone('UTC')->format('H:i') : "" }}"
+                        ></widget-scheduler-picker>
                     </div>
                 </div>
     

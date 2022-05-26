@@ -30,7 +30,7 @@ Vue.component('MissedChat', require('./components/Visuals/MissedChat.vue').defau
 Vue.component('HourlyVisitor', require('./components/Visuals/HourlyVisitor.vue').default);
 Vue.component('profile-edit-form', require('./components/ProfileUpdateComponent.vue').default);
 Vue.component('vue-multiselect', window.VueMultiselect.default)
-
+Vue.component('widget-scheduler-picker', require('./components/WidgetSchedulePicker.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
