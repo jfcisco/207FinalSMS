@@ -22,25 +22,26 @@
   <div class="col-lg-2 sidebar" style="overflow-y: scroll">
 
     <!--INCOMING SESSIONS SECTION START-->
+
     <div class="row py-0 mt-0">
       <p class="subtitle">Incoming Sessions</p>
 
       <!--INCOMING CHAT BLOCK START-->
-        <div class="block incoming">
-          <div class="details">
+      <div class="block incoming">
+        <div class="details">
 
-            <!--room id/username section-->
-            <div class="listHead">
-              <p>Incoming user</p>
-            </div>
-            <!--room id/username section-->
-            <!-- The message last sent to the room -->
-            <div class="message_p">
-              <p>last message sent</p>
-            </div>
-            <!-- The message last sent to the room -->
+          <!--room id/username section-->
+          <div class="listHead">
+            <p>Incoming user</p>
           </div>
+          <!--room id/username section-->
+          <!-- The message last sent to the room -->
+          <div class="message_p">
+            <p>last message sent</p>
+          </div>
+          <!-- The message last sent to the room -->
         </div>
+      </div>
       <!--INCOMING CHAT BLOCK END-->
 
     </div>
@@ -48,6 +49,7 @@
 
     <!--ACTIVE SESSIONS START-->
     <div class="row">
+
       <p class="subtitle sidebartitle">Active Sessions</p>
 
       <!--ACTIVE CHAT BLOCK START-->
@@ -57,12 +59,14 @@
           active: chatroom._id == activeRoom,
         }"
         v-for="chatroom in chatrooms"
-        :key="chatroom._id">
+        :key="chatroom._id"
+      >
 
         <div
           class="details"
           v-on:click="selectRoom(chatroom._id)"
-          v-bind:id="chatroom._id">
+          v-bind:id="chatroom._id"
+        >
 
           <!--room id/username section-->
           <div class="listHead">
@@ -76,13 +80,13 @@
 
           <!-- The message last sent to the room -->
           <div class="message_p">
-
             <p>last message sent</p>
           </div>
-
         </div>
+
       </div>
       <!--ACTIVE CHAT BLOCK END-->
+
     </div>
   </div>
   <!--MESSAGE LISTS END-->
