@@ -260,124 +260,21 @@ export default {
     };
   },
 
-  computed: {
-    activeRoomDetails: function () {
-      const activeRoomResult = this.chatrooms.filter(
-        (room) => room._id == this.activeRoom
-      );
+  // computed: {
+  //   activeRoomDetails: function () {
+  //     const activeRoomResult = this.chatrooms.filter(
+  //       (room) => room._id == this.activeRoom
+  //     );
 
-      if (activeRoomResult.length === 0) {
-        return null;
-      } else {
-        return activeRoomResult[0];
-      }
-    },
-  },
+  //     if (activeRoomResult.length === 0) {
+  //       return null;
+  //     } else {
+  //       return activeRoomResult[0];
+  //     }
+  //   },
+  // },
 
   created() {
-    // this.fetchChatrooms();
-    // Echo.join("chat")
-    //   .here((user) => {
-    //     this.users = user;
-    //     this.fetchMessages();
-    //   })
-    //   .joining((user) => {
-    //     this.users.push(user);
-    //   })
-    //   .leaving((user) => {
-    //     this.users = this.users.filter((u) => u.id != user.id);
-    //   })
-    //   .listen(".chatroom.created", (event) => {
-    //     // Add the chatroom created to the user's list of chatrooms
-
-    //     // Only if they're a member of the chatroom
-    //     if (
-    //       event.chatRoom.members.some(
-    //         (member) => member.id === this.$props.user.id
-    //       )
-    //     ) {
-    //       this.chatrooms.unshift({
-    //         room_id: event.chatRoom.room_id,
-    //         room_name: event.chatRoom.room_name,
-    //       });
-
-    //       this.roomMsgs.unshift({
-    //         room_id: event.chatRoom.room_id,
-    //         room_name: event.chatRoom.room_name,
-    //         messages: [],
-    //       });
-    //     }
-    //   })
-    //   .listen(".message", (event) => {
-    //     //check which room the message goes
-    //     let found = this.getTargetRoomIndex(event.room_id);
-    //     if (
-    //       event.room_name == "" &&
-    //       found == null &&
-    //       event.new_member != this.user.id
-    //     ) {
-    //       //no one is being added and user doesn't have the room
-    //       //message is not for the user
-    //       return;
-    //     } else if (
-    //       event.room_name != "" &&
-    //       found == null &&
-    //       event.new_member == this.user.id
-    //     ) {
-    //       //user is being added to the room
-    //       this.chatrooms.unshift({
-    //         room_id: event.room_id,
-    //         room_name: event.room_name,
-    //       });
-    //       this.roomMsgs.unshift({
-    //         room_id: event.room_id,
-    //         room_name: event.room_name,
-    //         messages: [],
-    //       });
-    //       //this.activeRoom = event.room_id;
-    //       found = this.getTargetRoomIndex(event.room_id);
-    //     }
-
-    //     if (found != null) {
-    //       //put the new message received in the right room
-    //       let newMessage = {
-    //         user: event.user,
-    //         message: event.message,
-    //       };
-    //       console.log("Event");
-    //       console.log(event);
-    //       console.log("New Message");
-    //       console.log(newMessage);
-
-    //       // Check if incoming has an attachment
-    //       if (event.attachment_path) {
-    //         newMessage.attachment_path = event.attachment_path;
-    //       }
-
-    //       this.roomMsgs[found].messages.push(newMessage);
-    //       //move up the room with the new message
-    //       let found2 = null;
-    //       for (const indx in this.chatrooms) {
-    //         if (this.chatrooms[indx].room_id == event.room_id) {
-    //           found2 = indx;
-    //         }
-    //       }
-    //       let room = this.chatrooms[found2];
-    //       this.chatrooms.splice(found2, 1);
-    //       this.chatrooms.unshift(room);
-    //     }
-    //   })
-    //   .listenForWhisper("typing", (user) => {
-    //     this.activeUser = user;
-
-    //     if (this.typingTimer) {
-    //       clearTimeout(this.typingTimer);
-    //     }
-
-    //     this.typingTimer = setTimeout(() => {
-    //       this.activeUser = false;
-    //     }, 3000);
-    //   });
 
     socket.auth = {
       // // For visitors
@@ -388,7 +285,7 @@ export default {
 
       // For admin/agent
       clientId: this.user._id,
-      clientName: "agentako",
+      clientName: `${this.currentUser.name}`,
       clientType: "user",
     };
 
@@ -425,10 +322,10 @@ export default {
       console.log("chatRooms => ", this.chatrooms.map(room => ({ 'chatroom._id': room._id, 'chatroom.members.length': room.members.length, 'chatroom.messages': room.messages })));
 
       // join all rooms in chatrooms
-      this.chatrooms.forEach((room) => {
-        socket.emit("join", { roomId: room._id, name: this.currentUser.name });
+      // this.chatrooms.forEach((room) => {
+        // socket.emit("join", { roomId: room._id, name: this.currentUser.name });
         // console.log("roomId", room._id, "name", this.currentUser.name, "members", room.members);
-      });
+      // });
     });
 
     socket.on("message", (message) => {
@@ -469,12 +366,14 @@ export default {
         // reference is message 27, content: ww, clientId: "1659239814", clientType: visitor | clientName: Jasper
         // reference is message 2, content: "hi!", clientId: "628ccfce68a859a97208ccfe", clientType: "user"
         // whisper message 51 and 52, clientType: "user"
+        socket.emit("whisper", newMessage);
+      } else {
+        socket.emit("message", newMessage);
       }
 
       console.log("newMessage2=> ", newMessage);
 
-      // Send to socket server
-      socket.emit("message", newMessage);
+
 
       // Add message to UI
       let found = this.getTargetRoomIndex(this.activeRoom);
@@ -541,7 +440,7 @@ export default {
       console.log("found chatroom after joining", this.chatrooms[found])
 
       // insert socket.io code for joining a room
-      // socket.emit("join", { roomId: room._id, name: this.currentUser.name });
+      socket.emit("join", { roomId: roomId, name: this.currentUser.name });
     },
 
     // Function to query the database for a certain user
