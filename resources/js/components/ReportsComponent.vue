@@ -187,7 +187,7 @@
         <br/>
         <br/>
 
-                <h1>Hystorical Analytics</h1>
+                <h1>Historical Analytics</h1>
                 <p>Chat Volume</p>
                 <input type="date" id="start_date_input">
                 <input type="date" id="end_date_input">
@@ -341,7 +341,7 @@ export default {
             });
         },
         async getChatVolume(start, end) {
-            let post = await fetch("/api/reports/chats/daily/", {
+            let post = await fetch("/api/reports/chats/daily", {
                 method: "POST",
                 body: {
                     "start_date": start,
