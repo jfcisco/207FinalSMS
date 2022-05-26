@@ -147,7 +147,14 @@
   <!--MESSAGE LISTS END-->
 
   <!--MAIN CHAT WINDOW START-->
+
   <div class="col-lg-9 mainchat">
+    <!-- JOIN FEATURE AVAILABLE ONLY IF CURRENT USER IS NOT ALREADY ASSIGNED -->
+    <!-- <button
+      id="join-btn"
+      style="display: flex"
+      v-on:click="joinRoom(activeRoom)"> -->
+
 
     <div
       class="mainchat2"
@@ -158,6 +165,14 @@
       <div
         class="card-body chatmessages roomMessages"
         v-bind:id="'messages_room' + chatroom._id">
+
+          <button
+            id="join-btn"
+            style="display: flex"
+            v-if="chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
+            v-on:click="joinRoom(chatroom._id)">
+            Join
+          </button>
 
           <div><h4>{{ chatroom.members[0].clientName }}</h4></div>
           <div><h5 style="font-weight: 500; font-style: italic;">
@@ -435,17 +450,28 @@ export default {
       // join the selected room
       if (confirmAction) {
         this.joinRoom(roomId)
-        alert("Successfully joined this room")
+        alert("Successfully joined this room");
       }
     },
 
     joinRoom: function(roomId) {
-      let found = this.getTargetRoomIndex(roomId);
 
-      this.chatrooms[found].members.push(
+      let foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
+
+      // check if currentUser is already a member of foundRoom
+      if (foundRoom.members.filter(member => member.clientId === this.currentUser._id).length === 0 ) {
+        console.log("currently not a member");
+        // return;
+      }
+
+      // not used
+      // const joinBtnEl = document.getElementById("join-btn");
+      // joinBtnEl.style.display = "none";
+
+      foundRoom.members.push(
           {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
       )
-      console.log("found chatroom after joining", this.chatrooms[found])
+      console.log("found chatroom after joining", this.chatrooms[foundRoom])
 
       // insert socket.io code for joining a room
       socket.emit("join", { roomId: roomId, name: this.currentUser.name });
