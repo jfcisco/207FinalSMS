@@ -27,12 +27,34 @@
       <p class="subtitle">Incoming Sessions</p>
 
       <!--INCOMING CHAT BLOCK START-->
-      <div class="block incoming">
-        <div class="details">
-
+      <!-- <div
+        class="block incoming"
+        v-for="chatroom in chatrooms"
+        :key="chatroom._id"
+      > -->
+      <div
+        class="block incoming"
+        :class="{
+          block: true,
+          active: chatroom._id == activeRoom,
+          incoming: chatroom.members.length === 1
+        }"
+        v-for="chatroom in chatrooms"
+        v-show="chatroom.members.length === 1"
+        :key="chatroom._id"
+      >
+        <div
+          class="details"
+          v-on:click="selectIncomingRoom(chatroom._id)"
+          v-bind:id="chatroom._id"
+        >
           <!--room id/username section-->
+          <!-- start here -->
           <div class="listHead">
-            <p>Incoming user</p>
+            <p>{{ chatroom.members[0].clientName }}</p>
+          </div>
+          <div class="listHead">
+            <p>Incoming user: {{ chatroom._id }}</p>
           </div>
           <!--room id/username section-->
           <!-- The message last sent to the room -->
@@ -40,6 +62,7 @@
             <p>last message sent</p>
           </div>
           <!-- The message last sent to the room -->
+
         </div>
       </div>
       <!--INCOMING CHAT BLOCK END-->
@@ -65,6 +88,7 @@
         <div
           class="details"
           v-on:click="selectRoom(chatroom._id)"
+          v-if="chatroom.members.length > 1"
           v-bind:id="chatroom._id"
         >
 
@@ -349,14 +373,33 @@ export default {
 
     socket.on("rooms", ({ rooms }) => {
       console.log("socket.on rooms")
-      console.log("rooms => ", rooms);
+      console.log("rooms full data=> ", rooms)
+      console.log("rooms mod data=> ", rooms.map(room => ({ 'room._id': room._id, 'room.members.length': room.members.length, 'room.messages': room.messages })));
 
       this.chatrooms = _.unionBy(
         rooms,
         this.chatrooms,
         (room) => room._id,
       );
-      console.log("chatRooms => ", this.chatrooms);
+
+      // add test data for incoming room | only 1 member of room w/ clientType: visitor
+      this.chatrooms.push({
+        _id: "54321",
+        members: [
+          {clientId: "1234", clientName: "test-incoming-visitor", clientType: "visitor"}
+        ],
+        messages: [
+          {_id: "123", clientId: "1234", clientType: "visitor", content: "test-msg", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+          {_id: "1234", clientId: "1234", clientType: "visitor", content: "test-msg2", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+          {_id: "12345", clientId: "1234", clientType: "visitor", content: "test-msg3", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+          {_id: "123456", clientId: "1234", clientType: "visitor", content: "test-msg4", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+          {_id: "1234567", clientId: "1234", clientType: "visitor", content: "test-msg5", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+          {_id: "12345678", clientId: "1234", clientType: "visitor", content: "test-msg6", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+
+        ],
+      })
+
+      console.log("chatRooms => ", this.chatrooms.map(room => ({ 'chatroom._id': room._id, 'chatroom.members.length': room.members.length, 'chatroom.messages': room.messages })));
 
       // join all rooms in chatrooms
       this.chatrooms.forEach((room) => {
@@ -444,6 +487,35 @@ export default {
     selectRoom: function (roomId) {
       this.activeRoom = roomId;
       this.scrollToChatBottom();
+    },
+
+    selectIncomingRoom: function (roomId) {
+      // console.log("incoming block div of chatroom ", document.getElementById(`${roomId}`).parentElement)
+      event.preventDefault();
+      this.selectRoom(roomId);
+
+      // delete
+      console.log(this.currentUser)
+      let foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
+      console.log("found chatroom before joining", ({"_id": foundRoom["_id"], "members": foundRoom["members"], "messages": foundRoom["messages"]}))
+
+      let confirmAction = confirm("Are you sure you want to join this room?");
+
+      // join the selected room
+      if (confirmAction) {
+        let found = this.getTargetRoomIndex(roomId);
+
+        alert("Successfully joined this room")
+        // test code for testing ui of joining a room
+        this.chatrooms[found].members.push(
+          {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
+        )
+        console.log("found chatroom after joining", this.chatrooms[found])
+
+        // insert socket.io code for joining a room
+        // socket.emit("join", { roomId: room._id, name: this.currentUser.name });
+
+      }
     },
 
     // Function to query the database for a certain user
