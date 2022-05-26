@@ -102,6 +102,20 @@
           </div>
           <!-- delete in the future -->
 
+          <!-- assigned room users (Admin/Agent) -->
+          <div class="listHead">
+            <p style="font-weight: 500; font-style: italic;">
+              Assigned:
+              {{
+                chatroom.members
+                .filter(member => member.clientType === "user")
+                .reduce((result, member) => result + `${member.clientName} `,""
+                )
+              }}
+            </p>
+          </div>
+          <!-- assigned room users (Admin/Agent) -->
+
           <!-- The message last sent to the room -->
           <div class="message_p">
             <p>last message sent</p>
@@ -128,6 +142,15 @@
         v-bind:id="'messages_room' + chatroom._id">
 
           <div><h4>{{ chatroom.members[0].clientName }}</h4></div>
+          <div><h5 style="font-weight: 500; font-style: italic;">
+            Assigned:
+            {{
+              chatroom.members
+              .filter(member => member.clientType === "user")
+              .reduce((result, member) => result + `${member.clientName} `,""
+              )
+            }}
+          </h5></div>
 
           <!--CHATBOX START-->
           <div class="chatboxfix" ref="chatWindow" v-chat-scroll style="overflow-y: scroll; overflow-x: hidden;">
@@ -495,7 +518,7 @@ export default {
       this.selectRoom(roomId);
 
       // delete
-      console.log(this.currentUser)
+      console.log("currentUser", this.currentUser)
       let foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
       console.log("found chatroom before joining", ({"_id": foundRoom["_id"], "members": foundRoom["members"], "messages": foundRoom["messages"]}))
 
@@ -506,7 +529,7 @@ export default {
         let found = this.getTargetRoomIndex(roomId);
 
         alert("Successfully joined this room")
-        // test code for testing ui of joining a room
+        // test code for testing ui of joining an incoming room
         this.chatrooms[found].members.push(
           {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
         )
