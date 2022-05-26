@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <!--MAIN SIDE BAR-->
-        <div class="col-lg-2 mainsidebar">
+        <div class="col-lg-1 mainsidebar">
             <a href="/home"
                 ><ion-icon name="mail-outline"></ion-icon
                 ><span class="menutitle">Messaging</span></a
@@ -27,14 +27,24 @@
 
 
                 <div class="block">
+                    <div class="details">                    
+                        <div class="listHead">
+                            <p>Live Sessions</p>
+                        </div>    
+                    </div>
+                </div>
+                <div class="block">
                     <div class="details">
-                        <div class="listdead">
+                        <div class="listHead">
                             <p>Live Visitors</p>
                         </div>
-                        <div class="listdead">
+                    </div>
+                </div>
+                <div class="block">                    
+                    <div class="details">                     
+                        <div class="listHead">
                             <p>Live Chats</p>
-                        </div>                        
-
+                        </div>             
                     </div>
                 </div>
                 
@@ -46,16 +56,28 @@
                 <p class="subtitle sidebartitle">Historical Analytics</p>
                 <div class="block">
                     <div class="details">
-                        <div class="listdead">
+                        <div class="listHead">
                             <p>Chat Volume</p>
                         </div>
-                        <div class="listdead">
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="details">
+                        <div class="listHead">
                             <p>Missed Chats</p>
-                        </div>                        
-                        <div class="listdead">
+                        </div>
+                    </div>
+                </div>
+                <div class="block">                    
+                    <div class="details">                                                
+                        <div class="listHead">
                             <p>Offline Messages</p>
                         </div>
-                        <div class="listdead">
+                    </div>
+                </div>
+                <div class="block">                    
+                    <div class="details">                        
+                        <div class="listHead">
                             <p>Average Chat Duration</p>
                         </div>                          
                     </div>
@@ -73,6 +95,7 @@
                     <span>Socket ID: {{ socketReport.socketId }}</span>
                     <span>IP Address: {{ socketReport.ipAddress }}</span>
                     <span>Browser: {{ socketReport.browser }}</span>
+                    <span>Website: {{ socketReport.fromURL }}</span>
                     <span>Link to Chat: {{ socketReport.roomId }}</span>
                     <span>Duration: {{ socketReport.time }}</span>
                 </div>
@@ -254,7 +277,7 @@ const client = new cj.ClientJS();
 //for localhost testing
 //const socket = io("http://localhost:3000", {
 const socket = io("https://sms-ws.ml:3000", {
-    // secure: true,
+    //secure: true,
     autoConnect: false,
 });
 
