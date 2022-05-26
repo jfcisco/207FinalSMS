@@ -90,13 +90,13 @@
           active: chatroom._id == activeRoom,
         }"
         v-for="chatroom in chatrooms"
+        v-show="chatroom.members.length > 1"
         :key="chatroom._id"
       >
 
         <div
           class="details"
           v-on:click="selectRoom(chatroom._id)"
-          v-if="chatroom.members.length > 1"
           v-bind:id="chatroom._id"
         >
 
@@ -149,12 +149,6 @@
   <!--MAIN CHAT WINDOW START-->
 
   <div class="col-lg-9 mainchat">
-    <!-- JOIN FEATURE AVAILABLE ONLY IF CURRENT USER IS NOT ALREADY ASSIGNED -->
-    <!-- <button
-      id="join-btn"
-      style="display: flex"
-      v-on:click="joinRoom(activeRoom)"> -->
-
 
     <div
       class="mainchat2"
@@ -166,12 +160,13 @@
         class="card-body chatmessages roomMessages"
         v-bind:id="'messages_room' + chatroom._id">
 
+          <!-- JOIN FEATURE AVAILABLE ONLY IF CURRENT USER IS NOT ALREADY ASSIGNED -->
           <button
             id="join-btn"
             style="display: flex"
             v-if="chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
             v-on:click="joinRoom(chatroom._id)">
-            Join
+            JOIN
           </button>
 
           <div><h4>{{ chatroom.members[0].clientName }}</h4></div>
@@ -471,7 +466,7 @@ export default {
       foundRoom.members.push(
           {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
       )
-      console.log("found chatroom after joining", this.chatrooms[foundRoom])
+      console.log("found chatroom after joining", foundRoom)
 
       // insert socket.io code for joining a room
       socket.emit("join", { roomId: roomId, name: this.currentUser.name });
