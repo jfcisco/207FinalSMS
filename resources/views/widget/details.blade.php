@@ -45,16 +45,16 @@
     
                         <div class="widget-block">
                             <label class="chat-label" for="widget-status">Widget Status</label>
-                            <input class="form-control form-control-widget-full" type="text" name="widget-status" id="widget-status"  checked="{{ $currentWidget->is_active }}">
+                            <input class="form-control form-control-widget-full" type="text" name="widget-status" id="widget-status" value="Enabled">
                         </div>
                         <div class="widget-block">
                             <label class="chat-label" for="widget-id">Widget ID</label>
                             <input class="form-control form-control-widget-full" type="text" name="widget-id" id="widget-id" readonly value="{{ $currentWidget->_id }}">
                         </div>
-                        <div class="widget-block">
+                        {{-- <div class="widget-block">
                             <label class="chat-label" for="chat-link">Direct Chat Link</label>
                             <input class="form-control form-control-widget-full" type="text" name="chat-link" id="chat-link" readonly value="{{ $currentWidget->_id }}">
-                        </div>
+                        </div> --}}
                     </div>
     
                     <div class="col-lg-5">
@@ -78,12 +78,11 @@
     
                 
                 <div class="row">
-                    
-                    <div class="col-lg-5">
+                    {{-- <div class="col-lg-5">
                     <h4 class="chat-subheader">Widget Appearance</h4> 
                         <div class="widget-block">
                             <label class="chat-label">Widget Color</label>  
-                            <input class="form-control form-control-widget-full" type="text" name="widget-color" id="widget-color" readonly value="{{ $currentWidget->_id }}">
+                            <input class="form-control form-control-color form-control-widget-full" type="color" name="widget-color" id="widget-color" readonly>
     
                         </div>
     
@@ -91,9 +90,9 @@
                             <label class="chat-label">Language</label>  
                             <input class="form-control form-control-widget-full" type="text" name="widget-color" id="widget-color" readonly value="{{ $currentWidget->_id }}">
                         </div>
-                    </div>
+                    </div> --}}
     
-                    <div class="col-lg-6">
+                    <div class="col-lg-5">
                         <h4 class="chat-subheader">Scheduler</h4> 
                         {{-- Custom scheduler component  --}}
                         <widget-scheduler-picker
@@ -106,13 +105,10 @@
                             initial-end-time="{{ $currentWidget->availability_end_time ? $currentWidget->availability_end_time->setTimezone('UTC')->format('H:i') : "" }}"
                         ></widget-scheduler-picker>
                     </div>
-                </div>
-    
-                
-                <div class="row">
-                    <h4 class="chat-subheader">Widget Behavior</h4> 
-    
+
+                    {{-- Widget Behavior Settings --}}
                     <div class="col-lg-6">
+                        <h4 class="chat-subheader">Widget Behavior</h4> 
                         <div class="widget-block">
                             <label class="chat-label" for="visiibility-settings">Visibility Settings</label>
                         </div>
@@ -121,25 +117,37 @@
     
                         <div class="widget-block">
                             <label class="switch">
-                                <input type="checkbox">
+                                <input disabled type="checkbox" value="hide-widget-offline"
+                                    @if ($currentWidget->hide_when_offline)
+                                        checked
+                                    @endif
+                                >
                                 <span class="slider round"></span>
                             </label> 
-                            <span class="chat-label">Option</span>
+                            <span class="chat-label">Hide widget when offline</span>
     
                             <label class="switch">
-                                <input type="checkbox">
+                                <input disabled type="checkbox"
+                                    @if ($currentWidget->hide_when_on_desktop)
+                                        checked
+                                    @endif
+                                >
                                 <span class="slider round"></span>
                             </label> 
-                            <span class="chat-label">Option</span>
+                            <span class="chat-label">Hide widget on load in desktop</span>
     
                             <label class="switch">
-                                <input type="checkbox">
+                                <input disabled type="checkbox"
+                                    @if ($currentWidget->hide_when_on_mobile)
+                                        checked
+                                    @endif 
+                                >
                                 <span class="slider round"></span>
                             </label> 
-                            <span class="chat-label">Option</span>
+                            <span class="chat-label">Hide widget on load in mobile</span>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    {{-- <div class="col-lg-6">
                         <div class="widget-block">
                             <label class="chat-label" for="feature-settings">Feature Settings</label>
                         </div>
@@ -166,7 +174,7 @@
                             <span class="chat-label">Option</span>
                         </div>
                     </div>
-                </div>
+                </div> --}}
     
                 <div class="row">
                     <h4 class="chat-subheader-3">Availability Restrictions</h4> 
@@ -176,8 +184,9 @@
                             initial-domains-list-json="{{old('allowed_domains', json_encode($currentWidget->allowed_domains ?? array("")))}}"
                         ></widget-domains-picker>
                     </div>
-    
-                    <div class="col-lg-4">
+
+                    {{-- Platform and Country Restrictions --}}
+                    {{-- <div class="col-lg-4">
                         <div class="widget-block">
                             <label class="chat-label" for="platform-restriction">Platform Restriction</label>
                         </div>
@@ -211,7 +220,7 @@
                             
                             <p class="chat-label-2 mb-0">By default, the widget will be shown to all visitors. To show or hide the widget for visitors from specific countris, enable this functionality and specify the countries.</p>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
 
                 @if (Auth::user()->role === "admin")
