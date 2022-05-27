@@ -43,8 +43,8 @@
 
             <!--INPUT MESSAGE BOX-->
             <!-- Lines in this section that are commented out pertain to the attach file/file upload button -->
-            <!-- <div class="inputs">
-                <div> -->
+            <div class="inputs">
+                <div>
                         <form @submit.prevent="sendMessage()">
                             <input
                                 ref="messageInput"
@@ -57,11 +57,12 @@
                                 autocomplete="off"
                             />
                         </form>
-                <!-- </div>
-                <div>
-                    <button id=exit-chat onClick="endConversation()"><i class="material-icons" style="font-size:25px;">attach_file</i></button>
                 </div>
-            </div> -->
+                <FileUpload
+                :active-room="activeRoom"
+                v-on:upload-success="handleAttachmentUpload"
+                ></FileUpload>
+            </div>
             <!-- End of section pertaining to attach/file upload button -->
         </div>
     </div>
@@ -146,30 +147,18 @@ h2 ul li button:hover .tooltiptext{
     padding: 10px;
     font-style: italic;
 }
-/* Lines in this section that are commented out pertain to the attach file/file upload button 
 .inputs {
     display: grid;
     grid-template-columns: 90% 10%;
     margin-bottom: 5px;
     align-content: space-around;
 }
-.inputs button {
-    float: right;
-    border: none;
-    background: none;
-    margin-top: 25%;
-    color:#466289;
-    text-align: center;
-}
-.inputs button:hover {
-    color:#FA6121;
-    cursor: pointer;
-} */
 </style>
 
 <script>
 import io from "socket.io-client";
 import cj from "clientjs";
+import FileUpload from './FileUpload.vue';
 
 // Setup client.js for device fingerprinting
 const client = new cj.ClientJS();
@@ -182,6 +171,10 @@ const socket = io("https://sms-ws.ml:3000", {
 
 export default {
     props: ["visitorName"],
+
+        components: {
+            FileUpload,
+        },
 
     data() {
         return {
@@ -315,8 +308,28 @@ export default {
                 messageInputRef.focus();
             });
         },
+        
         endConversation() {
             //TO DO: Add code to end conversation
+        },
+        
+        handleAttachmentUpload(attachmentUrl) {
+            let found = this.getTargetRoomIndex(this.activeRoom);
+            this.roomMsgs[found].messages.push({
+                user: this.user,
+                message: "",
+                attachment_path: attachmentUrl,
+            });
+        },
+        
+        getTargetRoomIndex(targetRoom) {
+            let found = null;
+            for (const indx in this.roomMsgs) {
+                if (this.roomMsgs[indx].room_id == targetRoom) {
+                found = indx;
+                }
+            }
+            return found;
         },
     },
 };
