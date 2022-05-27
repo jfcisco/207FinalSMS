@@ -240,8 +240,6 @@
 </template>
 
 <script>
-import FileUploadComponent from "./FileUploadComponent.vue";
-import ProfileUpdateComponent from "./ProfileUpdateComponent.vue";
 import axios from 'axios';
 
 const client = new cj.ClientJS();
