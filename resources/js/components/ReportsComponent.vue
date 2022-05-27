@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <!--MAIN SIDE BAR-->
-        <div class="col-lg-2 mainsidebar">
+        <div class="col-lg-1 mainsidebar">
             <a href="/home"
                 ><ion-icon name="mail-outline"></ion-icon
                 ><span class="menutitle">Messaging</span></a
@@ -27,14 +27,24 @@
 
 
                 <div class="block">
+                    <div class="details">                    
+                        <div class="listHead">
+                            <p>Live Sessions</p>
+                        </div>    
+                    </div>
+                </div>
+                <div class="block">
                     <div class="details">
-                        <div class="listdead">
+                        <div class="listHead">
                             <p>Live Visitors</p>
                         </div>
-                        <div class="listdead">
+                    </div>
+                </div>
+                <div class="block">                    
+                    <div class="details">                     
+                        <div class="listHead">
                             <p>Live Chats</p>
-                        </div>                        
-
+                        </div>             
                     </div>
                 </div>
                 
@@ -46,16 +56,28 @@
                 <p class="subtitle sidebartitle">Historical Analytics</p>
                 <div class="block">
                     <div class="details">
-                        <div class="listdead">
+                        <div class="listHead">
                             <p>Chat Volume</p>
                         </div>
-                        <div class="listdead">
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="details">
+                        <div class="listHead">
                             <p>Missed Chats</p>
-                        </div>                        
-                        <div class="listdead">
+                        </div>
+                    </div>
+                </div>
+                <div class="block">                    
+                    <div class="details">                                                
+                        <div class="listHead">
                             <p>Offline Messages</p>
                         </div>
-                        <div class="listdead">
+                    </div>
+                </div>
+                <div class="block">                    
+                    <div class="details">                        
+                        <div class="listHead">
                             <p>Average Chat Duration</p>
                         </div>                          
                     </div>
@@ -65,41 +87,45 @@
 
         <!--CHAT DISPLAY-->
         <div class="col-lg-8 mainchat">
-            <div
-                v-for="socketReport in socketReports"
-                :key="socketReport.socketId"
-            >
-                <div>
-                    <span>Socket ID: {{ socketReport.socketId }}</span>
-                    <span>IP Address: {{ socketReport.ipAddress }}</span>
-                    <span>Browser: {{ socketReport.browser }}</span>
-                    <span>Link to Chat: {{ socketReport.roomId }}</span>
-                    <span>Duration: {{ socketReport.time }}</span>
-                </div>
-            </div>
+
 
             <div class="chat-container">
                 <div class="row">
                 <h1>Live Analytics</h1>
-                <!-- Report Cards and Charts -->
-                <div class="col-sm-6">
-              <div class="card">
-                <div class="card-body">
-                  <div><h5 class="card-title">Visitors  </h5></div><br/>
-                    <div class="row">
-
-                    <div class="col-sm-6">
-                      <div class="card">
-                        <div class="card-body">
-                          <h5 class="card-title">Today</h5>
-                          <p class="card-text"><VisitorsToday></VisitorsToday></p>
+                <div>
+                    <div><h5 class="card-title">Live Session  </h5></div>
+                    <div
+                        v-for="socketReport in socketReports"
+                        :key="socketReport.socketId"
+                    >
+                        <div>
+                            <span>Socket ID: {{ socketReport.socketId }}</span>
+                            <span>IP Address: {{ socketReport.ipAddress }}</span>
+                            <span>Browser: {{ socketReport.browser }}</span>
+                            <span>Website: {{ socketReport.fromURL }}</span>
+                            <span>Link to Chat: {{ socketReport.roomId }}</span>
+                            <span>Duration: {{ socketReport.time }}</span>
                         </div>
-                      </div>
+                    </div>                    
+                </div>
+                <!-- Report Cards and Charts -->
+                <div class="col-sm-6">                  
+                    <div class="card">
+                        <div class="card-body">
+                            <div><h5 class="card-title">Visitors  </h5></div><br/>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Today</h5>
+                                            <p class="card-text"><VisitorsToday></VisitorsToday></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
-              </div>
-            </div>
             <div class="col-sm-6">
               <div class="card">
                 <div class="card-body">
@@ -161,7 +187,7 @@
         <br/>
         <br/>
 
-                <h1>Hystorical Analytics</h1>
+                <h1>Historical Analytics</h1>
                 <p>Chat Volume</p>
                 <input type="date" id="start_date_input">
                 <input type="date" id="end_date_input">
@@ -252,9 +278,9 @@
 const client = new cj.ClientJS();
 
 //for localhost testing
-//const socket = io("http://localhost:3000", {
-const socket = io("https://sms-ws.ml:3000", {
-    // secure: true,
+const socket = io("http://localhost:3000", {
+//const socket = io("https://sms-ws.ml:3000", {
+    //secure: true,
     autoConnect: false,
 });
 
@@ -310,14 +336,12 @@ export default {
     methods: {
         timeUpdate(){
             this.socketReports.forEach(function(report){
-                var diff = new Date(new Date() - new Date(report.startAt));
-                //report.time = diff.getUTCHours() + ":" + diff.getMinutes() + ":" + diff.getSeconds();
-                
+                var diff = new Date(new Date() - new Date(report.startAt));                
                 report.time = diff.toISOString().substr(11, 8);
             });
         },
         async getChatVolume(start, end) {
-            let post = await fetch("/api/reports/chats/daily/", {
+            let post = await fetch("/api/reports/chats/daily", {
                 method: "POST",
                 body: {
                     "start_date": start,

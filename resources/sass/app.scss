@@ -245,7 +245,6 @@ body{
 position:  relative;
 	display:  flex;
 	width:  100%;
-	padding: 2px;
 	color: #466289;
 }
 
@@ -253,9 +252,13 @@ position:  relative;
 position:  relative;
 	display:  flex;
 	width:  100%;
-	padding: 2px;
 	color: #fa6121;
 
+}
+
+.whisper_text{
+	color: darkgrey;
+	font-style: italic;
 }
 
 
@@ -269,6 +272,32 @@ position:  relative;
 	justify-content: space-between;
 	align-items: center;
 
+}
+
+.joinbutton{
+	position: absolute;
+	bottom: 10px;
+	width: 97%;
+	height: 80px;
+	margin: 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color:#fa6121;
+	color:#e9edee;
+	border:0px;
+	border-radius:10px;
+	font-size:30px;
+
+}
+
+.joinroom{
+	margin-left: auto;
+  margin-right: auto;
+}
+
+.itsrelative{
+	position: relative;
 }
 
 .chatbox_input input{
@@ -324,10 +353,7 @@ position:  relative;
   cursor: pointer;
 }
 
-.whisper_text{
-	color: darkgrey;
-	font-style: italic;
-}
+
 
 // ADDITIONAL MODAL FORMATTING
 
