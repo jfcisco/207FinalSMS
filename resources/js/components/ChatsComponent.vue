@@ -270,12 +270,6 @@ export default {
   },
 
   created() {
-    // get all rooms from mongodb
-    this.getAllRooms();
-
-    // classify into incoming and active sessions
-
-
 
     socket.auth = {
       // // For visitors
@@ -292,17 +286,20 @@ export default {
 
     socket.connect();
 
+    // get all rooms from mongodb
+    this.generateChatroomsList();
+
     socket.on("rooms", ({ rooms }) => {
+      // console.log("running socket.on rooms")
       // console.log("socket.on rooms");
       // console.log("rooms full data=> ", rooms);
       // console.log("rooms mod data=> ", rooms.map(room => ({ 'room._id': room._id, 'room.members.length': room.members.length, 'room.messages': room.messages })));
-
       this.chatrooms = _.unionBy(
         rooms,
         this.chatrooms,
         (room) => room._id,
       );
-      console.log("this.chatrooms", this.chatrooms);
+      console.log("this.chatrooms on socket.on 'rooms'", this.chatrooms);
     });
 
     socket.on("message", (message) => {
@@ -312,36 +309,82 @@ export default {
     });
 
     // add test data for incoming room | only 1 member of room w/ clientType: visitor
-    this.chatrooms.push({
-      _id: "54321",
-      members: [
-        {clientId: "1234", clientName: "test-incoming-visitor", clientType: "visitor"}
-      ],
-      messages: [
-        {_id: "123", clientId: "1234", clientType: "visitor", content: "test-msg", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-        {_id: "1234", clientId: "1234", clientType: "visitor", content: "test-msg2", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-        {_id: "12345", clientId: "1234", clientType: "visitor", content: "test-msg3", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-        {_id: "123456", clientId: "1234", clientType: "visitor", content: "test-msg4", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-        {_id: "1234567", clientId: "1234", clientType: "visitor", content: "test-msg5", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-        {_id: "12345678", clientId: "1234", clientType: "visitor", content: "test-msg6", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-      ],
-    })
+    // this.chatrooms.push({
+    //   _id: "54321",
+    //   members: [
+    //     {clientId: "1234", clientName: "test-incoming-visitor", clientType: "visitor"}
+    //   ],
+    //   messages: [
+    //     {_id: "123", clientId: "1234", clientType: "visitor", content: "test-msg", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+    //     {_id: "1234", clientId: "1234", clientType: "visitor", content: "test-msg2", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+    //     {_id: "12345", clientId: "1234", clientType: "visitor", content: "test-msg3", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+    //     {_id: "123456", clientId: "1234", clientType: "visitor", content: "test-msg4", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+    //     {_id: "1234567", clientId: "1234", clientType: "visitor", content: "test-msg5", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+    //     {_id: "12345678", clientId: "1234", clientType: "visitor", content: "test-msg6", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+    //   ],
+    // })
 
     // console.log("chatRooms => ", this.chatrooms.map(room => ({ 'chatroom._id': room._id, 'chatroom.members.length': room.members.length, 'chatroom.messages': room.messages })));
     // console.log("currentUser", this.currentUser)
   },
 
   methods: {
+    // API CALLS TO MONGODB
     async getAllRooms() {
-      console.log("running getAllRooms");
       try {
         const response = await axios.get("/api/rooms");
-        console.log("response GET api/rooms", response.data.data.map(
-          item => ({ "roomId": item.id, "members": item.members.map(i => `${i.name} clientId(${i.id})`), "messages": item.messages })));
-        console.log("look here", response.data.data)
+        // console.log("response GET api/rooms", response.data.data.map(
+        //   item => ({ "roomId": item.id, "members": item.members.map(i => `${i.name} clientId(${i.id})`), "messages": item.messages })));
+        // console.log("look here", response.data.data)
+        return response.data.data;
       } catch (err) {
         console.error(err);
       }
+    },
+    // UTILITY FUNCTIONS
+    async generateChatroomsList() {
+      try {
+        console.log("running generateChatroomsList");
+        const results = await this.getAllRooms();
+        // console.log("api call response", results);
+        // console.log("convertedResults", convertedResults);
+
+        this.chatrooms = _.unionBy(
+          this.chatrooms,
+          this.convertSchemaOfRoomsResponse(results),
+          (room) => room._id,
+        );
+        console.log("this.chatrooms after api call", this.chatrooms)
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    convertSchemaOfRoomsResponse(rooms) {
+      // this converts the schema of response data from "get" request on "/api/rooms" route
+      // to match the schema of data returned by socket.on("rooms")
+      return rooms.map(room => {
+        return {
+          _id: room.id,
+          members: room.members.map(member => {
+            return {
+              clientId: member.id,
+              clientName: member.name,
+              clientType: (member.role ? "user" : "visitor"),
+            }
+          }),
+          messages: room.messages.map(msg => {
+            return {
+              _id: msg.id,
+              clientId: msg.client_id,
+              clientType: msg.client_type,
+              content: msg.content,
+              created_at: msg.created_at,
+              isWhisper: msg.is_whisper,
+              roomId: msg.room_id,
+            }
+          }),
+        }
+      });
     },
     getLastMsgAndSender(chatroom) {
       // ensure chatroom.messages is not undefined and is not an empty array
