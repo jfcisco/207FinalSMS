@@ -456,7 +456,7 @@ export default {
       });
       // console.log("this.chatrooms2=> ", this.chatrooms[found].messages)
 
-      this.newMessage = "";
+      this.message = "";
     },
 
     // sendTypingEvent() {
