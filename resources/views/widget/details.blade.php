@@ -28,7 +28,7 @@
                     </div>
                 @endif
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-5">
                         <h2 class="chat-header">Chat Widgets</h2>
                         @if (count($widgets) === 0)
                         <p class="no-widget-prompt">You have no widgets yet!</p>
@@ -57,7 +57,7 @@
                         </div> --}}
                     </div>
     
-                    <div class="col-lg-5">
+                    <div class="col-lg-6">
                         <!--CODE WIDGET LINK-->
                         {{-- This is the part that generates the HTML code of the widget --}}
                         <div class="row marginallowance">
@@ -104,6 +104,15 @@
 
                             initial-end-time="{{ $currentWidget->availability_end_time ? $currentWidget->availability_end_time->setTimezone('UTC')->format('H:i') : "" }}"
                         ></widget-scheduler-picker>
+                    </div>
+
+
+                    
+                    <div class="col-lg-6">
+                        <h4 class="chat-subheader-3">Availability Restrictions</h4> 
+                        <widget-domains-picker
+                            initial-domains-list-json="{{old('allowed_domains', json_encode($currentWidget->allowed_domains ?? array("")))}}"
+                        ></widget-domains-picker>
                     </div>
 
                     {{-- Widget Behavior Settings --}}
@@ -177,13 +186,13 @@
                 </div> --}}
     
                 <div class="row">
-                    <h4 class="chat-subheader-3">Availability Restrictions</h4> 
+                    {{--<h4 class="chat-subheader-3">Availability Restrictions</h4> 
                     
                     <div class="col-lg-4">
                         <widget-domains-picker
                             initial-domains-list-json="{{old('allowed_domains', json_encode($currentWidget->allowed_domains ?? array("")))}}"
                         ></widget-domains-picker>
-                    </div>
+                    </div>--}}
 
                     {{-- Platform and Country Restrictions --}}
                     {{-- <div class="col-lg-4">
