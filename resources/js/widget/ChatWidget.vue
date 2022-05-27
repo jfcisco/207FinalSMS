@@ -42,27 +42,18 @@
             </div>
 
             <!--INPUT MESSAGE BOX-->
-            <!-- Lines in this section that are commented out pertain to the attach file/file upload button -->
-            <!-- <div class="inputs">
-                <div> -->
-                        <form @submit.prevent="sendMessage()">
-                            <input
-                                ref="messageInput"
-                                :disabled="!room._id"
-                                v-model="message"
-                                type="text"
-                                name="message"
-                                placeholder="Enter your message..."
-                                class="form-control"
-                                autocomplete="off"
-                            />
-                        </form>
-                <!-- </div>
-                <div>
-                    <button id=exit-chat onClick="endConversation()"><i class="material-icons" style="font-size:25px;">attach_file</i></button>
-                </div>
-            </div> -->
-            <!-- End of section pertaining to attach/file upload button -->
+            <form @submit.prevent="sendMessage()">
+                <input
+                    ref="messageInput"
+                    :disabled="!room._id"
+                    v-model="message"
+                    type="text"
+                    name="message"
+                    placeholder="Enter your message..."
+                    class="form-control"
+                    autocomplete="off"
+                />
+            </form>
         </div>
     </div>
 </template>
@@ -146,25 +137,6 @@ h2 ul li button:hover .tooltiptext{
     padding: 10px;
     font-style: italic;
 }
-/* Lines in this section that are commented out pertain to the attach file/file upload button 
-.inputs {
-    display: grid;
-    grid-template-columns: 90% 10%;
-    margin-bottom: 5px;
-    align-content: space-around;
-}
-.inputs button {
-    float: right;
-    border: none;
-    background: none;
-    margin-top: 25%;
-    color:#466289;
-    text-align: center;
-}
-.inputs button:hover {
-    color:#FA6121;
-    cursor: pointer;
-} */
 </style>
 
 <script>
