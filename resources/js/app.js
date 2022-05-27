@@ -7,8 +7,11 @@
 require('./bootstrap');
 
 window.Vue = require('vue').default;
+import Vue from 'vue';
 import VueChatScroll from 'vue-chat-scroll';
 Vue.use(VueChatScroll);
+
+Vue.config.ignoredElements = ['ion-icon'];
 
 /**
  * The following block of code may be used to automatically register your
@@ -30,7 +33,8 @@ Vue.component('MissedChat', require('./components/Visuals/MissedChat.vue').defau
 Vue.component('HourlyVisitor', require('./components/Visuals/HourlyVisitor.vue').default);
 Vue.component('profile-edit-form', require('./components/ProfileUpdateComponent.vue').default);
 Vue.component('vue-multiselect', window.VueMultiselect.default)
-
+Vue.component('widget-scheduler-picker', require('./components/WidgetSchedulePicker.vue').default);
+Vue.component('widget-domains-picker', require('./components/WidgetDomainsPicker.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

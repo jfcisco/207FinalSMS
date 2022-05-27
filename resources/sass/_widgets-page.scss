@@ -6,3 +6,16 @@
 	font-family: monospace;
 }
 
+.widget-details-row {
+	max-height: 90vh !important;
+}
+
+.widget-details-sidebar {
+	max-height: inherit;
+	overflow-y: hidden;
+}
+
+.widget-details-form {
+	max-height: inherit !important;
+	overflow-y: auto;
+}

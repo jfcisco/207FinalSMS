@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
+use \DateTimeZone;
+use \DateTime;
 
 /**
  * User-facing Functionalities for Widget Management
@@ -51,7 +53,41 @@ class WidgetController extends Controller
             'template' => $this->generateTemplate($appUrl, $userId, $widget->_id),
             'currentWidget' => $widget,
             'widgets' => $widgets,
+            'timezones' => $this->generateTimezoneDropdownList()
         ]);
+    }
+
+    private function generateTimezoneDropdownList() {
+        // Source: https://gist.github.com/Xeoncross/1204255
+        $regions = array(
+            'Africa' => DateTimeZone::AFRICA,
+            'America' => DateTimeZone::AMERICA,
+            'Antarctica' => DateTimeZone::ANTARCTICA,
+            'Asia' => DateTimeZone::ASIA,
+            'Atlantic' => DateTimeZone::ATLANTIC,
+            'Europe' => DateTimeZone::EUROPE,
+            'Indian' => DateTimeZone::INDIAN,
+            'Pacific' => DateTimeZone::PACIFIC
+        );
+        
+        $timezones = array();
+        foreach ($regions as $name => $mask)
+        {
+            $zones = DateTimeZone::listIdentifiers($mask);
+            foreach($zones as $timezone)
+            {
+                // Get current time for this timezone
+                $time = new DateTime(NULL, new DateTimeZone($timezone));
+
+                // Generate AM/PM format for current time
+                $currentTime = $time->format('g:i a');
+
+                // Remove region name
+                $timezones[$name][$timezone] = substr($timezone, strlen($name) + 1) . ' [Time: ' . $currentTime . ']';
+            }
+        }
+        
+        return $timezones;
     }
 
     private function generateTemplate($baseUrl, $userId, $widgetId)
@@ -167,11 +203,69 @@ class WidgetController extends Controller
 
     public function create()
     {
+        return view('widget.create');
+    }
+
+    public function store()
+    {
         // TODO: Implement Create Widget form
         $widget = ChatWidget::create([
             'name' => 'Sample Widget'
         ]);
+    }
 
-        return redirect('/widget/2');
+    public function update(Request $request, $widgetId)
+    {
+        $widgetToUpdate = ChatWidget::find($widgetId);
+
+        if (is_null($widgetToUpdate)) {
+            abort(404);
+        }
+
+        // Validate incoming form data
+        $request->validate([
+            'availability_timezone' => 'timezone',
+            'availability_start_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_end_time',
+            'availability_end_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_start_time|after:availability_start_time',
+            'allowed_domains' => [
+                'nullable',
+                'json',
+                function ($attribute, $value, $fail) {
+                    $domainArray = json_decode($value);
+                    $allAreValidDomainValues = collect($domainArray)
+                        ->every(function($value, $key) {
+                            return preg_match("/https?\:\/\/.+(\:\d+)?/i", $value);
+                        });
+
+                    if (!$allAreValidDomainValues) {
+                        $fail("An invalid domain has been provided. Please double check your domain restrictions.");
+                    }
+                }
+            ]
+        ]);
+        
+        // Update Allowed Domains
+        if ($request->filled('allowed_domains')) {
+            $allowedDomains = json_decode($request->input('allowed_domains'));
+            $widgetToUpdate->allowed_domains = $allowedDomains;
+        }
+        else {
+            $widgetToUpdate->unset('allowed_domains');
+        }
+
+        // Update Availability Schedule
+        if ($request->filled(['availability_start_time', 'availability_end_time'])) {
+            $widgetToUpdate->availability_timezone = $request->input('availability_timezone', 'Asia/Hong_Kong');
+            $widgetToUpdate->availability_start_time = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('availability_start_time'), 'UTC');
+            $widgetToUpdate->availability_end_time = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('availability_end_time'), 'UTC');
+        }
+        else {
+            $widgetToUpdate->unset('availability_timezone');
+            $widgetToUpdate->unset('availability_start_time');
+            $widgetToUpdate->unset('availability_end_time');
+        }
+        
+        $widgetToUpdate->save();
+        return redirect()->route("widget-details");
     }
 }
