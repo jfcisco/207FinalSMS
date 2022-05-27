@@ -270,6 +270,13 @@ export default {
   },
 
   created() {
+    // get all rooms from mongodb
+    this.getAllRooms();
+
+    // classify into incoming and active sessions
+
+
+
     socket.auth = {
       // // For visitors
       // clientId: client.getFingerprint(),
@@ -295,6 +302,7 @@ export default {
         this.chatrooms,
         (room) => room._id,
       );
+      console.log("this.chatrooms", this.chatrooms);
     });
 
     socket.on("message", (message) => {
@@ -324,6 +332,17 @@ export default {
   },
 
   methods: {
+    async getAllRooms() {
+      console.log("running getAllRooms");
+      try {
+        const response = await axios.get("/api/rooms");
+        console.log("response GET api/rooms", response.data.data.map(
+          item => ({ "roomId": item.id, "members": item.members.map(i => `${i.name} clientId(${i.id})`), "messages": item.messages })));
+        console.log("look here", response.data.data)
+      } catch (err) {
+        console.error(err);
+      }
+    },
     getLastMsgAndSender(chatroom) {
       // ensure chatroom.messages is not undefined and is not an empty array
       if (chatroom.messages && chatroom.messages.length > 0) {
@@ -422,7 +441,7 @@ export default {
       if (confirmAction) {
 
         let foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
-      // console.log("found chatroom before joining", ({"_id": foundRoom["_id"], "members": foundRoom["members"], "messages": foundRoom["messages"]}))
+        // console.log("found chatroom before joining", ({"_id": foundRoom["_id"], "members": foundRoom["members"], "messages": foundRoom["messages"]}))
 
 
         // check if currentUser is already a member of foundRoom
