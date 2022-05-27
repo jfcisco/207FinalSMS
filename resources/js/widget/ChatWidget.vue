@@ -6,13 +6,19 @@
                 <li>Conversation</li>
                 <!-- END CHAT BUTTON -->
                 <!-- TO DO: Edit behavior of the button to End Chat -->
-                <!-- <li style="float:right"><button id=exit-chat @click="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i><span class="tooltiptext">End chat</span></button>
-                </li> -->
+                <li style="float:right" v-if="!chatEnded">
+                    <button id=exit-chat @click="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i><span class="tooltiptext">End chat</span></button>
+                </li>
             </ul>
         </h2>
 
+        <!-- END CHAT SCREEN -->
+        <div class="end-chat content" v-if="chatEnded">
+            <p>You have ended the chat conversation.</p>
+        </div>
+
         <!--CHAT MESSAGES BOX-->
-        <div id="messages" class="content">
+        <div v-else id="messages" class="content">
             <div class="messages" v-chat-scroll>
                 <!--CHAT MESSAGE/CHAT UPDATE-->
                 <template v-for="(message, index) in room.messages">
@@ -137,6 +143,11 @@ h2 ul li button:hover .tooltiptext{
     padding: 10px;
     font-style: italic;
 }
+
+.end-chat {
+    text-align: center;
+}
+
 </style>
 
 <script>
@@ -157,7 +168,7 @@ export default {
 
     data() {
         return {
-            isVisible: true,
+            chatEnded: false,
             message: "",
             room: {
                 // Room default values
@@ -288,7 +299,8 @@ export default {
             });
         },
         endConversation() {
-            //TO DO: Add code to end conversation
+            socket.disconnect();
+            this.chatEnded = true;
         },
     },
 };
