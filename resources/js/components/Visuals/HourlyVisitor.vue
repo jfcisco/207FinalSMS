@@ -42,6 +42,13 @@ export default {
                     display: false,
                 },
             },
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                },
+            },
         },
     }),
     mounted() {

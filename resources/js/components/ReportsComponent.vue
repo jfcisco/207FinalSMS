@@ -178,7 +178,8 @@
                         <h5>Chats per hour</h5>
                         <div class="card">
                             <div class="card-body">
-                                   <table style="border: 1px solid gray;"><thead style="border: px solid gray; padding: 0px 5px 0px 5px"><th style="padding: 0px 5px 0px 5px;">Time (hour)</th><th style="padding: 0px 5px 0px 5px;">Number of Chats</th></thead><HourlyChat></HourlyChat></table>
+                                   <!-- <table style="border: 1px solid gray;"><thead style="border: px solid gray; padding: 0px 5px 0px 5px"><th style="padding: 0px 5px 0px 5px;">Time (hour)</th><th style="padding: 0px 5px 0px 5px;">Number of Chats</th></thead><HourlyChat></HourlyChat></table> -->
+                                   <HourlyChat></HourlyChat>
                             </div>
                         </div>
                     </div>
