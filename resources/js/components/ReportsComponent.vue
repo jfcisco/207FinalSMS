@@ -109,23 +109,24 @@
                     </div>                    
                 </div>
                 <!-- Report Cards and Charts -->
-                <div class="col-sm-6">                  
-                    <div class="card">
+                <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <div><h5 class="card-title">Visitors  </h5></div><br/>
+                    <div class="row">
+
+                    <div class="col-sm-6">
+                      <div class="card">
                         <div class="card-body">
-                            <div><h5 class="card-title">Visitors  </h5></div><br/>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Today</h5>
-                                            <p class="card-text"><VisitorsToday></VisitorsToday></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                          <h5 class="card-title">Live</h5>
+                          <p class="card-text"><VisitorsToday></VisitorsToday></p>
                         </div>
+                      </div>
                     </div>
                 </div>
+                </div>
+              </div>
+            </div>
             <div class="col-sm-6">
               <div class="card">
                 <div class="card-body">
@@ -163,7 +164,7 @@
                         <h5>Visitors per hour</h5>
                         <div class="card">
                             <div class="card-body">
-                                <HourlyVisitor></HourlyVisitor>
+                                <table style="border: 1px solid gray;"><thead style="border: px solid gray; padding: 0px 5px 0px 5px"><th style="padding: 0px 5px 0px 5px;">Time (hour)</th><th style="padding: 0px 5px 0px 5px;">Number of Visitors</th></thead><HourlyVisitor></HourlyVisitor></table>
                             </div>
                         </div>
                     </div>
@@ -176,13 +177,14 @@
                         <h5>Chats per hour</h5>
                         <div class="card">
                             <div class="card-body">
-                                    <p>-- Insert Chart Here -- </p>           
+                                   <table style="border: 1px solid gray;"><thead style="border: px solid gray; padding: 0px 5px 0px 5px"><th style="padding: 0px 5px 0px 5px;">Time (hour)</th><th style="padding: 0px 5px 0px 5px;">Number of Chats</th></thead><HourlyChat></HourlyChat></table>     
                             </div>
                         </div>
                     </div>
                 </div>
              </div>
         </div>
+
 
         <br/>
         <br/>
@@ -289,6 +291,7 @@ import AnsweredChat from './Visuals/AnsweredChat.vue';
 import MissedChat from './Visuals/MissedChat.vue';
 import axios from 'axios';
 import HourlyVisitor from './Visuals/HourlyVisitor.vue';
+import HourlyChat from './Visuals/HourlyChat.vue';
 
 export default {
     props: ["user"],
@@ -296,7 +299,8 @@ export default {
     VisitorsToday,
     AnsweredChat,
     MissedChat,
-    HourlyVisitor
+    HourlyVisitor,
+    HourlyChat
 },
     data() {
         return {

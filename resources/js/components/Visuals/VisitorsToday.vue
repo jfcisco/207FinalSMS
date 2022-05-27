@@ -1,6 +1,6 @@
 <template>
 <div>
-<h1>{{ list }}</h1>
+<h5>{{ list }}</h5>
 </div>
 </template>
 <script>
@@ -14,9 +14,10 @@ export default{
     return{list:undefined}
   },
   mounted() {
-    Vue.axios.get('/api/reporting/sessions/live-today').then((resp)=>{
+    Vue.axios.get('/api/reports/sessions/todays-live').then((resp)=>{
       this.list=resp.data.data;
       console.warn(resp.data.data);
+
     })
   },
 

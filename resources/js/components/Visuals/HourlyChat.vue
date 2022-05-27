@@ -1,5 +1,5 @@
 <template>
-  <tbody id = "displayTableChats">
+  <tbody id = "displayTableVisitors">
   </tbody>
 </template> 
 
@@ -11,14 +11,14 @@ import VueAxios from 'vue-axios';
 
 Vue.use(VueAxios,axios)
 export default{
-  name:"HourlyVisitor",
+  name:"HourlyChat",
   data(){
     return{}
   },
   mounted() {
-    Vue.axios.get('/api/reports/sessions/todays-hourly').then((resp)=>{
+    Vue.axios.get('/api/reports/chats/todays-hourly ').then((resp)=>{
     
-      this.divContainer = document.getElementById("displayTableChats");
+      this.divContainer = document.getElementById("displayTableVisitors");
       this.divContainer.innerHTML = "";
     
       let visitorsHr = Object.keys(resp.data.data);
