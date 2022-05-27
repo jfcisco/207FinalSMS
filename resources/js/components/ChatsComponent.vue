@@ -40,6 +40,7 @@
           incoming: chatroom.members.length === 1
         }"
         v-for="chatroom in chatrooms"
+        :chatroom="chatroom"
         v-show="chatroom.members.length === 1"
         :key="chatroom._id"
       >
@@ -60,13 +61,8 @@
           <!-- The message last sent to the room -->
           <div class="message_p">
             <p>
-              {{
-                chatroom.messages[chatroom.messages.length - 1].clientId === user._id ? "You: " :
-                  `${chatroom.members
-                  .filter(member => member.clientId === chatroom.messages[chatroom.messages.length - 1].clientId)
-                  [0].clientName}: `
-              }}
-              {{ chatroom.messages[chatroom.messages.length - 1].content }}</p>
+              {{ getLastMsgAndSender(chatroom) }}
+            </p>
           </div>
           <!-- The message last sent to the room -->
 
@@ -89,6 +85,7 @@
           active: chatroom._id == activeRoom,
         }"
         v-for="chatroom in chatrooms"
+        :chatroom="chatroom"
         v-show="chatroom.members.length > 1"
         :key="chatroom._id"
       >
@@ -112,12 +109,7 @@
           <!-- assigned room users (Admin/Agent) -->
           <div class="listHead">
             <p style="font-weight: 500; font-style: italic;">
-              Assigned:
-              {{
-                chatroom.members
-                  .filter(member => member.clientType === "user")
-                  .reduce((result, member) => result + `${member.clientName} `,"")
-              }}
+              Assigned: {{ getAssignedToRoom(chatroom) }}
             </p>
           </div>
           <!-- assigned room users (Admin/Agent) -->
@@ -125,13 +117,7 @@
           <!-- The message last sent to the room -->
           <div class="message_p">
             <p>
-              {{
-                chatroom.messages[chatroom.messages.length - 1].clientId === user._id ? "You: " :
-                  `${chatroom.members
-                  .filter(member => member.clientId === chatroom.messages[chatroom.messages.length - 1].clientId)
-                  [0].clientName}: `
-              }}
-              {{ chatroom.messages[chatroom.messages.length - 1].content }}
+             {{ getLastMsgAndSender(chatroom) }}
             </p>
           </div>
         </div>
@@ -178,6 +164,7 @@
     <div
       class="mainchat2"
       v-for="chatroom in chatrooms"
+      :chatroom="chatroom"
       v-show="chatroom._id == activeRoom"
       :key="chatroom._id">
 
@@ -186,18 +173,14 @@
         v-bind:id="'messages_room' + chatroom._id">
 
           <div>
-          <h4>{{ chatroom.members[0].clientName }}</h4>
+            <h4>{{ chatroom.members[0].clientName }}</h4>
           </div>
 
-          <div class="mb-3"><h5 style="font-weight: 500; font-style: italic;">
-            Assigned:
-            {{
-              chatroom.members
-              .filter(member => member.clientType === "user")
-              .reduce((result, member) => result + `${member.clientName} `,""
-              )
-            }}
-          </h5></div>
+          <div class="mb-3">
+            <h5 style="font-weight: 500; font-style: italic;">
+              Assigned: {{ getAssignedToRoom(chatroom) }}
+            </h5>
+          </div>
 
           <!--CHATBOX START-->
           <div class="chatboxfix" ref="chatWindow" v-chat-scroll style="overflow-y: scroll; overflow-x: hidden;">
@@ -206,6 +189,7 @@
                 <!-- CHAT MESSAGE LINE START -->
                 <li
                   v-for="(message, index) in chatroom.messages"
+                  :message="message"
                   :key="index">
                     <div
                       v-if="message.content.length > 0"
@@ -217,13 +201,16 @@
                       }"
                     >
                         <!-- <b>{{ message.clientId === user._id ? "You: " : `${chatroom.members[0].clientName}: ` }}</b> -->
-                        <b>
+                        <!-- <b>
                           {{
                             message.clientId === user._id ? "You: " :
                               `${chatroom.members
                               .filter(member => member.clientId === message.clientId)
                               [0].clientName}: `
                           }}
+                        </b> -->
+                        <b>
+                          {{ getMsgSender(message, chatroom) }}:
                         </b>
                         <p>&nbsp;{{message.content }}</p>
                     </div>
@@ -255,6 +242,7 @@
 <script>
 import FileUploadComponent from "./FileUploadComponent.vue";
 import ProfileUpdateComponent from "./ProfileUpdateComponent.vue";
+import axios from 'axios';
 
 const client = new cj.ClientJS();
 
@@ -281,22 +269,7 @@ export default {
     };
   },
 
-  // computed: {
-  //   activeRoomDetails: function () {
-  //     const activeRoomResult = this.chatrooms.filter(
-  //       (room) => room._id == this.activeRoom
-  //     );
-
-  //     if (activeRoomResult.length === 0) {
-  //       return null;
-  //     } else {
-  //       return activeRoomResult[0];
-  //     }
-  //   },
-  // },
-
   created() {
-
     socket.auth = {
       // // For visitors
       // clientId: client.getFingerprint(),
@@ -313,52 +286,73 @@ export default {
     socket.connect();
 
     socket.on("rooms", ({ rooms }) => {
-      console.log("socket.on rooms")
-      console.log("rooms full data=> ", rooms)
-      console.log("rooms mod data=> ", rooms.map(room => ({ 'room._id': room._id, 'room.members.length': room.members.length, 'room.messages': room.messages })));
+      // console.log("socket.on rooms");
+      // console.log("rooms full data=> ", rooms);
+      // console.log("rooms mod data=> ", rooms.map(room => ({ 'room._id': room._id, 'room.members.length': room.members.length, 'room.messages': room.messages })));
 
       this.chatrooms = _.unionBy(
         rooms,
         this.chatrooms,
         (room) => room._id,
       );
-
-      // add test data for incoming room | only 1 member of room w/ clientType: visitor
-      this.chatrooms.push({
-        _id: "54321",
-        members: [
-          {clientId: "1234", clientName: "test-incoming-visitor", clientType: "visitor"}
-        ],
-        messages: [
-          {_id: "123", clientId: "1234", clientType: "visitor", content: "test-msg", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-          {_id: "1234", clientId: "1234", clientType: "visitor", content: "test-msg2", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-          {_id: "12345", clientId: "1234", clientType: "visitor", content: "test-msg3", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-          {_id: "123456", clientId: "1234", clientType: "visitor", content: "test-msg4", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-          {_id: "1234567", clientId: "1234", clientType: "visitor", content: "test-msg5", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-          {_id: "12345678", clientId: "1234", clientType: "visitor", content: "test-msg6", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-
-        ],
-      })
-
-      console.log("chatRooms => ", this.chatrooms.map(room => ({ 'chatroom._id': room._id, 'chatroom.members.length': room.members.length, 'chatroom.messages': room.messages })));
-
-      // join all rooms in chatrooms
-      // this.chatrooms.forEach((room) => {
-        // socket.emit("join", { roomId: room._id, name: this.currentUser.name });
-        // console.log("roomId", room._id, "name", this.currentUser.name, "members", room.members);
-      // });
     });
 
     socket.on("message", (message) => {
-      console.log("message received", message);
+      // console.log("message received", message);
       let found = this.getTargetRoomIndex(message.roomId);
       this.chatrooms[found].messages.push(message);
     });
+
+    // add test data for incoming room | only 1 member of room w/ clientType: visitor
+    this.chatrooms.push({
+      _id: "54321",
+      members: [
+        {clientId: "1234", clientName: "test-incoming-visitor", clientType: "visitor"}
+      ],
+      messages: [
+        {_id: "123", clientId: "1234", clientType: "visitor", content: "test-msg", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+        {_id: "1234", clientId: "1234", clientType: "visitor", content: "test-msg2", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+        {_id: "12345", clientId: "1234", clientType: "visitor", content: "test-msg3", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+        {_id: "123456", clientId: "1234", clientType: "visitor", content: "test-msg4", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+        {_id: "1234567", clientId: "1234", clientType: "visitor", content: "test-msg5", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+        {_id: "12345678", clientId: "1234", clientType: "visitor", content: "test-msg6", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
+      ],
+    })
+
+    // console.log("chatRooms => ", this.chatrooms.map(room => ({ 'chatroom._id': room._id, 'chatroom.members.length': room.members.length, 'chatroom.messages': room.messages })));
+    // console.log("currentUser", this.currentUser)
   },
 
   methods: {
+    getLastMsgAndSender(chatroom) {
+      // ensure chatroom.messages is not undefined and is not an empty array
+      if (chatroom.messages && chatroom.messages.length > 0) {
+        // console.log("chatroom", chatroom.messages.length);
+        const lastMsg = chatroom.messages[chatroom.messages.length - 1];
+        const msgSender = this.getMsgSender(lastMsg, chatroom)
+        const msg = lastMsg.content;
+
+        return `${msgSender}: ${msg}`
+      }
+    },
+
+    getMsgSender(msg, chatroom) {
+      return msg.clientId === this.currentUser._id ? "You" : chatroom.members
+        .filter(member => member.clientId === msg.clientId)
+        [0].clientName
+    },
+
+    getAssignedToRoom(chatroom) {
+      const assignedUsers =
+        chatroom.members
+          .filter(member => member.clientType === "user")
+          .reduce((result, member) => result + `${member.clientName}, `,"");
+      const formatttedAssignedUsers = assignedUsers.slice(0, -2);
+      return formatttedAssignedUsers;
+    },
+
     scrollToChatBottom() {
-      console.log("scrolling to bottom");
+      // console.log("scrolling to bottom");
       const chatWindows = this.$refs.chatWindow;
       // console.log("chatWindows", chatWindows);
       chatWindows.forEach((window) => {
@@ -367,6 +361,7 @@ export default {
           // console.log("scrollHeight", window.scrollHeight);
       });
     },
+
     sendMessage() {
 
       if (this.message === "") return;
@@ -376,57 +371,36 @@ export default {
         roomId: this.activeRoom,
       };
 
-      console.log("newMessage1=> ", {...newMessage});
+      // console.log("newMessage1=> ", {...newMessage});
 
       // if message is whisper
-      console.log("event=> ", event.target.parentElement.id);
+      // console.log("event=> ", event.target.parentElement.id);
       if (event.target.parentElement.id === "whisper") {
-        console.log("this is a whisper")
+        // console.log("this is a whisper")
         newMessage['isWhisper'] = true;
-        // newMessage['clientId'] = "1659239814";
-        // reference is message 27, content: ww, clientId: "1659239814", clientType: visitor | clientName: Jasper
-        // reference is message 2, content: "hi!", clientId: "628ccfce68a859a97208ccfe", clientType: "user"
-        // whisper message 51 and 52, clientType: "user"
         socket.emit("whisper", newMessage);
       } else {
         socket.emit("message", newMessage);
       }
-
-      console.log("newMessage2=> ", newMessage);
-
-
+      // console.log("newMessage2=> ", newMessage);
 
       // Add message to UI
       let found = this.getTargetRoomIndex(this.activeRoom);
-      console.log("this.chatrooms=> ", this.chatrooms[found].messages)
+      // console.log("this.chatrooms=> ", this.chatrooms[found].messages)
       this.chatrooms[found].messages.push({
         ...newMessage,
         clientId: socket.auth.clientId,
         _id: "",
       });
-      console.log("this.chatrooms2=> ", this.chatrooms[found].messages)
+      // console.log("this.chatrooms2=> ", this.chatrooms[found].messages)
 
       this.newMessage = "";
     },
+
     // sendTypingEvent() {
     //     Echo.join("chat").whisper("typing", this.user);
     // },
-    // fetchChatrooms() {
-    //     console.log("fetchChatrooms");
-    //     this.loadingChatrooms = true;
-    //     axios
-    //         .get("rooms")
-    //         .then((response) => {
-    //             console.log("rooms", response);
-    //             if (response.data.length > 0) {
-    //                 this.chatrooms = response.data;
-    //                 this.activeRoom = this.chatrooms[0].room_id;
-    //             }
-    //         })
-    //         .finally(() => {
-    //             this.loadingChatrooms = false;
-    //         });
-    // },
+
     selectRoom: function (roomId) {
       this.activeRoom = roomId;
       this.scrollToChatBottom();
@@ -437,122 +411,37 @@ export default {
       event.preventDefault();
       this.selectRoom(roomId);
 
-      // delete this
-      console.log("currentUser", this.currentUser)
-      let foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
-      console.log("found chatroom before joining", ({"_id": foundRoom["_id"], "members": foundRoom["members"], "messages": foundRoom["messages"]}))
-      // delete this
-
-      let confirmAction = confirm("Are you sure you want to join this room?");
-
       // join the selected room
-      if (confirmAction) {
-        this.joinRoom(roomId)
-        alert("Successfully joined this room");
-      }
+      this.joinRoom(roomId)
     },
 
     joinRoom: function(roomId) {
 
-      let foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
+      let confirmAction = confirm("Are you sure you want to join this room?");
 
-      // check if currentUser is already a member of foundRoom
-      if (foundRoom.members.filter(member => member.clientId === this.currentUser._id).length === 0 ) {
+      if (confirmAction) {
+
+        let foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
+      // console.log("found chatroom before joining", ({"_id": foundRoom["_id"], "members": foundRoom["members"], "messages": foundRoom["messages"]}))
+
+
+        // check if currentUser is already a member of foundRoom
+        if (foundRoom.members.filter(member => member.clientId === this.currentUser._id).length > 0 ) {
+          console.log("currently a member");
+          return;
+        }
         console.log("currently not a member");
-        // return;
+
+        foundRoom.members.push(
+            {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
+        )
+        // console.log("found chatroom after joining", foundRoom);
+
+        socket.emit("join", { roomId: roomId, name: this.currentUser.name });
+
+        alert("Successfully joined this room");
       }
-
-      // not used
-      // const joinBtnEl = document.getElementById("join-btn");
-      // joinBtnEl.style.display = "none";
-
-      foundRoom.members.push(
-          {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
-      )
-      console.log("found chatroom after joining", foundRoom)
-
-      // insert socket.io code for joining a room
-      socket.emit("join", { roomId: roomId, name: this.currentUser.name });
     },
-
-    // Function to query the database for a certain user
-    // findUser(query) {
-    //     if (query === "") {
-    //         // Only send request if there is a search query
-    //         this.userDropdownOptions = [];
-    //         return;
-    //     }
-
-    //     // Show the loading bar
-    //     this.isSearchLoading = true;
-    //     axios
-    //         .get("/users", {
-    //             params: {
-    //                 name: query,
-    //             },
-    //         })
-    //         .then((response) => {
-    //             // Set the result of the database query as the options
-    //             this.userDropdownOptions = response.data;
-    //         })
-    //         .catch((error) => {
-    //             // Unexpected error occurred, for now log to console
-    //             console.error(error);
-    //         })
-    //         .finally(() => {
-    //             this.isSearchLoading = false;
-    //         });
-    // },
-
-    // findUserNotInRoom(nameQuery, roomId) {
-    //     if (nameQuery === "") {
-    //         // Only send request if there is a search query
-    //         this.newMemberDropdownOptions = [];
-    //         return;
-    //     }
-
-    //     // Show the loading spinner
-    //     this.isMemberSearchLoading = true;
-    //     axios
-    //         .get("/users", {
-    //             params: {
-    //                 name: nameQuery,
-    //                 notInRoom: roomId,
-    //             },
-    //         })
-    //         .then((response) => {
-    //             // Set the result of the database query as the options
-    //             this.newMemberDropdownOptions = response.data;
-    //         })
-    //         .catch((error) => {
-    //             // Unexpected error occurred, for now log to console
-    //             console.error(error);
-    //         })
-    //         .finally(() => {
-    //             this.isMemberSearchLoading = false;
-    //         });
-    // },
-
-    // addMember(newMember) {
-    //     axios.post("addMember", {
-    //         email: newMember.email,
-    //         room_id: this.activeRoom,
-    //     });
-
-    //     // Inform the chatroom that a new member has been added
-    //     let found = this.getTargetRoomIndex(this.activeRoom);
-    //     this.chatrooms[found].messages.push({
-    //         user: "",
-    //         message:
-    //             newMember.first_name +
-    //             " " +
-    //             newMember.last_name +
-    //             " has been added",
-    //     });
-
-    //     this.newMemberDropdownOptions = [];
-    //     this.addingMember = false;
-    // },
 
     getTargetRoomIndex(targetRoom) {
         let found = null;
@@ -564,23 +453,7 @@ export default {
         return found;
     },
 
-    // Given a message object, converts it to a string resembling a chat message
-    // This is used for the chat rooms list message preview
-    convertMessageObjectToString(message) {
-        if (!message) return "";
-
-        if (message.attachment_path) {
-            return `${message.user.first_name || ""} ${
-                message.user.last_name || ""
-            } sent an attachment.`;
-        }
-
-        return `${message.user.first_name || ""} ${
-            message.user.last_name || ""
-        }: ${message.message}`;
-    },
   },
 };
-
 
 </script>
