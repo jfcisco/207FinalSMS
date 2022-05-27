@@ -18,7 +18,7 @@
   </div>
   <!--MAIN SIDE BAR END-->
 
-  <!--MESSAGE LISTS START-->
+  <!--ROOM LISTS START-->
   <div class="col-lg-2 sidebar" style="overflow-y: scroll">
 
     <!--INCOMING SESSIONS SECTION START-->
@@ -61,11 +61,10 @@
           <div class="message_p">
             <p>
               {{
-                `${
-                  chatroom.members
+                chatroom.messages[chatroom.messages.length - 1].clientId === user._id ? "You: " :
+                  `${chatroom.members
                   .filter(member => member.clientId === chatroom.messages[chatroom.messages.length - 1].clientId)
-                  [0].clientName
-                }: `
+                  [0].clientName}: `
               }}
               {{ chatroom.messages[chatroom.messages.length - 1].content }}</p>
           </div>
@@ -116,9 +115,8 @@
               Assigned:
               {{
                 chatroom.members
-                .filter(member => member.clientType === "user")
-                .reduce((result, member) => result + `${member.clientName} `,""
-                )
+                  .filter(member => member.clientType === "user")
+                  .reduce((result, member) => result + `${member.clientName} `,"")
               }}
             </p>
           </div>
@@ -128,11 +126,10 @@
           <div class="message_p">
             <p>
               {{
-                `${
-                  chatroom.members
+                chatroom.messages[chatroom.messages.length - 1].clientId === user._id ? "You: " :
+                  `${chatroom.members
                   .filter(member => member.clientId === chatroom.messages[chatroom.messages.length - 1].clientId)
-                  [0].clientName
-                }: `
+                  [0].clientName}: `
               }}
               {{ chatroom.messages[chatroom.messages.length - 1].content }}
             </p>
@@ -144,14 +141,14 @@
 
     </div>
   </div>
-  <!--MESSAGE LISTS END-->
+  <!--ROOM LISTS END-->
 
   <!--MAIN CHAT WINDOW START-->
 
   <div class="col-lg-9 mainchat">
 
     <!--MAIN INPUT MESSAGE BOX START-->
-    
+
     <div class="chatbox_input" id="message_main" style="display:flex">
       <ion-icon class="whisper" name="volume-high-outline" id="headerToggle1" onclick="toggleheaderleft()"></ion-icon>
       <input
@@ -191,7 +188,7 @@
           <div>
           <h4>{{ chatroom.members[0].clientName }}</h4>
           </div>
-          
+
           <div class="mb-3"><h5 style="font-weight: 500; font-style: italic;">
             Assigned:
             {{
@@ -219,7 +216,15 @@
                         whisper_text: message.isWhisper
                       }"
                     >
-                        <b>{{ message.clientId === user._id ? "You: " : `${chatroom.members[0].clientName}: ` }}</b>
+                        <!-- <b>{{ message.clientId === user._id ? "You: " : `${chatroom.members[0].clientName}: ` }}</b> -->
+                        <b>
+                          {{
+                            message.clientId === user._id ? "You: " :
+                              `${chatroom.members
+                              .filter(member => member.clientId === message.clientId)
+                              [0].clientName}: `
+                          }}
+                        </b>
                         <p>&nbsp;{{message.content }}</p>
                     </div>
                 </li>
@@ -227,9 +232,9 @@
             </ul>
           </div>
           <!--CHATBOX END-->
-          
+
           <!-- JOIN FEATURE AVAILABLE ONLY IF CURRENT USER IS NOT ALREADY ASSIGNED -->
-          <button 
+          <button
             class="joinbutton"
             id="join-btn"
             style="display: flex"
@@ -237,7 +242,7 @@
             v-on:click="joinRoom(chatroom._id)">
             <span class="joinroom">Click to join room</span>
           </button>
-      
+
       </div>
     </div>
 
