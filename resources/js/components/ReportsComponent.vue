@@ -27,10 +27,10 @@
 
 
                 <div class="block">
-                    <div class="details">                    
+                    <div class="details">
                         <div class="listHead">
                             <p>Live Sessions</p>
-                        </div>    
+                        </div>
                     </div>
                 </div>
                 <div class="block">
@@ -40,17 +40,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="block">                    
-                    <div class="details">                     
+                <div class="block">
+                    <div class="details">
                         <div class="listHead">
                             <p>Live Chats</p>
-                        </div>             
+                        </div>
                     </div>
                 </div>
-                
+
             </div>
 
-            
+
 
             <div class="row">
                 <p class="subtitle sidebartitle">Historical Analytics</p>
@@ -68,18 +68,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="block">                    
-                    <div class="details">                                                
+                <div class="block">
+                    <div class="details">
                         <div class="listHead">
                             <p>Offline Messages</p>
                         </div>
                     </div>
                 </div>
-                <div class="block">                    
-                    <div class="details">                        
+                <div class="block">
+                    <div class="details">
                         <div class="listHead">
                             <p>Average Chat Duration</p>
-                        </div>                          
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,7 +106,7 @@
                             <span>Link to Chat: {{ socketReport.roomId }}</span>
                             <span>Duration: {{ socketReport.time }}</span>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 <!-- Report Cards and Charts -->
                 <div class="col-sm-6">
@@ -158,26 +158,27 @@
       <br/>
 
       <div class="row">
-            <div class="col-sm-6"> 
+            <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
                         <h5>Visitors per hour</h5>
                         <div class="card">
                             <div class="card-body">
-                                <table style="border: 1px solid gray;"><thead style="border: px solid gray; padding: 0px 5px 0px 5px"><th style="padding: 0px 5px 0px 5px;">Time (hour)</th><th style="padding: 0px 5px 0px 5px;">Number of Visitors</th></thead><HourlyVisitor></HourlyVisitor></table>
+                                <!-- <table style="border: 1px solid gray;"><thead style="border: px solid gray; padding: 0px 5px 0px 5px"><th style="padding: 0px 5px 0px 5px;">Time (hour)</th><th style="padding: 0px 5px 0px 5px;">Number of Visitors</th></thead><HourlyVisitor></HourlyVisitor></table> -->
+                                <HourlyVisitor></HourlyVisitor>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-sm-6"> 
+            <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
                         <h5>Chats per hour</h5>
                         <div class="card">
                             <div class="card-body">
-                                   <table style="border: 1px solid gray;"><thead style="border: px solid gray; padding: 0px 5px 0px 5px"><th style="padding: 0px 5px 0px 5px;">Time (hour)</th><th style="padding: 0px 5px 0px 5px;">Number of Chats</th></thead><HourlyChat></HourlyChat></table>     
+                                   <table style="border: 1px solid gray;"><thead style="border: px solid gray; padding: 0px 5px 0px 5px"><th style="padding: 0px 5px 0px 5px;">Time (hour)</th><th style="padding: 0px 5px 0px 5px;">Number of Chats</th></thead><HourlyChat></HourlyChat></table>
                             </div>
                         </div>
                     </div>
@@ -343,7 +344,7 @@ export default {
     methods: {
         timeUpdate(){
             this.socketReports.forEach(function(report){
-                var diff = new Date(new Date() - new Date(report.startAt));                
+                var diff = new Date(new Date() - new Date(report.startAt));
                 report.time = diff.toISOString().substr(11, 8);
             });
         },
@@ -368,12 +369,12 @@ export default {
             let start_date = document.getElementById("start_date_input").value;
             let end_date = document.getElementById("end_date_input").value;
             let data = await this.getChatVolume(start_date, end_date);
-            
+
             console.log("==========================");
             console.log("start: " + start_date);
             console.log("end: " + end_date);
             console.log(data.data);
-            
+
             let reversedKeys = Object.keys(data.data).reverse();
 
             reversedKeys.forEach((key) => {
@@ -382,7 +383,7 @@ export default {
                     <td>${data.data[key]}</td>
                 </tr>`;
             });
-                
+
 
         }
 
