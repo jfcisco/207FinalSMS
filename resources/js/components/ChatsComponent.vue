@@ -54,9 +54,9 @@
           <div class="listHead">
             <p>{{ chatroom.members[0].clientName }}</p>
           </div>
-          <div class="listHead">
+          <!-- <div class="listHead">
             <p>room._id: {{ chatroom._id }}</p>
-          </div>
+          </div> -->
           <!--room id/username section-->
           <!-- The message last sent to the room -->
           <div class="message_p">
@@ -101,9 +101,9 @@
             <p>{{ chatroom.members[0].clientName }}</p>
           </div>
           <!-- delete in the future -->
-          <div class="listHead">
+          <!-- <div class="listHead">
             <p>room._id: {{ chatroom._id }}</p>
-          </div>
+          </div> -->
           <!-- delete in the future -->
 
           <!-- assigned room users (Admin/Agent) -->
