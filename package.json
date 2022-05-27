@@ -28,8 +28,6 @@
     },
     "dependencies": {
         "clientjs": "^0.2.1",
-        "laravel-echo": "^1.11.4",
-        "pusher-js": "^7.0.6",
         "socket.io-client": "^4.5.0",
         "vue-axios": "^3.4.1",
         "vue-chat-scroll": "^1.4.0"
