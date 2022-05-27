@@ -27,10 +27,10 @@
 
 
                 <div class="block">
-                    <div class="details">                    
+                    <div class="details">
                         <div class="listHead">
                             <p>Live Sessions</p>
-                        </div>    
+                        </div>
                     </div>
                 </div>
                 <div class="block">
@@ -40,17 +40,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="block">                    
-                    <div class="details">                     
+                <div class="block">
+                    <div class="details">
                         <div class="listHead">
                             <p>Live Chats</p>
-                        </div>             
+                        </div>
                     </div>
                 </div>
-                
+
             </div>
 
-            
+
 
             <div class="row">
                 <p class="subtitle sidebartitle">Historical Analytics</p>
@@ -68,18 +68,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="block">                    
-                    <div class="details">                                                
+                <div class="block">
+                    <div class="details">
                         <div class="listHead">
                             <p>Offline Messages</p>
                         </div>
                     </div>
                 </div>
-                <div class="block">                    
-                    <div class="details">                        
+                <div class="block">
+                    <div class="details">
                         <div class="listHead">
                             <p>Average Chat Duration</p>
-                        </div>                          
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,10 +106,10 @@
                             <span>Link to Chat: {{ socketReport.roomId }}</span>
                             <span>Duration: {{ socketReport.time }}</span>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 <!-- Report Cards and Charts -->
-                <div class="col-sm-6">                  
+                <div class="col-sm-6">
                     <div class="card">
                         <div class="card-body">
                             <div><h5 class="card-title">Visitors  </h5></div><br/>
@@ -157,7 +157,7 @@
       <br/>
 
       <div class="row">
-            <div class="col-sm-6"> 
+            <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
                         <h5>Visitors per hour</h5>
@@ -170,13 +170,13 @@
                 </div>
             </div>
 
-            <div class="col-sm-6"> 
+            <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
                         <h5>Chats per hour</h5>
                         <div class="card">
                             <div class="card-body">
-                                    <p>-- Insert Chart Here -- </p>           
+                                    <p>-- Insert Chart Here -- </p>
                             </div>
                         </div>
                     </div>
@@ -278,8 +278,8 @@
 const client = new cj.ClientJS();
 
 //for localhost testing
-const socket = io("http://localhost:3000", {
-//const socket = io("https://sms-ws.ml:3000", {
+const socket = io(process.env.MIX_SOCKET_SERVER, {
+//const socket = io(process.env.MIX_SOCKET_SERVER, {
     //secure: true,
     autoConnect: false,
 });
@@ -336,7 +336,7 @@ export default {
     methods: {
         timeUpdate(){
             this.socketReports.forEach(function(report){
-                var diff = new Date(new Date() - new Date(report.startAt));                
+                var diff = new Date(new Date() - new Date(report.startAt));
                 report.time = diff.toISOString().substr(11, 8);
             });
         },
@@ -361,12 +361,12 @@ export default {
             let start_date = document.getElementById("start_date_input").value;
             let end_date = document.getElementById("end_date_input").value;
             let data = await this.getChatVolume(start_date, end_date);
-            
+
             console.log("==========================");
             console.log("start: " + start_date);
             console.log("end: " + end_date);
             console.log(data.data);
-            
+
             let reversedKeys = Object.keys(data.data).reverse();
 
             reversedKeys.forEach((key) => {
@@ -375,7 +375,7 @@ export default {
                     <td>${data.data[key]}</td>
                 </tr>`;
             });
-                
+
 
         }
 

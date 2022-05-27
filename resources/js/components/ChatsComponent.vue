@@ -246,7 +246,7 @@ import axios from 'axios';
 
 const client = new cj.ClientJS();
 
-const socket = io("https://sms-ws.ml:3000", {
+const socket = io(process.env.MIX_SOCKET_SERVER, {
     secure: true,
     autoConnect: false,
 });

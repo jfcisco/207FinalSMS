@@ -158,7 +158,7 @@ import cj from "clientjs";
 const client = new cj.ClientJS();
 
 // Setup Socket.IO connection
-const socket = io("https://sms-ws.ml:3000", {
+const socket = io(process.env.MIX_SOCKET_SERVER, {
     secure: true,
     autoConnect: false,
 });
