@@ -107,7 +107,7 @@
                     </div>
 
                     {{-- Widget Behavior Settings --}}
-                    <div class="col-lg-6">
+                    {{-- <div class="col-lg-6">
                         <h4 class="chat-subheader">Widget Behavior</h4> 
                         <div class="widget-block">
                             <label class="chat-label" for="visiibility-settings">Visibility Settings</label>
@@ -147,7 +147,7 @@
                             <span class="chat-label">Hide widget on load in mobile</span>
                         </div>
                     </div>
-                    {{-- <div class="col-lg-6">
+                    <div class="col-lg-6">
                         <div class="widget-block">
                             <label class="chat-label" for="feature-settings">Feature Settings</label>
                         </div>

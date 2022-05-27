@@ -6,8 +6,8 @@
                 <li>Conversation</li>
                 <!-- END CHAT BUTTON -->
                 <!-- TO DO: Edit behavior of the button to End Chat -->
-                <li style="float:right"><button id=exit-chat onClick="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i><span class="tooltiptext">End chat</span></button>
-                </li>
+                <!-- <li style="float:right"><button id=exit-chat @click="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i><span class="tooltiptext">End chat</span></button>
+                </li> -->
             </ul>
         </h2>
 
