@@ -1,9 +1,16 @@
 <template>
     <div>
         <div class="widget-block">
-            <label style="font-size: 1rem;">Enabled? 
+            <label class="chat-label" for="availability-schedule">Availability Schedule</label>
+        </div>
+        <div class="widget-block">
+            <label class="switch">
                 <input type="checkbox" v-model="enabled">
-            </label>  
+                <span class="slider round"></span>
+            </label> 
+            <span class="chat-label">
+                {{ enabled ? "Enabled" : "Disabled" }}
+            </span>
         </div>
         
         <template v-if="enabled">

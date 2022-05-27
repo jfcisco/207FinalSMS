@@ -170,22 +170,11 @@
     
                 <div class="row">
                     <h4 class="chat-subheader-3">Availability Restrictions</h4> 
+                    
                     <div class="col-lg-4">
-                        <div class="widget-block">
-                            <label class="chat-label" for="domain-restriction">Domain Restriction</label>
-                        </div>
-                        <div class="widget-block">
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider round"></span>
-                            </label> 
-                            <span class="chat-label">Disabled</span>
-                            
-                        </div>
-                        <div class="widget-block">
-                            
-                            <p class="chat-label-2 mb-0">By default, the code will work on all the domains and URLs where it has been inserted. To show or hide the widget on one or morer specific domain or URLs, enable this functionality and specify the rule.</p>
-                        </div>
+                        <widget-domains-picker
+                            initial-domains-list-json="{{old('allowed_domains', json_encode($currentWidget->allowed_domains ?? array("")))}}"
+                        ></widget-domains-picker>
                     </div>
     
                     <div class="col-lg-4">

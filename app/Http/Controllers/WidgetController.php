@@ -226,13 +226,34 @@ class WidgetController extends Controller
         $request->validate([
             'availability_timezone' => 'timezone',
             'availability_start_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_end_time',
-            'availability_end_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_start_time|after:availability_start_time'
-            
+            'availability_end_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_start_time|after:availability_start_time',
+            'allowed_domains' => [
+                'nullable',
+                'json',
+                function ($attribute, $value, $fail) {
+                    $domainArray = json_decode($value);
+                    $allAreValidDomainValues = collect($domainArray)
+                        ->every(function($value, $key) {
+                            return preg_match("/https?\:\/\/.+(\:\d+)?/i", $value);
+                        });
+
+                    if (!$allAreValidDomainValues) {
+                        $fail("An invalid domain has been provided. Please double check your domain restrictions.");
+                    }
+                }
+            ]
         ]);
+        
+        // Update Allowed Domains
+        if ($request->filled('allowed_domains')) {
+            $allowedDomains = json_decode($request->input('allowed_domains'));
+            $widgetToUpdate->allowed_domains = $allowedDomains;
+        }
+        else {
+            $widgetToUpdate->unset('allowed_domains');
+        }
 
-        // ddd($request);
-
-        /* Update Availability Schedule */
+        // Update Availability Schedule
         if ($request->filled(['availability_start_time', 'availability_end_time'])) {
             $widgetToUpdate->availability_timezone = $request->input('availability_timezone', 'Asia/Hong_Kong');
             $widgetToUpdate->availability_start_time = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('availability_start_time'), 'UTC');
