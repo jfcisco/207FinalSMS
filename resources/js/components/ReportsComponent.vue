@@ -18,7 +18,7 @@
 
         <!--reports LISTS-->
 
-        <div class="col-lg-2 sidebar" style="overflow-y: scroll">
+        <div class="col-lg-2 sidebar" style="overflow-y: auto">
 
 
             <div class="row py-0 mt-0">
@@ -86,7 +86,7 @@
         </div>
 
         <!--CHAT DISPLAY-->
-        <div class="col-lg-8 mainchat">
+        <div class="col mainchat overflow-auto">
 
 
             <div class="chat-container">
@@ -211,6 +211,11 @@
 </template>
 
 <style scoped>
+/* HACK: Temporary fix, remove when layout is okay */
+.row > * {
+    max-height: 90vh !important;
+}
+
 /* .attachment {
     max-width: 15rem;
 } */
@@ -279,10 +284,8 @@
 
 const client = new cj.ClientJS();
 
-//for localhost testing
-const socket = io("http://localhost:3000", {
-//const socket = io("https://sms-ws.ml:3000", {
-    //secure: true,
+const socket = io(process.env.MIX_SOCKET_SERVER, {
+    secure: true,
     autoConnect: false,
 });
 
