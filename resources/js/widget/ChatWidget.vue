@@ -4,19 +4,28 @@
         <h2>
             <ul>
                 <li>Conversation</li>
+                <!-- END CHAT BUTTON -->
                 <!-- TO DO: Edit behavior of the button to End Chat -->
-                <li style="float:right"><button id=exit-chat onClick="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i><span class="tooltiptext">End chat</span></button>
+                <li style="float:right" v-if="!chatEnded">
+                    <button id=exit-chat @click="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i><span class="tooltiptext">End chat</span></button>
                 </li>
             </ul>
         </h2>
 
+        <!-- END CHAT SCREEN -->
+        <div class="end-chat content" v-if="chatEnded">
+            <p>You have ended the chat conversation.</p>
+        </div>
+
         <!--CHAT MESSAGES BOX-->
-        <div id="messages" class="content">
+        <div v-else id="messages" class="content">
             <div class="messages" v-chat-scroll>
                 <!--CHAT MESSAGE/CHAT UPDATE-->
                 <template v-for="(message, index) in room.messages">
                     <!-- Check if the message is just an update -->
-                    <div class="update" v-if="message.isUpdate" :key="index">
+                    <div class="update" v-if="message.isUpdate"
+                    v-show="!message.isWhisper"
+                    :key="index">
                         {{ message.content }}
                     </div>
 
@@ -31,10 +40,9 @@
                         :key="index"
                     >
                         <div class="name">
-                            {{ message.fromSelf ? "You" : message.clientId }}
-                            <!-- TODO: Ask Raymond if the sender/client's name can also be passed instead of just the clientId -->
+                            {{ message.fromSelf ? "You" : message.senderName }}
+                            <div class="text">{{ message.content }}</div>
                         </div>
-                        <div class="text">{{ message.content }}</div>
                     </div>
                 </template>
             </div>
@@ -119,17 +127,27 @@ h2 ul li button:hover .tooltiptext{
     justify-content: flex-start;
 }
 .content .messages .message .name {
-    font-size: 12px;
+    font-size: 10px;
+    padding-bottom: 5px;
     color: #fa6121;
+    font-weight: bold;
 }
 .content .messages .message .text {
     word-wrap: break-word;
+    font-size: 14px;
+    color: black;
+    font-weight: normal;
 }
 .content .messages .update {
     text-align: center;
     padding: 10px;
     font-style: italic;
 }
+
+.end-chat {
+    text-align: center;
+}
+
 </style>
 
 <script>
@@ -140,22 +158,23 @@ import cj from "clientjs";
 const client = new cj.ClientJS();
 
 // Setup Socket.IO connection
-const socket = io("https://sms-ws.ml:3000", {
-    // secure: true,
+const socket = io(process.env.MIX_SOCKET_SERVER, {
+    secure: true,
     autoConnect: false,
 });
 
 export default {
     props: ["visitorName"],
-    
+
     data() {
         return {
-            isVisible: true,
+            chatEnded: false,
             message: "",
             room: {
                 // Room default values
                 _id: null,
                 messages: [],
+                members: []
             },
         };
     },
@@ -163,23 +182,26 @@ export default {
     created() {
         // Setup auth for connection
         socket.auth = {
-            clientId: client.getFingerprint(),
+            clientId: `${client.getFingerprint()}`,
             clientType: "visitor",
-            clientName: this.$props.visitorName,
+            clientName: this.visitorName,
             widgetId: "widget1",
         };
 
         socket.connect();
 
         socket.on("rooms", ({ rooms }) => {
+            console.log("socket.on rooms")
+            console.log("rooms=>", rooms)
             if (!this.room._id) {
                 // Get the room and its accompanying information
                 let room = rooms[0];
 
                 // Process the room's messages, attaching additional properties we need
                 room.messages = room.messages.map((msg) =>
-                    this.attachMessageProperties(msg)
+                    this.attachMessageProperties(room, msg)
                 );
+
                 this.room = room;
 
                 this.focusOnMessageInput();
@@ -189,15 +211,22 @@ export default {
 
         // Listen to any sent messages
         socket.on("message", (message) => {
-            const chatMessage = this.attachMessageProperties(message);
+            const chatMessage = this.attachMessageProperties(this.room, message);
             this.room.messages.push(chatMessage);
         });
 
-        // An admin/agent has joined the room
-        // socket.on("join", (notification) => {
-        //     const update = this.attachUpdateProperties(notification);
-        //     this.room.messages.push(update);
-        // });
+        // Received notification that an admin/agent has joined the room
+        socket.on("join", (notification) => {
+            const update = this.attachUpdateProperties(notification);
+            this.room.messages.push(update);
+        });
+
+        // Received information about user that joined
+        socket.on("user_joined", (user) => {
+            if (user.roomId === this.room._id) {
+                this.room.members.push(user);
+            }
+        });
 
         // // An admin/agent/visitor left the room
         // socket.on("user_disconnect", (notification) => {
@@ -220,6 +249,7 @@ export default {
                 content: this.message,
                 roomId: this.room._id,
             };
+            console.log("room._id=> ", this.room._id);
 
             socket.emit("message", newMessage);
 
@@ -235,9 +265,10 @@ export default {
         },
 
         // Helper method to attach properties to a `message` instance so that we can display it properly
-        attachMessageProperties(message) {
+        attachMessageProperties(room, message) {
             return {
                 ...message,
+                senderName: this.findMemberNameByClientId(room, message.clientId),
                 isUpdate: false,
                 fromSelf: message.clientId === socket.auth.clientId,
             };
@@ -251,6 +282,16 @@ export default {
             };
         },
 
+        findMemberNameByClientId(room, clientId) {
+            for (let member of room.members) {
+                if (member.clientId === clientId) {
+                    return member.clientName;
+                }
+            }
+
+            return "Unknown";
+        },
+
         focusOnMessageInput() {
             this.$nextTick(() => {
                 const messageInputRef = this.$refs.messageInput;
@@ -258,7 +299,8 @@ export default {
             });
         },
         endConversation() {
-            //TO DO: Add code to end conversation
+            socket.disconnect();
+            this.chatEnded = true;
         },
     },
 };

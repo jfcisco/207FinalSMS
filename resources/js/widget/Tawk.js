@@ -1,11 +1,29 @@
 import Vue from 'vue'; 
 import VueChatScroll from "vue-chat-scroll";
 
+// Options used for converting date/time to string using .toLocaleTimeString()
+const localeTimeFormat = {
+    hour: '2-digit',
+    minute: '2-digit'
+}
+
 export class Tawk {
-    constructor({ position = 'bottom-right'} = {}) {
+    constructor({ position = 'bottom-right',
+        baseUrl, 
+        hasScheduledAvailability,
+        availabilityStartTime,
+        availabilityEndTime } = {}
+    ) {
+        this.baseUrl = baseUrl;
         this.position = this.getPosition(position);
         this.open = false;
         this.sessionStarted = false;
+
+        // Variables for availability schedule
+        this.hasScheduledAvailability = hasScheduledAvailability;
+        this.availabilityStartTime = availabilityStartTime;
+        this.availabilityEndTime = availabilityEndTime;
+
         this.initialise();
         this.createStyles();
     }
@@ -29,12 +47,12 @@ export class Tawk {
         buttonContainer.classList.add('button-container')
 
         const chatIcon = document.createElement('img');
-        chatIcon.src = '<?php echo $baseUrl; ?>/assets/chat.svg';
+        chatIcon.src = `${this.baseUrl}/assets/chat.svg`;
         chatIcon.classList.add('icon');
         this.chatIcon = chatIcon;
 
         const closeIcon = document.createElement('img');
-        closeIcon.src = '<?php echo $baseUrl; ?>/assets/cross.svg';
+        closeIcon.src = `${this.baseUrl}/assets/cross.svg`;
         closeIcon.classList.add('icon', 'hidden');
         this.closeIcon = closeIcon;
 
@@ -45,7 +63,7 @@ export class Tawk {
         this.messageContainer = document.createElement('div');
         this.messageContainer.classList.add('hidden', 'message-container');
         
-        this.createMessageContainerContent();
+        this.checkTime();
 
         container.appendChild(this.messageContainer);
         container.appendChild(buttonContainer);
@@ -60,7 +78,7 @@ export class Tawk {
         form.classList.add('content');
         
         const welcome = document.createElement('div');
-        form.classList.add('welcome');
+        welcome.classList.add('welcome');
         welcome.textContent = `Enter your name and start chatting with us.`;
 
         const name = document.createElement('input');
@@ -82,6 +100,20 @@ export class Tawk {
 
         this.messageContainer.appendChild(title);
         this.messageContainer.appendChild(form);
+
+    }
+
+    createMessageContainerContentAfterHours() {
+        this.messageContainer.innerHTML = '';
+        const title = document.createElement('h2');
+        title.textContent = `We're not here...`;
+
+        const afterhoursmessage = document.createElement('div');
+        afterhoursmessage.classList.add('content');
+        afterhoursmessage.textContent = `Our agents are available from ${this.availabilityStartTime.toLocaleTimeString([], localeTimeFormat)} to ${this.availabilityEndTime.toLocaleTimeString([], localeTimeFormat)}.  Let's chat again during those hours!`;
+
+        this.messageContainer.appendChild(title);
+        this.messageContainer.appendChild(afterhoursmessage);
 
     }
 
@@ -233,7 +265,7 @@ export class Tawk {
             if (nameField) nameField.focus();
         } else {
             if (!this.sessionStarted) {
-                this.createMessageContainerContent();
+                this.checkTime();
             }
 
             // TO DO: Need to insert a check if the visitor has already started a conversation.
@@ -263,11 +295,12 @@ export class Tawk {
         document.head.appendChild(gIconsHeader);
         
         // Set up Vue component
-        this.messageContainer.innerHTML = `<chat-widget></chat-widget>`;
+        this.messageContainer.innerHTML = `<chat-widget visitor-name="${formSubmission.name}"></chat-widget>`;
+
         Vue.use(VueChatScroll);
         this.vue = new Vue({
             components: {
-                'chat-widget': require('./ChatWidget.vue').default 
+                'chat-widget': require('./ChatWidget.vue').default
             },
             propsData: {
                 visitorName: formSubmission.name
@@ -277,5 +310,23 @@ export class Tawk {
         // Mount it to message-container
         this.vue.$mount(this.messageContainer);
         this.messageContainer = this.vue.$el;
+    }
+
+    checkTime() {
+        // LOGIC FOR AFTER HOURS MESSAGE
+        if (!this.hasScheduledAvailability) {
+            this.createMessageContainerContent();
+        }
+        else {
+            var now = new Date().getTime();
+            var startTime = this.availabilityStartTime.getTime();
+            var endTime = this.availabilityEndTime.getTime();
+            
+            if (now > startTime && now < endTime) {
+                this.createMessageContainerContent();
+            } else {
+                this.createMessageContainerContentAfterHours();
+            }
+        }
     }
 }

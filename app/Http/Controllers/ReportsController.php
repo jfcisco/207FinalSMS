@@ -16,6 +16,11 @@ class ReportsController extends Controller
         return view('reports');
     }
 
+    public function live()
+    {
+        return view('livereports');
+    }
+
     public function dailyChats(Request $request)
     {
         $dayOfWeek = Carbon::now()->dayOfWeek;
@@ -27,7 +32,7 @@ class ReportsController extends Controller
         $messages = Message::where('created_at', '>=', $startDate)
             ->where('created_at', '<', $endDate->addDay())
             ->orderBy('created_at', 'DESC')->get()->groupBy(function ($item) {
-            return $item->created_at->toDateString();
+            return $item->created_at->format('d/M/Y');
         });
 
         foreach ($messages as $key => $message) {
@@ -197,7 +202,7 @@ class ReportsController extends Controller
         $startDate = $startDate->copy();
 
         for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
-            $dates->put($date->toDateString(), 0);
+            $dates->put($date->format('d/M/Y'), 0);
         }
 
         return $dates;
@@ -213,7 +218,7 @@ class ReportsController extends Controller
         $pieces = explode('"', $pieces[1]);
         $millis = intval($pieces[1]);
 
-        return date('Y-m-d', ($millis / 1000));
+        return date('d/M/Y', ($millis / 1000));
     }
 
     function parseTime($dateFromMongo)

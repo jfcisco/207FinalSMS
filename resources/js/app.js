@@ -7,8 +7,11 @@
 require('./bootstrap');
 
 window.Vue = require('vue').default;
+import Vue from 'vue';
 import VueChatScroll from 'vue-chat-scroll';
 Vue.use(VueChatScroll);
+
+Vue.config.ignoredElements = ['ion-icon'];
 
 /**
  * The following block of code may be used to automatically register your
@@ -24,9 +27,14 @@ Vue.use(VueChatScroll);
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('chats', require('./components/ChatsComponent.vue').default);
 Vue.component('reports', require('./components/ReportsComponent.vue').default);
+Vue.component('VisitorsToday', require('./components/Visuals/VisitorsToday.vue').default);
+Vue.component('AnsweredChat', require('./components/Visuals/AnsweredChat.vue').default);
+Vue.component('MissedChat', require('./components/Visuals/MissedChat.vue').default);
+Vue.component('HourlyVisitor', require('./components/Visuals/HourlyVisitor.vue').default);
 Vue.component('profile-edit-form', require('./components/ProfileUpdateComponent.vue').default);
 Vue.component('vue-multiselect', window.VueMultiselect.default)
-
+Vue.component('widget-scheduler-picker', require('./components/WidgetSchedulePicker.vue').default);
+Vue.component('widget-domains-picker', require('./components/WidgetDomainsPicker.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -37,6 +45,39 @@ Vue.component('vue-multiselect', window.VueMultiselect.default)
 const app = new Vue({
     el: '#app',
 });
+
+     
+/* Code used to copy widget code to the clipboard */
+function copyContentsToClipboard(event) {
+  // Source: https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
+  const copyText = event.target;
+
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(copyText.textContent);
+    alert("Copied text!");
+  }
+  else {
+    console.error("Clipboard unavailable due to insecure context, or browser limitations.");
+
+    const unavailableClipboardAlert = document.querySelector("#unavailable-clipboard");
+
+    unavailableClipboardAlert.classList.remove("d-none");
+    unavailableClipboardAlert.classList.add("d-block");
+  }
+}
+
+const widgetCode = document.querySelector(".widget-code");
+
+if (widgetCode) {
+  widgetCode.addEventListener("click", copyContentsToClipboard);
+  
+  if (bootstrap.Tooltip) {
+    new bootstrap.Tooltip(widgetCode);
+  }
+}
 
 
 function toggleheaderleft() {
@@ -50,23 +91,3 @@ function toggleheaderleft() {
         y.style.display ="flex";
       }
     }
-
-     
-/* Code used to copy widget code to the clipboard */
-function copyContentsToClipboard(event) {
-  // Source: https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
-  const copyText = event.target;
-  
-  // copyText.select();
-  // copyText.setSelection(0, 99999);
-
-  navigator.clipboard.writeText(copyText.textContent);
-
-  alert("Copied text!");
-}
-
-const widgetCode = document.querySelector(".widget-code");
-
-if (widgetCode) {
-  widgetCode.addEventListener("click", copyContentsToClipboard);
-}
