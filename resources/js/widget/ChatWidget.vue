@@ -46,20 +46,27 @@
                     </div>
                 </template>
             </div>
-
             <!--INPUT MESSAGE BOX-->
-            <form @submit.prevent="sendMessage()">
-                <input
-                    ref="messageInput"
-                    :disabled="!room._id"
-                    v-model="message"
-                    type="text"
-                    name="message"
-                    placeholder="Enter your message..."
-                    class="form-control"
-                    autocomplete="off"
-                />
-            </form>
+            <div class="inputs">
+                <div>
+                        <form @submit.prevent="sendMessage()">
+                            <input
+                                ref="messageInput"
+                                :disabled="!room._id"
+                                v-model="message"
+                                type="text"
+                                name="message"
+                                placeholder="Enter your message..."
+                                class="form-control"
+                                autocomplete="off"
+                            />
+                        </form>
+                </div>
+                <FileUploadWidget
+                :active-room="activeRoom"
+                v-on:upload-success="handleAttachmentUpload"
+                ></FileUploadWidget>
+            </div>
         </div>
     </div>
 </template>
@@ -143,7 +150,12 @@ h2 ul li button:hover .tooltiptext{
     padding: 10px;
     font-style: italic;
 }
-
+.inputs {
+    display: grid;
+    grid-template-columns: 90% 10%;
+    margin-bottom: 5px;
+    align-content: space-around;
+}
 .end-chat {
     text-align: center;
 }
@@ -153,6 +165,7 @@ h2 ul li button:hover .tooltiptext{
 <script>
 import io from "socket.io-client";
 import cj from "clientjs";
+import FileUploadWidget from "./FileUploadWidget.vue";
 
 // Setup client.js for device fingerprinting
 const client = new cj.ClientJS();
@@ -165,6 +178,10 @@ const socket = io(process.env.MIX_SOCKET_SERVER, {
 
 export default {
     props: ["visitorName"],
+
+        components: {
+            FileUploadWidget,
+        },
 
     data() {
         return {
