@@ -81,7 +81,7 @@ export default {
 
             return errors;
         },
-        
+
         // Send file to server
         uploadFile() {
             this.errors = this.validateInput();
@@ -93,17 +93,16 @@ export default {
 
             // Prepare to send the file to the server
             let formData = new FormData();
-            formData.append('attachment', this.attachmentFile, this.attachmentFile.name);
-            formData.append('room_id', this.$props.activeRoom);
+            formData.append('file', this.attachmentFile);
             this.isUploading = true;
 
             // Send request to upload file to server
-            axios.post('messages', formData)
+            axios.post("api/upload-file", formData)
                 .then(response => {
-                    const imageUrl = response.data.imageUrl;
-
+                    const fileUrl = response.data.data;
+                    console.log("response=> ", fileUrl)
                     // Fire an event to the parent component
-                    this.$emit('upload-success', imageUrl);
+                    this.$emit('upload-success', fileUrl);
 
                     // Reset the form
                     this.$refs.uploadForm.reset();
@@ -112,6 +111,7 @@ export default {
                     var modalElement = document.getElementById("FileUploadModal");
                     var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
                     modal.hide();
+
                 })
                 .catch((err) => {
                     console.error(err);
@@ -120,7 +120,7 @@ export default {
                 .finally(() => {
                     this.isUploading = false;
                 });
-        }
+        },
     }
 }
 </script>

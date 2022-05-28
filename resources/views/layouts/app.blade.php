@@ -94,17 +94,5 @@
 
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
-    <!--Start of Widget Script-->
-    <script type="text/javascript">
-        (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true;
-            s1.charset='UTF-8';
-            s1.src='http://localhost:8000/embed/629223664b108933e60c91ad/629223674b108933e60c91af';
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-        })();
-    </script>
-    <!--End of Widget Script-->
 </body>
 </html>

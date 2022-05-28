@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueChatScroll from "vue-chat-scroll";
 import cj from "clientjs";
-// import axios from 'axios';
+import axios from 'axios';
 
 // Options used for converting date/time to string using .toLocaleTimeString()
 const localeTimeFormat = {
@@ -14,7 +14,9 @@ export class Tawk {
         baseUrl,
         hasScheduledAvailability,
         availabilityStartTime,
-        availabilityEndTime } = {}
+        availabilityEndTime,
+        schedulerEnabledForToday
+    } = {}
     ) {
         this.baseUrl = baseUrl;
         this.position = this.getPosition(position);
@@ -26,6 +28,7 @@ export class Tawk {
         this.hasScheduledAvailability = hasScheduledAvailability;
         this.availabilityStartTime = availabilityStartTime;
         this.availabilityEndTime = availabilityEndTime;
+        this.schedulerEnabledForToday = schedulerEnabledForToday;
 
         this.initialise();
         this.createStyles();
@@ -114,6 +117,20 @@ export class Tawk {
         const afterhoursmessage = document.createElement('div');
         afterhoursmessage.classList.add('content');
         afterhoursmessage.textContent = `Our agents are available from ${this.availabilityStartTime.toLocaleTimeString([], localeTimeFormat)} to ${this.availabilityEndTime.toLocaleTimeString([], localeTimeFormat)}.  Let's chat again during those hours!`;
+
+        this.messageContainer.appendChild(title);
+        this.messageContainer.appendChild(afterhoursmessage);
+
+    }
+
+    createMessageContainerContentUnavailableAllDay() {
+        this.messageContainer.innerHTML = '';
+        const title = document.createElement('h2');
+        title.textContent = `We're not here today...`;
+
+        const afterhoursmessage = document.createElement('div');
+        afterhoursmessage.classList.add('content');
+        afterhoursmessage.textContent = `Our agents are unavailable today. Let's chat on another day!`;
 
         this.messageContainer.appendChild(title);
         this.messageContainer.appendChild(afterhoursmessage);
@@ -261,9 +278,9 @@ export class Tawk {
         console.log("running api call")
         try {
             const visitorId = `${this.client.getFingerprint()}`;
-            const response = await axios.get(`api/visitors/${visitorId}`);
-            // const response = await axios.get(`api/visitors/${this.client.getFingerprint().toString()}`);
-            console.log("response", response.data)
+            // const response = await axios.get(`${this.baseUrl}/api/visitors/${visitorId}`);
+            const response = await axios.get(`${this.baseUrl}/api/visitors/${this.client.getFingerprint().toString()}`);
+            console.log("getCurrentVisitor response=> ", response.data)
         } catch (err) {
           console.error(err);
         }
@@ -371,10 +388,18 @@ export class Tawk {
             var startTime = this.availabilityStartTime.getTime();
             var endTime = this.availabilityEndTime.getTime();
 
-            if (now > startTime && now < endTime) {
-                this.createMessageContainerContent();
-            } else {
-                this.createMessageContainerContentAfterHours();
+            // Widget is active for a specified time today
+            if (this.schedulerEnabledForToday) {
+                if (now > startTime && now < endTime) {
+                    this.createMessageContainerContent();
+                } else {
+                    this.createMessageContainerContentAfterHours();
+                }
+            }
+
+            // Widget is inactive the whole day today
+            else {
+                this.createMessageContainerContentUnavailableAllDay();
             }
         }
     }
