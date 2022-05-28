@@ -312,11 +312,11 @@ export class Tawk {
                 // hide element
                 nameField.style.display = "none";
                 // set name input field value to previously entered value by visitor
-                nameField.value = visitorName
+                nameField.value = visitorName;
             }
             if (welcomeDiv) {
                 // modify welcomeDiv to show visitor's name
-                welcomeDiv.textContent = `Welcome ${visitorName}`;
+                welcomeDiv.textContent = `Welcome back, ${visitorName}!`;
             }
         }
     }
