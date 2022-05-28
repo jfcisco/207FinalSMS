@@ -82,9 +82,9 @@
             <div class="chat-container">
                 
                 <!--LIVE SESSION SECTION-->
-                <div class="row reportsection">
-                    <h1>Live Analytics</h1>
-                
+                <h1>Live Analytics</h1>
+                <div class="row reportsection livesession" style="overflow-y: scroll; overflow-x: hidden;">
+                    
                     <div class="col-sm-12">
                         <div class="card" id="livesessions">
                             <div  class="card-body">
