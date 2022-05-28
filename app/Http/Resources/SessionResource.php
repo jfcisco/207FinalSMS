@@ -27,6 +27,7 @@ class SessionResource extends JsonResource
             return [
                 'id' => $this->_id,
                 'socket_id' => $this->socketId,
+                'webpage_source' => $this->webpage_source,
                 'clientType' => $this->clientType,
                 'user' => new UserResource($visitor),
                 'started_at' => $startAt,
@@ -37,6 +38,7 @@ class SessionResource extends JsonResource
             return [
                 'id' => $this->_id,
                 'socket_id' => $this->socketId,
+                'webpage_source' => $this->webpage_source,
                 'clientType' => $this->clientType,
                 'visitor' => new VisitorResource($visitor),
                 'started_at' => $startAt,
