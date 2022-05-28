@@ -44,7 +44,7 @@
                             <div class="text" v-if="!message.content.startsWith('files/')">
                                 {{ message.content }}
                             </div>
-                            <div v-else><a :href="'<?php echo $baseUrl; ?>/'+message.content">{{ message.content }}</a></div>
+                            <div class ="text" v-else><a :href="'<?php echo $baseUrl; ?>/'+message.content" target="_blank">{{ message.content.substring(6) }}</a></div>
                         </div>
                     </div>
                 </template>
@@ -76,91 +76,91 @@
 <style scoped>
 /* CSS rules can be added here */
 
-h2 ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-h2 ul li{
-  display: inline;
-}
-h2 ul li button{
-  background-color: #466289;
-  border: none;
-  color: white;
-}
-h2 ul li button:hover{
-  background-color: lightgray;
-  cursor: pointer;
-  color:#FA6121;
-}
-h2 ul li button .tooltiptext{
-  visibility: hidden;
-  width: 65px;
-  background-color: lightgrey;
-  color: black;
-  text-align: center;
-  border-radius: 2px;
-  padding: 5px 0;
+    h2 ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+    h2 ul li{
+        display: inline;
+    }
+    h2 ul li button{
+        background-color: #466289;
+        border: none;
+        color: white;
+    }
+    h2 ul li button:hover{
+        background-color: lightgray;
+        cursor: pointer;
+        color:#FA6121;
+    }
+    h2 ul li button .tooltiptext{
+        visibility: hidden;
+        width: 65px;
+        background-color: lightgrey;
+        color: black;
+        text-align: center;
+        border-radius: 2px;
+        padding: 5px 0;
 
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-  top: 10%;
-  left: 80%;
-}
-h2 ul li button:hover .tooltiptext{
-  visibility: visible;
-}
-.content .messages {
-    overflow-y: scroll;
-    max-height: 320px;
-    margin-bottom: 5px;
-    background-color: #ffffff;
-    font-family: "Raleway", sans-serif;
-}
-.content .messages .message {
-    display: flex;
-    padding: 10px;
-}
-.content .messages .message > div {
-    max-width: 70%;
-    background: #ffffff;
-    box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.05);
-    padding: 10px;
-}
-.content .messages .message.sent-message {
-    justify-content: flex-end;
-}
-.content .messages .message.received-message {
-    justify-content: flex-start;
-}
-.content .messages .message .name {
-    font-size: 10px;
-    padding-bottom: 5px;
-    color: #fa6121;
-    font-weight: bold;
-}
-.content .messages .message .text {
-    word-wrap: break-word;
-    font-size: 14px;
-    color: black;
-    font-weight: normal;
-}
-.content .messages .update {
-    text-align: center;
-    padding: 10px;
-    font-style: italic;
-}
-.inputs {
-    display: grid;
-    grid-template-columns: 90% 10%;
-    margin-bottom: 5px;
-    align-content: space-around;
-}
-.end-chat {
-    text-align: center;
-}
+    /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+        top: 10%;
+        left: 80%;
+    }
+    h2 ul li button:hover .tooltiptext{
+        visibility: visible;
+    }
+    .content .messages {
+        overflow-y: scroll;
+        max-height: 320px;
+        margin-bottom: 5px;
+        background-color: #ffffff;
+        font-family: "Raleway", sans-serif;
+    }
+    .content .messages .message {
+        display: flex;
+        padding: 10px;
+    }
+    .content .messages .message > div {
+        max-width: 70%;
+        background: #ffffff;
+        box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.05);
+        padding: 10px;
+    }
+    .content .messages .message.sent-message {
+        justify-content: flex-end;
+    }
+    .content .messages .message.received-message {
+        justify-content: flex-start;
+    }
+    .content .messages .message .name {
+        font-size: 10px;
+        padding-bottom: 5px;
+        color: #fa6121;
+        font-weight: bold;
+    }
+    .content .messages .message .text {
+        word-wrap: break-word;
+        font-size: 14px;
+        color: black;
+        font-weight: normal;
+    }
+    .content .messages .update {
+        text-align: center;
+        padding: 10px;
+        font-style: italic;
+    }
+    .inputs {
+        display: grid;
+        grid-template-columns: 90% 10%;
+        margin-bottom: 5px;
+        align-content: space-around;
+    }
+    .end-chat {
+        text-align: center;
+    }
 
 </style>
 

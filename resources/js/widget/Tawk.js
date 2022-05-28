@@ -248,6 +248,7 @@ export class Tawk {
                 border: 0;
                 border-radius: 4px;
                 padding: 10px;
+                position: relative;
             }
             .message-container form button:hover {
                 background-color: #FFB739;

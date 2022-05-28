@@ -27,7 +27,7 @@
                             <form class="container" ref="uploadForm">
                                 <div class="form-group">
                                     <label for="attachment">Attachment: </label>
-                                    <input class="form-control UploadField" type="file" v-bind:disabled="isUploading" accept="image/*" name="attachment" id="attachment" v-on:change="onFileChange($event)">
+                                    <input class="form-control UploadField" type="file" v-bind:disabled="isUploading" accept="file/*" name="attachment" id="attachment" v-on:change="onFileChange($event)">
                                 </div>
 
                                 <div class="text-danger" v-for="error in errors" v-bind:key="error">
@@ -37,12 +37,9 @@
                                 <div class="FileUploadModal-actions gap-2">
                                     <button type="button" v-bind:disabled="isUploading" class="UploadAndSendBtn" v-on:click="uploadFile()">
                                         <!-- Spinner -->
-                                        <span class="spinner-border text-light spinner-border-sm" role="status" v-if="isUploading">
-                                            <span style="visibility: hidden;">Uploading...</span>
-                                        </span>
+                                        <span class="spinnerButton" role="status" v-if="isUploading"></span>
                                         <!-- Spinner -->
-
-                                        <span>Upload &amp; Send</span>
+                                        <span v-else>Upload &amp; Send</span>
                                     </button>
                                     <button type="button" class="cancelButton" style="height: 50%;" @click="closeModal" v-bind:disabled="isUploading">Cancel</button>
                                 </div>
@@ -78,6 +75,10 @@
         color: white;
     }
 
+    .spinnerButton {
+        transition: all 0.2s;
+    }
+
     .closeModalBtn:hover {
         color: #FA6121;
         cursor: pointer;
@@ -90,6 +91,32 @@
 
     .UploadAndSendBtn {
         width: 40%;
+    }
+
+    .UploadAndSendBtn--loading::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        border: 4px solid transparent;
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: button-loading-spinner 1s ease infinite;
+    }
+
+    @keyframes button-loading-spinner {
+        from {
+            transform: rotate(0turn);
+        }
+
+        to {
+            transform: rotate(1turn);
+        }
     }
 
     .cancelButton {
@@ -159,26 +186,6 @@
         padding: 20px 10px;
     }
 
-    .btn-close {
-        position: absolute;
-        top: 0;
-        right: 0;
-        border: none;
-        font-size: 20px;
-        padding: 10px;
-        cursor: pointer;
-        font-weight: bold;
-        color: #4AAE9B;
-        background: transparent;
-    }
-
-    .btn-green {
-        color: white;
-        background: #4AAE9B;
-        border: 1px solid #4AAE9B;
-        border-radius: 2px;
-    }
-
     .modal-fade-enter,
     .modal-fade-leave-to {
         opacity: 0;
@@ -188,6 +195,7 @@
     .modal-fade-leave-active {
         transition: opacity .5s ease;
     }
+    
 
 </style>
 
@@ -198,8 +206,6 @@ export default {
     
     name: 'Modal',
     
-    props: ['active-room'],
-
     emits: ['upload-success'],
 
     data() {
@@ -228,7 +234,7 @@ export default {
             let errors = [];
 
             if (!this.attachmentFile) {
-                errors.push("Please upload a file.");
+                errors.push("Please choose a file.");
             }
 
             return errors;
@@ -247,7 +253,7 @@ export default {
             let formData = new FormData();
             formData.append('file', this.attachmentFile, this.attachmentFile.name);
             this.isUploading = true;
-
+ 
             // Send request to upload file to server
             axios.post("<?php echo $baseUrl; ?>/api/upload-file", formData)
                 .then(response => {
@@ -262,6 +268,7 @@ export default {
 
                     // Close the modal
                     this.closeModal();
+                    this.attachmentFile = null;
                 })
                 .catch((err) => {
                     console.error(err);
@@ -276,6 +283,10 @@ export default {
         },
         showModal() {
             this.isModalVisible = true;
+            const theButton = document.querySelector(".UploadAndSendBtn");
+            theButton.addEventListener("click", () => {
+                theButton.classList.add("UploadAndSendBtn--loading");
+            });
         },
         closeModal() {
             this.isModalVisible = false;
