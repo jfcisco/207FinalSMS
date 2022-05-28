@@ -192,6 +192,8 @@
 </style>
 
 <script>
+import axios from 'axios';
+
 export default {
     
     name: 'Modal',
@@ -243,25 +245,23 @@ export default {
 
             // Prepare to send the file to the server
             let formData = new FormData();
-            formData.append('attachment', this.attachmentFile, this.attachmentFile.name);
-            formData.append('room_id', this.$props.activeRoom);
+            formData.append('file', this.attachmentFile, this.attachmentFile.name);
             this.isUploading = true;
 
             // Send request to upload file to server
-            axios.post('messages', formData)
+            axios.post("<?php echo $baseUrl; ?>/api/upload-file", formData)
                 .then(response => {
-                    const imageUrl = response.data.imageUrl;
+
+                    const fileUrl = response.data.data;
 
                     // Fire an event to the parent component
-                    this.$emit('upload-success', imageUrl);
+                    this.$emit('upload-success', fileUrl);
 
                     // Reset the form
                     this.$refs.uploadForm.reset();
 
                     // Close the modal
-                    var modalElement = document.getElementById("FileUploadModal");
-                    var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-                    modal.hide();
+                    this.closeModal();
                 })
                 .catch((err) => {
                     console.error(err);

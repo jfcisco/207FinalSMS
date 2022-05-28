@@ -41,7 +41,10 @@
                     >
                         <div class="name">
                             {{ message.fromSelf ? "You" : message.senderName }}
-                            <div class="text">{{ message.content }}</div>
+                            <div class="text" v-if="!message.content.startsWith('files/')">
+                                {{ message.content }}
+                            </div>
+                            <div v-else><a :href="'<?php echo $baseUrl; ?>/'+message.content">{{ message.content }}</a></div>
                         </div>
                     </div>
                 </template>
@@ -63,7 +66,6 @@
                         </form>
                 </div>
                 <FileUploadWidget
-                :active-room="activeRoom"
                 v-on:upload-success="handleAttachmentUpload"
                 ></FileUploadWidget>
             </div>
@@ -319,6 +321,30 @@ export default {
             socket.disconnect();
             this.chatEnded = true;
         },
+
+        // Gets code when we successfully upload a file
+        handleAttachmentUpload(attachmentUrl) {
+            
+            // axios post to laravel app - to upload the file (in the file upload widget)
+            const newMessage = {
+                content: attachmentUrl,
+                roomId: this.room._id,
+            };
+            console.log("room._id=> ", this.room._id);
+
+            socket.emit("message", newMessage);
+
+            // Attach some properties we need later
+            this.room.messages.push({
+                ...newMessage,
+                isUpdate: false,
+                fromSelf: true,
+            });
+
+            // Clear message input
+            this.message = "";
+        },
+        
     },
 };
 </script>
