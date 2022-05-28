@@ -54,9 +54,14 @@
           <div class="listHead">
             <p>{{ chatroom.members[0].clientName }}</p>
           </div>
-          <!-- <div class="listHead">
+
+          <!-- HIDE BEFORE COMMIT -->
+          <!-- show chatroom ids in incoming -->
+          <div class="listHead">
             <p>room._id: {{ chatroom._id }}</p>
-          </div> -->
+          </div>
+          <!-- HIDE BEFORE COMMIT -->
+
           <!--room id/username section-->
           <!-- The message last sent to the room -->
           <div class="message_p">
@@ -100,11 +105,13 @@
           <div class="listHead">
             <p>{{ chatroom.members[0].clientName }}</p>
           </div>
-          <!-- delete in the future -->
-          <!-- <div class="listHead">
+
+          <!-- HIDE BEFORE COMMIT -->
+          <!-- show chatroom ids in active sessions -->
+          <div class="listHead">
             <p>room._id: {{ chatroom._id }}</p>
-          </div> -->
-          <!-- delete in the future -->
+          </div>
+          <!-- HIDE BEFORE COMMIT -->
 
           <!-- assigned room users (Admin/Agent) -->
           <div class="listHead">
