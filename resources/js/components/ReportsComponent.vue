@@ -305,6 +305,7 @@ export default {
 
         socket.on("report", ({ report }) => {
             this.socketReports.push(report);
+            console.log("socket", report);
         });
         socket.on("report-disconnect", ({ discon }) => {
             //console.log(discon);
@@ -315,6 +316,7 @@ export default {
             this.timeUpdate();
         }, 1000);
 
+        this.generateSessionList();
     },
 
     methods: {
@@ -361,7 +363,47 @@ export default {
             });
 
 
+        },
+        async getliveVisitors() {
+            try {
+                const response = await axios.get("/api/reports/sessions/live-visitors");
+                //console.log("live visitors", response.data.data)
+                return response.data.data;
+            } catch (err) {
+                console.error(err);
+            }
+        },
+        async generateSessionList() {
+        try {
+            console.log("running generateSessionList");
+            const results = await this.getliveVisitors();
+            // console.log("api call response", results);
+            // console.log("convertedResults", convertedResults);
+
+            this.socketReports = _.unionBy(
+                this.socketReports,
+                this.convertLiveVisitors(results),
+                (socketReport) => socketReport.socketId,
+            );
+            //console.log("this.socketReports after api call", this.socketReports)
+        } catch (err) {
+            console.error(err);
         }
+        },
+        convertLiveVisitors(liveVisitors){
+            return liveVisitors.map(visitor => {
+                return{
+                    socketId: visitor.socketId,
+                    ipAddress: visitor.ipAddress,
+                    browser: visitor.browser,
+                    roomId: visitor.roomId,
+                    fromURL: visitor.fromURL,
+                    startAt: visitor.startAt,
+                    time: visitor.time,                    
+                }
+            });            
+
+        },
 
 
         // selectRoom: function (roomId) {

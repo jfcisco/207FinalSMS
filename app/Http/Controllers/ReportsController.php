@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use App\Models\Room;
 use App\Models\Session;
+use App\Models\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -233,6 +234,27 @@ class ReportsController extends Controller
 
         return date('h A', ($millis / 1000));
     }
+    public function liveVisitorSessions()
+    {
+        $liveVisitorSessions = Session::where('endAt', null)->where('clientType', "visitor")->get();
+        foreach($liveVisitorSessions as $vSession){
+            $visitors = Visitor::where("_id", $vSession->clientId)->get();
+            //echo $vSession->startAt->toDateTime()->format('U.u')."<br>";
+            foreach($visitors as $visitor){
+                $rooms = Room::where('members.clientId',$vSession->clientId)->first();
+                $output[]=array(
+                    "socketId" => $vSession->socketId,
+                    "ipAddress" => $visitor->ipAddress,
+                    "browser" => $visitor->browser,
+                    "roomId" => $rooms->_id,
+                    "fromURL" => $visitor->webpage_source,
+                    "startAt" => $vSession->startAt->toDateTime()->format(DATE_ISO8601),
+                    "time" => "",
+                );
+            }
+        }
+        return response(['data' => $output], 200);
+    }    
 }
 
 

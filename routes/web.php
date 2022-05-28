@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('daily', [ReportsController::class, 'dailySessions']);
                 Route::get('todays-hourly', [ReportsController::class, 'todaysHourlySessions']);
                 Route::get('todays-live', [ReportsController::class, 'todaysLiveSessions']);
+                Route::get('live-visitors', [ReportsController::class, 'liveVisitorSessions']);
             });
         });
     });
