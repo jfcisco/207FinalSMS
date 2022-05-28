@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueChatScroll from "vue-chat-scroll";
 import cj from "clientjs";
-// import axios from 'axios';
+import axios from 'axios';
 
 // Options used for converting date/time to string using .toLocaleTimeString()
 const localeTimeFormat = {
@@ -261,9 +261,9 @@ export class Tawk {
         console.log("running api call")
         try {
             const visitorId = `${this.client.getFingerprint()}`;
-            const response = await axios.get(`api/visitors/${visitorId}`);
-            // const response = await axios.get(`api/visitors/${this.client.getFingerprint().toString()}`);
-            console.log("response", response.data)
+            // const response = await axios.get(`${this.baseUrl}/api/visitors/${visitorId}`);
+            const response = await axios.get(`${this.baseUrl}/api/visitors/${this.client.getFingerprint().toString()}`);
+            console.log("getCurrentVisitor response=> ", response.data)
         } catch (err) {
           console.error(err);
         }
