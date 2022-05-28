@@ -44,7 +44,12 @@
                         @else
                         <div class="widget-block">
                             <label class="chat-label" for="widget-name">Widget Name</label>
-                            <input class="form-control form-control-widget" name="name" type="text" 
+                            <input @class([
+                                    'form-control',
+                                    'form-control-widget' => Auth::user()->role === 'admin',
+                                    'form-control-widget-full' => Auth::user()->role !== 'admin'
+                                ]) 
+                                name="name" type="text" 
                                 @if (Auth::user()->role !== 'admin')    
                                     readonly 
                                 @endif
