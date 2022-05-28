@@ -43,8 +43,35 @@ class ChatWidget extends Model
         'hide_when_on_desktop' =>'boolean',
         'hide_when_on_mobile' =>'boolean',
         'enable_emojis' =>'boolean',
-        'availability_start_time' =>'datetime',
-        'availability_end_time' =>'datetime',
+
+        'sched_monday_enabled' => 'boolean',
+        'sched_monday_avail_start' => 'datetime',
+        'sched_monday_avail_end' => 'datetime',
+
+        'sched_tuesday_enabled' => 'boolean',
+        'sched_tuesday_avail_start' => 'datetime',
+        'sched_tuesday_avail_end' => 'datetime',
+
+        'sched_wednesday_enabled' => 'boolean',
+        'sched_wednesday_avail_start' => 'datetime',
+        'sched_wednesday_avail_end' => 'datetime',
+            
+        'sched_thursday_enabled' => 'boolean',
+        'sched_thursday_avail_start' => 'datetime',
+        'sched_thursday_avail_end' => 'datetime',
+            
+        'sched_friday_enabled' => 'boolean',
+        'sched_friday_avail_start' => 'datetime',
+        'sched_friday_avail_end' => 'datetime',
+            
+        'sched_saturday_enabled' => 'boolean',
+        'sched_saturday_avail_start' => 'datetime',
+        'sched_saturday_avail_end' => 'datetime',
+            
+        'sched_sunday_enabled' => 'boolean',
+        'sched_sunday_avail_start' => 'datetime',
+        'sched_sunday_avail_end' => 'datetime',
+        
         'is_active' =>'boolean',
     ];
 

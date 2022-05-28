@@ -122,6 +122,11 @@ class WidgetController extends Controller
             abort(404);
         }
 
+        // Check whether the widget is enabled or not
+        if (!$widget->is_active) {
+            abort(503);
+        }
+
         // Check request origin with widget's allowed domains
         $origin = $request->header('origin');
         $allowedDomains = collect($widget->allowed_domains);
@@ -148,6 +153,7 @@ class WidgetController extends Controller
             // Availability Schedule Information
             // Note: Times are converted to the ISO 8601 format because this is compatible with JavaScript
             'hasScheduledAvailability' => json_encode($widgetAvailabilitySchedule['isActive']),
+            'enabledForToday' => json_encode($widgetAvailabilitySchedule['enabledForToday']),
             'availabilityStartTime' => ($widgetAvailabilitySchedule['availStart'] 
                 ? $widgetAvailabilitySchedule['availStart']->toIso8601String()
                 : ""),
@@ -172,14 +178,13 @@ class WidgetController extends Controller
      */
     private function getAvailabilitySchedule($widget) 
     {    
-        // TODO: Store availability_timezone widget details
-        // Notes: Start time and End time are assumed to be stored in UTC
-        // Their date parts must be the same, suggestion: 1/1/1970
-        
-        // Widget doesn't have a set availability schedule
-        if (!$widget->availability_start_time || !$widget->availability_end_time) {
+        // Notes: Start time and End time are assumed to be stored in UTC. Their date parts must be the same, suggestion: 1/1/1970
+
+        // Widget doesn't have scheduler enabled
+        if (!$widget->sched_enabled) {
             return [
                 'isActive' => false,
+                'enabledForToday' => false,
                 'availStart' => null,
                 'availEnd' => null
             ];
@@ -187,17 +192,109 @@ class WidgetController extends Controller
 
         // Create carbon instances of widget availability schedules
         $timeZone = $widget->availability_timezone ?? "Asia/Hong_Kong";
-        // Convert both to UTC for uniformity in comparison
-        $availStart = $widget->availability_start_time->setTimezone('UTC');
-        $availEnd = $widget->availability_end_time->setTimezone('UTC');
         
-        $startTime = Carbon::createFromTime($availStart->hour, $availStart->minute, 0, $timeZone);
-        $endTime = Carbon::createFromTime($availEnd->hour, $availEnd->minute, 0, $timeZone);
+        // Get the available start time and available end time for the day of the week
+        $weekday = Carbon::now($timeZone)->dayOfWeek;
+
+        // Retrieve avail start and end times, converting them to UTC for uniformity
+        if ($weekday === Carbon::SUNDAY) {
+            $schedEnabled = $widget->sched_sunday_enabled;
+
+            if ($schedEnabled) {
+                $availStart = $widget->sched_sunday_avail_start->setTimezone('UTC');
+                $availEnd = $widget->sched_sunday_avail_end->setTimezone('UTC');
+            }
+            else {
+                $availStart = null;
+                $availEnd = null;
+            }
+        }
+        else if ($weekday === Carbon::MONDAY) {
+            $schedEnabled = $widget->sched_monday_enabled;
+
+            if ($schedEnabled) {
+                $availStart = $widget->sched_monday_avail_start->setTimezone('UTC');
+                $availEnd = $widget->sched_monday_avail_end->setTimezone('UTC'); 
+            }
+            else {
+                $availStart = null;
+                $availEnd = null;
+            }
+        }
+        else if ($weekday === Carbon::TUESDAY) {
+            $schedEnabled = $widget->sched_tuesday_enabled;
+
+            if ($schedEnabled) {
+                $availStart = $widget->sched_tuesday_avail_start->setTimezone('UTC');
+                $availEnd = $widget->sched_tuesday_avail_end->setTimezone('UTC'); 
+            }
+            else {
+                $availStart = null;
+                $availEnd = null;
+            }
+        }
+        else if ($weekday === Carbon::WEDNESDAY) {
+            $schedEnabled = $widget->sched_wednesday_enabled;
+
+            if ($schedEnabled) {
+                $availStart = $widget->sched_wednesday_avail_start->setTimezone('UTC');
+                $availEnd = $widget->sched_wednesday_avail_end->setTimezone('UTC'); 
+            }
+            else {
+                $availStart = null;
+                $availEnd = null;
+            }
+        }
+        else if ($weekday === Carbon::THURSDAY) {
+            $schedEnabled = $widget->sched_thursday_enabled;
+
+            if ($schedEnabled) {
+                $availStart = $widget->sched_thursday_avail_start->setTimezone('UTC');
+                $availEnd = $widget->sched_thursday_avail_end->setTimezone('UTC'); 
+            }
+            else {
+                $availStart = null;
+                $availEnd = null;
+            }
+        }
+        else if ($weekday === Carbon::FRIDAY) {
+            $schedEnabled = $widget->sched_friday_enabled;
+            
+            if ($schedEnabled) {
+                $availStart = $widget->sched_friday_avail_start->setTimezone('UTC');
+                $availEnd = $widget->sched_friday_avail_end->setTimezone('UTC'); 
+            }
+            else {
+                $availStart = null;
+                $availEnd = null;
+            }
+        }
+        else if ($weekday === Carbon::SATURDAY) {
+            $schedEnabled = $widget->sched_saturday_enabled;
+
+            if ($schedEnabled) {
+                $availStart = $widget->sched_saturday_avail_start->setTimezone('UTC');
+                $availEnd = $widget->sched_saturday_avail_end->setTimezone('UTC'); 
+            }
+            else {
+                $availStart = null;
+                $availEnd = null;
+            }
+        }
+
+        // Lastly, convert them to date-time before handing them over to the view
+        $startTime = ($availStart) 
+            ? Carbon::createFromTime($availStart->hour, $availStart->minute, 0, $timeZone)
+            : null;
+        $endTime = ($availEnd) 
+            ? Carbon::createFromTime($availEnd->hour, $availEnd->minute, 0, $timeZone)
+            : null;
 
         return [
             'isActive' => true,
+            'enabledForToday' => $schedEnabled,
             'availStart' => $startTime,
-            'availEnd' => $endTime
+            'availEnd' => $endTime,
         ];
     }
 
@@ -226,9 +323,39 @@ class WidgetController extends Controller
         $request->validate([
             'name' => 'string|required',
             'is_active' => 'boolean|required',
+            
+            // Availability data
             'availability_timezone' => 'timezone',
-            'availability_start_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_end_time',
-            'availability_end_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_start_time|after:availability_start_time',
+            'sched_monday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_monday_avail_start'
+            ],
+            'sched_tuesday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_tuesday_avail_start'
+            ],
+            'sched_wednesday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_wednesday_avail_start'
+            ],
+            'sched_thursday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_thursday_avail_start'
+            ],
+            'sched_friday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_friday_avail_start'
+            ],
+            'sched_saturday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_saturday_avail_start'
+            ],
+            'sched_sunday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_sunday_avail_start'
+            ],
+            
+            // Allowed Domains data
             'allowed_domains' => [
                 'nullable',
                 'json',
@@ -248,7 +375,7 @@ class WidgetController extends Controller
 
         // Update widget name and status
         $widgetToUpdate->name = $request->input('name');
-        $widgetToUpdate->is_active = $request->input('is_active');
+        $widgetToUpdate->is_active = $request->boolean('is_active');
         
         // Update Allowed Domains
         if ($request->filled('allowed_domains')) {
@@ -260,17 +387,122 @@ class WidgetController extends Controller
         }
 
         // Update Availability Schedule
-        if ($request->filled(['availability_start_time', 'availability_end_time'])) {
-            $widgetToUpdate->availability_timezone = $request->input('availability_timezone', 'Asia/Hong_Kong');
-            $widgetToUpdate->availability_start_time = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('availability_start_time'), 'UTC');
-            $widgetToUpdate->availability_end_time = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('availability_end_time'), 'UTC');
+        if ($request->filled('sched_enabled') and $request->boolean('sched_enabled')) {
+            $widgetToUpdate->sched_enabled = true;
+
+            $widgetToUpdate->availability_timezone = $request->input('availability_timezone');
+
+            $widgetToUpdate->sched_monday_enabled = $request->boolean('sched_monday_enabled');
+
+            if ($widgetToUpdate->sched_monday_enabled) {
+                $widgetToUpdate->sched_monday_avail_start = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_monday_avail_start'), 'UTC');
+                $widgetToUpdate->sched_monday_avail_end = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_monday_avail_end'), 'UTC');
+            }
+            else {
+                $widgetToUpdate->unset('sched_monday_avail_start');
+                $widgetToUpdate->unset('sched_monday_avail_end');
+            }
+            
+            $widgetToUpdate->sched_tuesday_enabled = $request->boolean('sched_tuesday_enabled');
+
+            if ($widgetToUpdate->sched_tuesday_enabled) {
+                $widgetToUpdate->sched_tuesday_avail_start = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_tuesday_avail_start'), 'UTC');
+                $widgetToUpdate->sched_tuesday_avail_end = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_tuesday_avail_end'), 'UTC');
+            }
+            else {
+                $widgetToUpdate->unset('sched_tuesday_avail_start');
+                $widgetToUpdate->unset('sched_tuesday_avail_end');
+            }
+            
+            $widgetToUpdate->sched_wednesday_enabled = $request->boolean('sched_wednesday_enabled');
+
+            if ($widgetToUpdate->sched_wednesday_enabled) {
+                $widgetToUpdate->sched_wednesday_avail_start = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_wednesday_avail_start'), 'UTC');
+                $widgetToUpdate->sched_wednesday_avail_end = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_wednesday_avail_end'), 'UTC');
+            }
+            else {
+                $widgetToUpdate->unset('sched_wednesday_avail_start');
+                $widgetToUpdate->unset('sched_wednesday_avail_end');
+            }
+            
+            $widgetToUpdate->sched_thursday_enabled = $request->boolean('sched_thursday_enabled');
+
+            if ($widgetToUpdate->sched_thursday_enabled) {
+                $widgetToUpdate->sched_thursday_avail_start = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_thursday_avail_start'), 'UTC');
+                $widgetToUpdate->sched_thursday_avail_end = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_thursday_avail_end'), 'UTC');
+            }
+            else {        
+                $widgetToUpdate->unset('sched_thursday_avail_start');
+                $widgetToUpdate->unset('sched_thursday_avail_end');
+            }
+            
+            $widgetToUpdate->sched_friday_enabled = $request->boolean('sched_friday_enabled');
+
+            if ($widgetToUpdate->sched_friday_enabled) {
+                $widgetToUpdate->sched_friday_avail_start = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_friday_avail_start'), 'UTC');
+                $widgetToUpdate->sched_friday_avail_end = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' . $request->input('sched_friday_avail_end'), 'UTC');
+            }
+            else {        
+                $widgetToUpdate->unset('sched_friday_avail_start');
+                $widgetToUpdate->unset('sched_friday_avail_end');
+            }
+            
+            $widgetToUpdate->sched_saturday_enabled = $request->boolean('sched_saturday_enabled');
+
+            if ($widgetToUpdate->sched_saturday_enabled) {
+                $widgetToUpdate->sched_saturday_avail_start = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' .  $request->input('sched_saturday_avail_start'), 'UTC');
+                $widgetToUpdate->sched_saturday_avail_end = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' .  $request->input('sched_saturday_avail_end'), 'UTC');
+            }
+            else {    
+                $widgetToUpdate->unset('sched_saturday_avail_start');
+                $widgetToUpdate->unset('sched_saturday_avail_end');
+            }
+            
+            $widgetToUpdate->sched_sunday_enabled = $request->boolean('sched_sunday_enabled');
+
+            if ($widgetToUpdate->sched_sunday_enabled) {
+                $widgetToUpdate->sched_sunday_avail_start = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' .   $request->input('sched_sunday_avail_start'), 'UTC');
+                $widgetToUpdate->sched_sunday_avail_end = Carbon::createFromFormat('Y-m-d H:i', '1970-01-01 ' .   $request->input('sched_sunday_avail_end'), 'UTC');
+            }
+            else {
+                $widgetToUpdate->unset('sched_sunday_avail_start');
+                $widgetToUpdate->unset('sched_sunday_avail_end');
+            }
         }
         else {
+            $widgetToUpdate->sched_enabled = false;
+
             $widgetToUpdate->unset('availability_timezone');
-            $widgetToUpdate->unset('availability_start_time');
-            $widgetToUpdate->unset('availability_end_time');
+
+            $widgetToUpdate->unset('sched_monday_enabled');
+            $widgetToUpdate->unset('sched_monday_avail_start');
+            $widgetToUpdate->unset('sched_monday_avail_end');
+            
+            $widgetToUpdate->unset('sched_tuesday_enabled');
+            $widgetToUpdate->unset('sched_tuesday_avail_start');
+            $widgetToUpdate->unset('sched_tuesday_avail_end');
+            
+            $widgetToUpdate->unset('sched_wednesday_enabled');
+            $widgetToUpdate->unset('sched_wednesday_avail_start');
+            $widgetToUpdate->unset('sched_wednesday_avail_end');
+            
+            $widgetToUpdate->unset('sched_thursday_enabled');
+            $widgetToUpdate->unset('sched_thursday_avail_start');
+            $widgetToUpdate->unset('sched_thursday_avail_end');
+            
+            $widgetToUpdate->unset('sched_friday_enabled');
+            $widgetToUpdate->unset('sched_friday_avail_start');
+            $widgetToUpdate->unset('sched_friday_avail_end');
+            
+            $widgetToUpdate->unset('sched_saturday_enabled');
+            $widgetToUpdate->unset('sched_saturday_avail_start');
+            $widgetToUpdate->unset('sched_saturday_avail_end');
+            
+            $widgetToUpdate->unset('sched_sunday_enabled');
+            $widgetToUpdate->unset('sched_sunday_avail_start');
+            $widgetToUpdate->unset('sched_sunday_avail_end');
         }
-        
+
         $widgetToUpdate->save();
         return redirect()->route("widget-details");
     }

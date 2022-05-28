@@ -62,11 +62,23 @@
     
                         <div class="widget-block">
                             <label class="chat-label" for="widget-status">Widget Status</label>
-                            <input class="form-control form-control-widget-full" type="text" name="is_active" id="widget-status" 
+                            <select class="form-select form-control-widget-full" type="dropdownbutton" name="is_active">
                                 @if (Auth::user()->role !== 'admin')
-                                    readonly 
+                                    disabled
                                 @endif
-                            value="{{ old('is_active', $currentWidget->is_active ? '1' : '0') }}">
+
+                            <option value="1"
+                                @if (old('is_active', $currentWidget->is_active) == true)
+                                selected
+                                @endif >
+                                Active </option>
+
+                            <option value="0"
+                                @if (old('is_active', $currentWidget->is_active) == false)
+                                selected
+                                @endif >
+                                Inactive </option>
+                            </select>
                         </div>
                         <div class="widget-block">
                             <label class="chat-label" for="widget-id">Widget ID</label>
@@ -119,13 +131,54 @@
                         <widget-scheduler-picker
                             editable="{{ Auth::user()->role === 'admin' }}"
 
+                            initial-enabled="{{ old('sched_enabled', $currentWidget->sched_enabled) }}"
+
                             :timezones="{{json_encode($timezones)}}"
 
                             initial-selected-timezone="{{old('availability_timezone', $currentWidget->availability_timezone)}}"
-                            
-                            initial-start-time="{{ $currentWidget->availability_start_time ? $currentWidget->availability_start_time->setTimezone('UTC')->format('H:i') : "" }}"
 
-                            initial-end-time="{{ $currentWidget->availability_end_time ? $currentWidget->availability_end_time->setTimezone('UTC')->format('H:i') : "" }}"
+                            monday-enabled="{{ old('sched_monday_enabled', $currentWidget->sched_monday_enabled) }}"
+
+                            monday-avail-start="{{ old('sched_monday_avail_start', $currentWidget->sched_monday_avail_start ? $currentWidget->sched_monday_avail_start->setTimezone('UTC')->format('H:i') : "") }}"
+
+                            monday-avail-end="{{ 
+                            old('sched_monday_avail_end', $currentWidget->sched_monday_avail_end ? $currentWidget->sched_monday_avail_end->setTimezone('UTC')->format('H:i') : "") }}"
+
+                            tuesday-enabled="{{ old('sched_tuesday_enabled', $currentWidget->sched_tuesday_enabled) }}"
+
+                            tuesday-avail-start="{{ old('sched_tuesday_avail_start', $currentWidget->sched_tuesday_avail_start ? $currentWidget->sched_tuesday_avail_start->setTimezone('UTC')->format('H:i') : "") }}"
+
+                            tuesday-avail-end="{{ old('sched_tuesday_avail_end', $currentWidget->sched_tuesday_avail_end ? $currentWidget->sched_tuesday_avail_end->setTimezone('UTC')->format('H:i') : "" )}}"
+
+                            wednesday-enabled="{{ old('sched_wednesday_enabled', $currentWidget->sched_wednesday_enabled) }}"
+
+                            wednesday-avail-start="{{ old('sched_wednesday_avail_start', $currentWidget->sched_wednesday_avail_start ? $currentWidget->sched_wednesday_avail_start->setTimezone('UTC')->format('H:i') : "" ) }}"
+
+                            wednesday-avail-end="{{ old('sched_wednesday_avail_end', $currentWidget->sched_wednesday_avail_end ? $currentWidget->sched_wednesday_avail_end->setTimezone('UTC')->format('H:i') : "" ) }}"
+
+                            thursday-enabled="{{ old('sched_thursday_enabled', $currentWidget->sched_thursday_enabled) }}"
+
+                            thursday-avail-start="{{ old('sched_thursday_avail_start', $currentWidget->sched_thursday_avail_start ? $currentWidget->sched_thursday_avail_start->setTimezone('UTC')->format('H:i') : "") }}"
+
+                            thursday-avail-end="{{ old('sched_thursday_avail_end', $currentWidget->sched_thursday_avail_end ? $currentWidget->sched_thursday_avail_end->setTimezone('UTC')->format('H:i') : "" ) }}"
+
+                            friday-enabled="{{ old('sched_friday_enabled', $currentWidget->sched_friday_enabled) }}"
+
+                            friday-avail-start="{{ old('sched_friday_avail_start', $currentWidget->sched_friday_avail_start ? $currentWidget->sched_friday_avail_start->setTimezone('UTC')->format('H:i') : "" ) }}"
+
+                            friday-avail-end="{{ old('sched_friday_avail_end', $currentWidget->sched_friday_avail_end ? $currentWidget->sched_friday_avail_end->setTimezone('UTC')->format('H:i') : "" ) }}"
+
+                            saturday-enabled="{{ old('sched_saturday_enabled', $currentWidget->sched_saturday_enabled) }}"
+
+                            saturday-avail-start="{{ old('sched_saturday_avail_start', $currentWidget->sched_saturday_avail_start ? $currentWidget->sched_saturday_avail_start->setTimezone('UTC')->format('H:i') : "" ) }}"
+
+                            saturday-avail-end="{{ old('sched_saturday_avail_end', $currentWidget->sched_saturday_avail_end ? $currentWidget->sched_saturday_avail_end->setTimezone('UTC')->format('H:i') : "" ) }}"
+
+                            sunday-enabled="{{ old('sched_sunday_enabled', $currentWidget->sched_sunday_enabled) }}"
+
+                            sunday-avail-start="{{ old('sched_sunday_avail_start', $currentWidget->sched_sunday_avail_start ? $currentWidget->sched_sunday_avail_start->setTimezone('UTC')->format('H:i') : "" ) }}"
+
+                            sunday-avail-end="{{ old('sched_sunday_avail_end', $currentWidget->sched_sunday_avail_end ? $currentWidget->sched_sunday_avail_end->setTimezone('UTC')->format('H:i') : "" ) }}"
                         ></widget-scheduler-picker>
                     </div>
 
@@ -258,7 +311,7 @@
                 </div>
 
                 @if (Auth::user()->role === "admin")
-                <div class="row my-4 widget-save">
+                <div class="row my-4">
                     <div class="col-4">
                         <button type="submit" class="btn btn-light w-100 widget-save-button">Save Changes</button>
                     </div>

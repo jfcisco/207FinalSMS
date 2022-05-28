@@ -13,6 +13,7 @@ import { Tawk } from './Tawk';
 const tawk = new Tawk({
     baseUrl: "<?php echo $baseUrl; ?>",
     hasScheduledAvailability: ("<?php echo $hasScheduledAvailability; ?>" === "true"),
+    schedulerEnabledForToday: ("<?php echo $enabledForToday; ?>" === "true"),
     availabilityStartTime: new Date("<?php echo $availabilityStartTime; ?>"),
     availabilityEndTime: new Date("<?php echo $availabilityEndTime; ?>"),
 });
