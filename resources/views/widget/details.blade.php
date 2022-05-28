@@ -28,25 +28,40 @@
                         </div>
                 </div>
                 @endif
+
+                @if(Auth::user()->role !== 'admin')
+                <div class="row">
+                    <p class="text-warning">This page is view-only. You are not authorized to make changes to the widget settings.</p>                    
+                </div>
+                @endif
+
                 <div class="row">
                     <div class="col-lg-5">
                         <h2 class="chat-header">Chat Widgets</h2>
+
                         @if (count($widgets) === 0)
                         <p class="no-widget-prompt">You have no widgets yet!</p>
                         @else
-                        {{-- TODO: Add widget selection component --}}
-                        {{-- TODO: Add link to create a widget --}}
-    
-    
                         <div class="widget-block">
                             <label class="chat-label" for="widget-name">Widget Name</label>
-                            <input class="form-control form-control-widget" name="widget-name" type="text" readonly value="{{ $currentWidget->name }}">
+                            <input class="form-control form-control-widget" name="name" type="text" 
+                                @if (Auth::user()->role !== 'admin')    
+                                    readonly 
+                                @endif
+                            value="{{ old('name', $currentWidget->name) }}">
+
+                            @if (Auth::user()->role === 'admin')    
                             <button class="save-button">Save</button>
+                            @endif
                         </div>
     
                         <div class="widget-block">
                             <label class="chat-label" for="widget-status">Widget Status</label>
-                            <input class="form-control form-control-widget-full" type="text" name="widget-status" id="widget-status" value="Enabled">
+                            <input class="form-control form-control-widget-full" type="text" name="is_active" id="widget-status" 
+                                @if (Auth::user()->role !== 'admin')
+                                    readonly 
+                                @endif
+                            value="{{ old('is_active', $currentWidget->is_active ? '1' : '0') }}">
                         </div>
                         <div class="widget-block">
                             <label class="chat-label" for="widget-id">Widget ID</label>
@@ -97,6 +112,8 @@
                         <h4 class="chat-subheader">Scheduler</h4> 
                         {{-- Custom scheduler component  --}}
                         <widget-scheduler-picker
+                            editable="{{ Auth::user()->role === 'admin' }}"
+
                             :timezones="{{json_encode($timezones)}}"
 
                             initial-selected-timezone="{{old('availability_timezone', $currentWidget->availability_timezone)}}"
@@ -112,6 +129,8 @@
                     <div class="col-lg-6">
                         <h4 class="chat-subheader-3">Availability Restrictions</h4> 
                         <widget-domains-picker
+                            editable="{{ Auth::user()->role === 'admin' }}"
+
                             initial-domains-list-json="{{old('allowed_domains', json_encode($currentWidget->allowed_domains ?? array("")))}}"
                         ></widget-domains-picker>
                     </div>

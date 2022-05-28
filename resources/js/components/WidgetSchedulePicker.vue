@@ -5,7 +5,7 @@
         </div>
         <div class="widget-block">
             <label class="switch">
-                <input type="checkbox" v-model="enabled">
+                <input type="checkbox" v-model="enabled" :disabled="!editable">
                 <span class="slider round"></span>
             </label> 
             <span class="chat-label">
@@ -16,7 +16,7 @@
         <template v-if="enabled">
             <div class="widget-block">
                 <label class="chat-label">Time Zone</label>  
-                <select name="availability_timezone" id="time-zone" class="form-select form-control-widget-full" v-model="selectedTimezone" required>
+                <select name="availability_timezone" id="time-zone" class="form-select form-control-widget-full" v-model="selectedTimezone" required :disabled="!editable">
                     <!-- Default Option -->
                     <option disabled>
                         -- Select a timezone --
@@ -33,12 +33,12 @@
 
             <div class="widget-block">
                 <label class="chat-label" for="availability-start-time">Start Time</label>
-                <input class="form-control form-control-widget-full" type="time" name="availability_start_time" id="availability-start-time" v-model="startTime" required>
+                <input class="form-control form-control-widget-full" type="time" name="availability_start_time" id="availability-start-time" v-model="startTime" required :disabled="!editable">
             </div>
 
             <div class="widget-block">
                 <label class="chat-label" for="availability-end-time">End Time</label>
-                <input class="form-control form-control-widget-full" type="time" name="availability_end_time" id="availability-end-time" v-model="endTime" required>
+                <input class="form-control form-control-widget-full" type="time" name="availability_end_time" id="availability-end-time" v-model="endTime" required :disabled="!editable">
             </div>
         </template>
     </div>
@@ -51,6 +51,7 @@ export default {
         'initialSelectedTimezone',
         'initialStartTime',
         'initialEndTime',
+        'editable',
     ],
 
     data() {
