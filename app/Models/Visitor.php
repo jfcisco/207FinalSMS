@@ -19,6 +19,7 @@ class Visitor extends Model
         'name',
         'ipAddress',
         'browser',
+        'webpage_source',
     ];
 
     public function session()

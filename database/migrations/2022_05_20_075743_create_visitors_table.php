@@ -18,6 +18,7 @@ class CreateVisitorsTable extends Migration
             $table->string('name');
             $table->string('ipAddress')->nullable();
             $table->string('browser')->nullable();
+            $table->string('webpage_source')->nullable();
             $table->timestamps();
         });
     }

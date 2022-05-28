@@ -94,32 +94,17 @@
 
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
-    <!--Start of Tawk.to Script-->
-    <!-- <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    <!--Start of Widget Script-->
+    <script type="text/javascript">
         (function(){
             var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
             s1.async=true;
-            s1.src='https://embed.tawk.to/627d27487b967b11798f1033/1g2se2trp';
             s1.charset='UTF-8';
+            s1.src='http://localhost:8000/embed/629223664b108933e60c91ad/629223674b108933e60c91af';
             s1.setAttribute('crossorigin','*');
             s0.parentNode.insertBefore(s1,s0);
         })();
-    </script> -->
-    <!--End of Tawk.to Script-->
-
-<script>
-    function toggleheaderleft() {
-      var x = document.getElementById("message_main");
-      var y = document.getElementById("whisper");
-      if (x.style.display === "none") {
-        x.style.display = "flex";
-        y.style.display ="none";
-      } else {
-        x.style.display = "none";
-        y.style.display ="flex";
-      }
-    }
-</script>
+    </script>
+    <!--End of Widget Script-->
 </body>
 </html>

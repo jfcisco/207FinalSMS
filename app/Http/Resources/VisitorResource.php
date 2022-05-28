@@ -13,6 +13,7 @@ class VisitorResource extends JsonResource
             'name' => $this->name,
             'ip_address' => $this->ipAddress,
             'browser' => $this->browser,
+            'webpage_source' => $this->webpage_source,
             'created_at' => $this->created_at,
         ];
     }
