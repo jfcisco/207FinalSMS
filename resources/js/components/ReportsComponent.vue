@@ -92,19 +92,23 @@
             <div class="chat-container">
                 <div class="row">
                 <h1>Live Analytics</h1>
-                <div>
-                    <div><h5 class="card-title">Live Session  </h5></div>
-                    <div
-                        v-for="socketReport in socketReports"
-                        :key="socketReport.socketId"
-                    >
-                        <div>
-                            <span>Socket ID: {{ socketReport.socketId }}</span>
-                            <span>IP Address: {{ socketReport.ipAddress }}</span>
-                            <span>Browser: {{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</span>
-                            <span>Website: {{ socketReport.fromURL }}</span>
-                            <span>Link to Chat: {{ socketReport.roomId }}</span>
-                            <span>Duration: {{ socketReport.time }}</span>
+                <div class="col-sm-15">
+                    <div class="card">
+                        <div  class="card-body">
+                            <div><h5 class="card-title">Live Session  </h5></div>
+                            <div
+                                v-for="socketReport in socketReports"
+                                :key="socketReport.socketId"
+                            >
+                                <div class="card-body">
+                                    <span>Socket ID: {{ socketReport.socketId }}</span>
+                                    <span>IP Address: {{ socketReport.ipAddress }}</span>
+                                    <span>Browser: {{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</span>
+                                    <span>Website: {{ socketReport.fromURL }}</span>
+                                    <span>Link to Chat: {{ socketReport.roomId }}</span>
+                                    <span>Duration: {{ socketReport.time }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -119,7 +123,7 @@
                       <div class="card">
                         <div class="card-body">
                           <h5 class="card-title">Live</h5>
-                          <p class="card-text"><VisitorsToday></VisitorsToday></p>
+                          <p class="card-text">{{ socketReports.length }}</p>
                         </div>
                       </div>
                     </div>
