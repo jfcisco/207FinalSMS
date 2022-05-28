@@ -101,7 +101,7 @@
                         <div>
                             <span>Socket ID: {{ socketReport.socketId }}</span>
                             <span>IP Address: {{ socketReport.ipAddress }}</span>
-                            <span>Browser: {{ socketReport.browser }}</span>
+                            <span>Browser: {{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</span>
                             <span>Website: {{ socketReport.fromURL }}</span>
                             <span>Link to Chat: {{ socketReport.roomId }}</span>
                             <span>Duration: {{ socketReport.time }}</span>
@@ -332,8 +332,9 @@ export default {
         socket.on("report", ({ report }) => {
             this.socketReports.push(report);
         });
-        socket.on("report-disconnect", ({ socketId }) => {
-            this.socketReports = this.socketReports.filter(reports => reports.socketId != socketId.socketId);
+        socket.on("report-disconnect", ({ discon }) => {
+            //console.log(discon);
+            this.socketReports = this.socketReports.filter(reports => reports.socketId != discon);
         });
 
         setInterval(()=>{
