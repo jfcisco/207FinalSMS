@@ -86,7 +86,7 @@
                     <h1>Live Analytics</h1>
                 
                     <div class="col-sm-12">
-                        <div class="card">
+                        <div class="card" id="livesessions">
                             <div  class="card-body">
                                 <div>
                                     <h5 class="card-title">Live Sessions  </h5>
