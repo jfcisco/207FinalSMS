@@ -213,13 +213,22 @@ body{
   position: relative;
 }
 
+.assignedmembers{
+	font-weight: 600; 
+	font-style: italic; 
+	color:darkgrey; 
+	font-size:15px;	
+}
+
 .chatmessages{
-	margin-top: 20px;
+	padding:10px;
+	margin-top:20px;
 }
 
 .chatboxfix{
 	height: 70vh;
 }
+
 
 .chatboxfix::-webkit-scrollbar-track {
   border: 1px solid e9edee;
@@ -246,19 +255,21 @@ position:  relative;
 	display:  flex;
 	width:  100%;
 	color: #466289;
+	padding-right:20px;
 }
 
 .sentmessage{
-position:  relative;
+	position:  relative;
 	display:  flex;
 	width:  100%;
 	color: #fa6121;
-
+	padding-right:20px;
 }
 
 .whisper_text{
 	color: darkgrey;
 	font-style: italic;
+	padding-right:20px;
 }
 
 
@@ -332,8 +343,6 @@ position:  relative;
   align-items: center;
   display: flex;
   border-radius: 5px;
-  gap: 10px;
-  margin-left:10px;
   cursor: pointer;
 }
 
@@ -348,11 +357,64 @@ position:  relative;
   align-items: center;
   display: flex;
   border-radius: 5px;
+  cursor: pointer;
+}
+
+//FILE UPLOAD COMPONENTS
+.file-upload-button{
+	color: #fa6121;
+	border: none;
+	background-color: #e9edee;
+  padding: 20px;
+  text-decoration: none;
+  font-size: 35px;
+  align-items: center;
+  display: flex;
+  border-radius: 5px;
   gap: 10px;
   margin-left:10px;
   cursor: pointer;
 }
 
+.UploadButton {      
+  border: none;
+	background-color: #e9edee;
+}
+
+.UploadField {
+	background:white;
+	margin-top:10px;
+	padding-bottom:0px;
+	margin-bottom:0px;
+	height:500px;
+}
+
+.UploadAndSendBtn {
+	background-color: #466289;
+	color: whitesmoke;
+	border: none;
+	padding: 5px;
+	width: 50%;
+}
+
+.UploadAndSendBtn:hover{
+	background-color:#fa6121;
+	color: whitesmoke;
+	border: none;
+	padding: 5px;
+	width: 50%;
+}
+
+.FileUploadModal-actions {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-evenly;
+	margin-top: 0.75rem;
+}
+
+.FileUploadModal-actions > .btn {
+	flex: 1; 
+}
 
 
 // ADDITIONAL MODAL FORMATTING
@@ -362,6 +424,89 @@ position:  relative;
 	color:#212529;
 }
 
+//REPORTS
+.reportsSection{
+	height: 92vh;
+}
+.reportsSection::-webkit-scrollbar-track {
+  border: 1px solid e9edee;
+  padding: 2px 0;
+  background-color: #e9edee;
+}
+
+.reportsSection::-webkit-scrollbar {
+  width: 10px;
+}
+
+.reportsSection::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: #fa6121;
+  
+}
+
+
+.reportblock{
+	position: relative;
+	width:  100%;
+	display: flex;
+	align-items:  center;
+	padding-left:  15px;
+	padding-right:  15px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid rgba(233,237,238,0.05);
+	cursor:  pointer;
+	border-radius: 10px 0px 0px 10px;
+	
+
+	a{
+		color:whitesmoke;
+		text-decoration:none;
+	}
+
+}
+
+.reportblock:hover{
+	background:#E9EDEE;
+	transition: 0.18s linear;
+
+	a{
+		color:#627894;
+		text-decoration:none;
+	}
+	
+}
+
+.reportsection{
+	margin-top:20px;
+}
+
+.graphsection{
+	height:50px;
+}
+
+
+.chat-container {
+    padding: 10px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 1cm;
+}
+
+#chat-container-table {
+    width: 100%;
+    margin-top: 1cm;
+}
+
+#chat-container-table thead {
+    height: 40px;
+    background-color: #F7F7F9;
+}
+
+#chat-container-table tbody tr {
+    border-bottom: 1px solid;
+}
 
 //LOGIN AND REGISTRATION
 
@@ -441,6 +586,41 @@ position:  relative;
 //Chat Widgets Page
 .chat-header{
 	color:#e9edee;
+}
+
+.widget-details-form{
+	position:relative;
+	height:92vh;
+}
+
+.widget-details-container{
+	position:relative;
+}
+
+.widget-save{
+	
+	position: absolute;
+	bottom: 0px;
+	width: 98%;
+	height: 100px;
+	margin: 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.widget-save-button {
+		color: #FA6121;
+		border-radius: 10px;
+		border:0px;
+		padding:10px;
+		font-size:.95rem;
+		font-weight:600;
+}
+
+.widget-save-button:hover {
+		color: whitesmoke;
+		background:#FA6121;
 }
 
 .chat-subheader{
@@ -535,7 +715,7 @@ position:  relative;
 		border:0px;
 		background:lightgray;
 		padding:5px;
-		font-size:1rem;
+		font-size:.95rem;
 }
 
 .save-button:hover {

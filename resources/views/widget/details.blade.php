@@ -3,9 +3,9 @@
 
 @section('content')
 <div class="container-fluid widget-details-container">
-    <div class="row  widget-details-row">
+    <div class="row">
         <!--MAIN SIDE BAR-->
-        <div class="col-lg-2 mainsidebar  widget-details-sidebar">
+        <div class="col-lg-1 col-sm-2 mainsidebar">
             <a href="/home"><ion-icon name="mail-outline"></ion-icon><span class="menutitle">Messaging</span></a>
             <a href="/reports"><ion-icon name="bar-chart-outline"></ion-icon><span class="menutitle">Reporting</span></a>
             <a class="activemenu" href="/widgets"><ion-icon name="copy-outline"></ion-icon><span class="menutitle">Widget</span></a>
@@ -13,11 +13,12 @@
         <!--END MAIN SIDE BAR-->
 
         
-        <div class="col-lg-10 sidebar widget-details-form">
+        <div class="col-lg-11 col-sm-10 sidebar widget-details-form">
             <form action="/widgets/{{$currentWidget->_id}}/update" method="POST">
+                
                 {{ csrf_field() }}
                 @if ($errors->any())
-                    <div class="row">
+                <div class="row">
                         <div class="alert alert-danger">
                             <ul>
                                 @foreach ($errors->all() as $error)
@@ -25,7 +26,7 @@
                                 @endforeach
                             </ul>
                         </div>
-                    </div>
+                </div>
                 @endif
                 <div class="row">
                     <div class="col-lg-5">
@@ -182,8 +183,8 @@
                             </label> 
                             <span class="chat-label">Option</span>
                         </div>
-                    </div>
-                </div> --}}
+                    </div>--}}
+                </div> 
     
                 <div class="row">
                     {{--<h4 class="chat-subheader-3">Availability Restrictions</h4> 
@@ -233,12 +234,13 @@
                 </div>
 
                 @if (Auth::user()->role === "admin")
-                <div class="row my-4 mx-auto">
+                <div class="row my-4 widget-save">
                     <div class="col-4">
-                        <button type="submit" class="btn btn-light w-100">Save Changes</button>
+                        <button type="submit" class="btn btn-light w-100 widget-save-button">Save Changes</button>
                     </div>
                 </div>
                 @endif
+                
             </form>
         </div>
             @endif

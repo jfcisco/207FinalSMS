@@ -1,7 +1,7 @@
 <template>
     <div class="UploadButton-container">
         <button type="button" class="UploadButton" title="Upload Image" data-bs-toggle="modal" data-bs-target="#FileUploadModal">
-            <ion-icon name="attach-outline"></ion-icon>
+            <ion-icon name="attach-outline" class="file-upload-button"></ion-icon>
         </button>
 
         <!-- File Dialog Modal -->
@@ -44,53 +44,6 @@
     </div>
 </template>
 
-<style scoped>
-    .UploadButton {
-        /* cursor:  pointer; */
-        font-size:  2em;
-        max-height: min-content;
-        padding: 0;
-        color:  whitesmoke;
-        background: none;
-        border: none;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .UploadField {
-        padding: 0.375rem 0.75rem;
-        margin: 0;
-    }
-
-    .UploadAndSendBtn {
-        background-color: #e06822;
-        color: whitesmoke;
-        border: none;
-        padding: 5px;
-        width: 50%;
-    }
-
-    .UploadAndSendBtn:hover{
-        background-color:#1a9988;
-        color: whitesmoke;
-        border: none;
-        padding: 5px;
-        width: 50%;
-    }
-
-    .FileUploadModal-actions {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-evenly;
-        margin-top: 0.75rem;
-    }
-
-    .FileUploadModal-actions > .btn {
-       flex: 1; 
-    }
-</style>
 
 <script>
 export default {

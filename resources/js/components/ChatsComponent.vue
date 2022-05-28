@@ -2,7 +2,7 @@
 <div class="row">
 
   <!--MAIN SIDE BAR START-->
-  <div class="col-lg-1 mainsidebar">
+  <div class="col-lg-1 col-sm-2 mainsidebar">
     <a class="activemenu" href="/home">
       <ion-icon name="mail-outline"></ion-icon>
       <span class="menutitle">Messaging</span>
@@ -19,7 +19,7 @@
   <!--MAIN SIDE BAR END-->
 
   <!--ROOM LISTS START-->
-  <div class="col-lg-2 sidebar" style="overflow-y: scroll">
+  <div class="col-lg-2 col-sm-3 sidebar" style="overflow-y: scroll">
 
     <!--INCOMING SESSIONS SECTION START-->
 
@@ -138,12 +138,16 @@
 
   <!--MAIN CHAT WINDOW START-->
 
-  <div class="col-lg-9 mainchat">
+  <div class="col-lg-9 col-sm-7 mainchat">
 
     <!--MAIN INPUT MESSAGE BOX START-->
 
     <div class="chatbox_input" id="message_main" style="display:flex">
       <ion-icon class="whisper" name="volume-high-outline" id="headerToggle1" onclick="toggleheaderleft()"></ion-icon>
+      <FileUploadComponent
+            :active-room="activeRoom"
+              v-on:upload-success="handleAttachmentUpload"
+            ></FileUploadComponent>
       <input
           @keyup.enter="sendMessage"
           v-model="message"
@@ -184,7 +188,7 @@
           </div>
 
           <div class="mb-3">
-            <h5 style="font-weight: 500; font-style: italic;">
+            <h5 class="assignedmembers">
               Assigned: {{ getAssignedToRoom(chatroom) }}
             </h5>
           </div>
