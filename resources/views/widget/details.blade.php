@@ -62,14 +62,22 @@
     
                         <div class="widget-block">
                             <label class="chat-label" for="widget-status">Widget Status</label>
-                            {{--<input class="form-control form-control-widget-full" type="text" name="is_active" id="widget-status"--}}
-                               {{--}} @if (Auth::user()->role !== 'admin')--}}
-                                 {{--}}   readonly --}}
-                               {{--}} @endif--}}
-                            {{--value="{{ old('is_active', $currentWidget->is_active ? '1' : '0') }}">--}}
-                            <select class="form-select form-control-widget-full" type="dropdownbutton">
-                            <option value="1">Active</option>
-                            <option value="2">Inactive</option>
+                            <select class="form-select form-control-widget-full" type="dropdownbutton" name="is_active">
+                                @if (Auth::user()->role !== 'admin')
+                                    disabled
+                                @endif
+
+                            <option value="1"
+                                @if (old('is_active', $currentWidget->is_active) == true)
+                                selected
+                                @endif >
+                                Active </option>
+
+                            <option value="0"
+                                @if (old('is_active', $currentWidget->is_active) == false)
+                                selected
+                                @endif >
+                                Inactive </option>
                             </select>
                         </div>
                         <div class="widget-block">
