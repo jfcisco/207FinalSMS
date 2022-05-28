@@ -256,15 +256,17 @@ export class Tawk {
         document.head.appendChild(styleTag);
     }
 
-    // async getCurrentVisitor() {
-    //     console.log("running api call")
-    //     try {
-    //       const response = await axios.get(`api/visitors/${this.client.getFingerprint().toString()}`);
-    //       console.log("response", response.data)
-    //     } catch (err) {
-    //       console.error(err);
-    //     }
-    // }
+    async getCurrentVisitor() {
+        console.log("running api call")
+        try {
+            const visitorId = `${this.client.getFingerprint()}`;
+            const response = await axios.get(`api/visitors/${visitorId}`);
+            // const response = await axios.get(`api/visitors/${this.client.getFingerprint().toString()}`);
+            console.log("response", response.data)
+        } catch (err) {
+          console.error(err);
+        }
+    }
 
     toggleOpen() {
         // alternative solution: api call to check if current visitor already has a name
@@ -304,13 +306,17 @@ export class Tawk {
             const nameField = document.querySelector("input#name");
             const welcomeDiv = document.querySelector("div.welcome")
 
-            // hide element
-            nameField.style.display = "none";
 
-            // set name input field value to previously entered value by visitor
-            nameField.value = visitorName
-            // modify welcomeDiv to show visitor's name
-            welcomeDiv.textContent = `Welcome ${visitorName}`;
+            if (nameField) {
+                // hide element
+                nameField.style.display = "none";
+                // set name input field value to previously entered value by visitor
+                nameField.value = visitorName
+            }
+            if (welcomeDiv) {
+                // modify welcomeDiv to show visitor's name
+                welcomeDiv.textContent = `Welcome ${visitorName}`;
+            }
         }
     }
 
