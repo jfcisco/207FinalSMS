@@ -321,8 +321,34 @@ class WidgetController extends Controller
             
             // Availability data
             'availability_timezone' => 'timezone',
-            // 'availability_start_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_end_time',
-            // 'availability_end_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_start_time|after:availability_start_time',
+            'sched_monday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_monday_avail_start'
+            ],
+            'sched_tuesday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_tuesday_avail_start'
+            ],
+            'sched_wednesday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_wednesday_avail_start'
+            ],
+            'sched_thursday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_thursday_avail_start'
+            ],
+            'sched_friday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_friday_avail_start'
+            ],
+            'sched_saturday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_saturday_avail_start'
+            ],
+            'sched_sunday_avail_end' => [
+                'regex:/^\d\d:\d\d$/',
+                'after:sched_sunday_avail_start'
+            ],
             
             // Allowed Domains data
             'allowed_domains' => [
