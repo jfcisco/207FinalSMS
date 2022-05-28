@@ -148,6 +148,7 @@ class WidgetController extends Controller
             // Availability Schedule Information
             // Note: Times are converted to the ISO 8601 format because this is compatible with JavaScript
             'hasScheduledAvailability' => json_encode($widgetAvailabilitySchedule['isActive']),
+            'enabledForToday' => json_encode($widgetAvailabilitySchedule['enabledForToday']),
             'availabilityStartTime' => ($widgetAvailabilitySchedule['availStart'] 
                 ? $widgetAvailabilitySchedule['availStart']->toIso8601String()
                 : ""),
@@ -178,6 +179,7 @@ class WidgetController extends Controller
         if (!$widget->sched_enabled) {
             return [
                 'isActive' => false,
+                'enabledForToday' => false,
                 'availStart' => null,
                 'availEnd' => null
             ];
@@ -276,13 +278,16 @@ class WidgetController extends Controller
         }
 
         // Lastly, convert them to date-time before handing them over to the view
-        $startTime = Carbon::createFromTime($availStart->hour, $availStart->minute, 0, $timeZone);
-        $endTime = Carbon::createFromTime($availEnd->hour, $availEnd->minute, 0, $timeZone);
+        $startTime = ($availStart) 
+            ? Carbon::createFromTime($availStart->hour, $availStart->minute, 0, $timeZone)
+            : null;
+        $endTime = ($availEnd) 
+            ? Carbon::createFromTime($availEnd->hour, $availEnd->minute, 0, $timeZone)
+            : null;
 
         return [
             'isActive' => true,
-            // TODO: Only check time if schedEnabled is true, otherwise hidden the entire day
-            'schedEnabled' => $schedEnabled,
+            'enabledForToday' => $schedEnabled,
             'availStart' => $startTime,
             'availEnd' => $endTime,
         ];
