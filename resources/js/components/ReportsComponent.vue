@@ -91,7 +91,7 @@
                                 <div>
                                     <h5 class="card-title">Live Sessions  </h5>
                                 </div>
-                                <table>
+                                <table class="table table-striped" style="border: 1px solid;">
                                     <tr>
                                         <th>Socket ID</th>
                                         <th>IP Address</th>
