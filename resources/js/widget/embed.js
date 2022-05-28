@@ -16,3 +16,7 @@ const tawk = new Tawk({
     availabilityStartTime: new Date("<?php echo $availabilityStartTime; ?>"),
     availabilityEndTime: new Date("<?php echo $availabilityEndTime; ?>"),
 });
+
+console.log("<?php echo $hasScheduledAvailability; ?>" === "true");
+console.log(new Date("<?php echo $availabilityStartTime; ?>"));
+console.log(new Date("<?php echo $availabilityEndTime; ?>"));
