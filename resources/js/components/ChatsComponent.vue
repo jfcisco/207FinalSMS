@@ -57,9 +57,9 @@
 
           <!-- HIDE BEFORE COMMIT -->
           <!-- show chatroom ids in incoming -->
-          <div class="listHead">
+          <!-- <div class="listHead">
             <p>room._id: {{ chatroom._id }}</p>
-          </div>
+          </div> -->
           <!-- HIDE BEFORE COMMIT -->
 
           <!--room id/username section-->
@@ -108,9 +108,9 @@
 
           <!-- HIDE BEFORE COMMIT -->
           <!-- show chatroom ids in active sessions -->
-          <div class="listHead">
+          <!-- <div class="listHead">
             <p>room._id: {{ chatroom._id }}</p>
-          </div>
+          </div> -->
           <!-- HIDE BEFORE COMMIT -->
 
           <!-- assigned room users (Admin/Agent) -->
@@ -144,10 +144,13 @@
 
     <div class="chatbox_input" id="message_main" style="display:flex">
       <ion-icon class="whisper" name="volume-high-outline" id="headerToggle1" onclick="toggleheaderleft()"></ion-icon>
+      <!-- <FileUploadComponent
+          :active-room="activeRoom"
+          v-on:upload-success="handleAttachmentUpload"
+      ></FileUploadComponent> -->
       <FileUploadComponent
-            :active-room="activeRoom"
-              v-on:upload-success="handleAttachmentUpload"
-            ></FileUploadComponent>
+          v-on:upload-success="handleAttachmentUpload"
+      ></FileUploadComponent>
       <input
           @keyup.enter="sendMessage"
           v-model="message"
@@ -223,7 +226,8 @@
                         <b>
                           {{ getMsgSender(message, chatroom) }}:
                         </b>
-                        <p>&nbsp;{{message.content }}</p>
+                        <p v-if="!message.content.startsWith('files/')">&nbsp;{{ message.content }}</p>
+                        <p v-else><a :href="message.content">&nbsp;{{ message.content.slice(6, message.content.length) }}</a></p>
                     </div>
                 </li>
                 <!-- CHAT MESSAGE LINE END -->
@@ -290,7 +294,7 @@ export default {
       // widgetId: "widget1",
 
       // For admin/agent
-      clientId: this.user._id,
+      clientId: this.currentUser._id,
       clientName: `${this.currentUser.name}`,
       clientType: "user",
     };
@@ -352,6 +356,7 @@ export default {
         console.error(err);
       }
     },
+
     // UTILITY FUNCTIONS
     async generateChatroomsList() {
       try {
@@ -370,6 +375,7 @@ export default {
         console.error(err);
       }
     },
+
     convertSchemaOfRoomsResponse(rooms) {
       // this converts the schema of response data from "get" request on "/api/rooms" route
       // to match the schema of data returned by socket.on("rooms")
@@ -397,6 +403,7 @@ export default {
         }
       });
     },
+
     getLastMsgAndSender(chatroom) {
       // ensure chatroom.messages is not undefined and is not an empty array
       if (chatroom.messages && chatroom.messages.length > 0) {
@@ -436,7 +443,6 @@ export default {
     },
 
     sendMessage() {
-
       if (this.message === "") return;
 
       const newMessage = {
@@ -462,7 +468,7 @@ export default {
       // console.log("this.chatrooms=> ", this.chatrooms[found].messages)
       this.chatrooms[found].messages.push({
         ...newMessage,
-        clientId: socket.auth.clientId,
+        clientId: this.currentUser._id,
         _id: "",
       });
       // console.log("this.chatrooms2=> ", this.chatrooms[found].messages)
@@ -524,6 +530,26 @@ export default {
             }
         }
         return found;
+    },
+
+    handleAttachmentUpload(attachmentUrl) {
+      console.log("running handleAttachmentUpload")
+
+      const newMessage = {
+        content: attachmentUrl,
+        roomId: this.activeRoom,
+      };
+
+      socket.emit("message", newMessage);
+
+      const foundRoom = this.chatrooms[this.getTargetRoomIndex(this.activeRoom)];
+
+      foundRoom.messages.push({
+        ...newMessage,
+        clientId: this.currentUser._id,
+        _id: "",
+      });
+
     },
 
   },
