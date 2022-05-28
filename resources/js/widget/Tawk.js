@@ -1,5 +1,7 @@
-import Vue from 'vue'; 
+import Vue from 'vue';
 import VueChatScroll from "vue-chat-scroll";
+import cj from "clientjs";
+// import axios from 'axios';
 
 // Options used for converting date/time to string using .toLocaleTimeString()
 const localeTimeFormat = {
@@ -9,7 +11,7 @@ const localeTimeFormat = {
 
 export class Tawk {
     constructor({ position = 'bottom-right',
-        baseUrl, 
+        baseUrl,
         hasScheduledAvailability,
         availabilityStartTime,
         availabilityEndTime } = {}
@@ -18,6 +20,7 @@ export class Tawk {
         this.position = this.getPosition(position);
         this.open = false;
         this.sessionStarted = false;
+        this.client = new cj.ClientJS();
 
         // Variables for availability schedule
         this.hasScheduledAvailability = hasScheduledAvailability;
@@ -35,7 +38,7 @@ export class Tawk {
             [horizontal]: '30px'
         };
     }
-    
+
     initialise() {
         const container = document.createElement('div');
         container.style.position = 'fixed';
@@ -62,11 +65,12 @@ export class Tawk {
 
         this.messageContainer = document.createElement('div');
         this.messageContainer.classList.add('hidden', 'message-container');
-        
+
         this.checkTime();
 
         container.appendChild(this.messageContainer);
         container.appendChild(buttonContainer);
+
     }
 
     createMessageContainerContent() {
@@ -76,7 +80,7 @@ export class Tawk {
 
         const form = document.createElement('form');
         form.classList.add('content');
-        
+
         const welcome = document.createElement('div');
         welcome.classList.add('welcome');
         welcome.textContent = `Enter your name and start chatting with us.`;
@@ -86,7 +90,7 @@ export class Tawk {
         name.id = 'name';
         name.type = 'name';
         name.placeholder = 'Your name';
- 
+
         const space = document.createElement('br');
 
         const btn = document.createElement('button');
@@ -100,7 +104,6 @@ export class Tawk {
 
         this.messageContainer.appendChild(title);
         this.messageContainer.appendChild(form);
-
     }
 
     createMessageContainerContentAfterHours() {
@@ -121,7 +124,7 @@ export class Tawk {
         const styleTag = document.createElement('style');
         styleTag.innerHTML = `
             @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200;400&display=swap');
-            
+
             .message-container * {
                 font-family: 'Raleway', sans-serif;
             }
@@ -253,7 +256,20 @@ export class Tawk {
         document.head.appendChild(styleTag);
     }
 
+    // async getCurrentVisitor() {
+    //     console.log("running api call")
+    //     try {
+    //       const response = await axios.get(`api/visitors/${this.client.getFingerprint().toString()}`);
+    //       console.log("response", response.data)
+    //     } catch (err) {
+    //       console.error(err);
+    //     }
+    // }
+
     toggleOpen() {
+        // alternative solution: api call to check if current visitor already has a name
+        // this.getCurrentVisitor()
+
         this.open = !this.open;
 
         if (this.open) {
@@ -262,7 +278,12 @@ export class Tawk {
             this.messageContainer.classList.remove('hidden');
 
             const nameField = document.querySelector("input#name");
+
+            // if visitor already has a name in localStorage
+            this.visitorHasName();
+
             if (nameField) nameField.focus();
+
         } else {
             if (!this.sessionStarted) {
                 this.checkTime();
@@ -275,16 +296,37 @@ export class Tawk {
         }
     }
 
+    visitorHasName() {
+        const visitorId = `${this.client.getFingerprint()}`
+        const visitorName = window.localStorage.getItem(visitorId);
+
+        if (visitorName) {
+            const nameField = document.querySelector("input#name");
+            const welcomeDiv = document.querySelector("div.welcome")
+
+            // hide element
+            nameField.style.display = "none";
+
+            // set name input field value to previously entered value by visitor
+            nameField.value = visitorName
+            // modify welcomeDiv to show visitor's name
+            welcomeDiv.textContent = `Welcome ${visitorName}`;
+        }
+    }
+
     submit(event) {
         // TO DO:  Add here code to start the chat.
         event.preventDefault();
         const formSubmission = {
-            name: event.srcElement.querySelector('#name').value, 
+            name: event.srcElement.querySelector('#name').value,
         };
+
+        // save visitor's inputted name in localStorage
+        window.localStorage.setItem(`${this.client.getFingerprint()}`, formSubmission.name);
 
         this.sessionStarted = true;
         this.startConversation(formSubmission);
-        
+
         console.log(formSubmission);
     }
 
@@ -293,7 +335,7 @@ export class Tawk {
         const gIconsHeader = document.createElement('link');
         gIconsHeader.innerHTML = '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">'
         document.head.appendChild(gIconsHeader);
-        
+
         // Set up Vue component
         this.messageContainer.innerHTML = `<chat-widget visitor-name="${formSubmission.name}"></chat-widget>`;
 
@@ -321,7 +363,7 @@ export class Tawk {
             var now = new Date().getTime();
             var startTime = this.availabilityStartTime.getTime();
             var endTime = this.availabilityEndTime.getTime();
-            
+
             if (now > startTime && now < endTime) {
                 this.createMessageContainerContent();
             } else {
