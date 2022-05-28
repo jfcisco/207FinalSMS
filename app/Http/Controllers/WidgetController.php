@@ -122,6 +122,11 @@ class WidgetController extends Controller
             abort(404);
         }
 
+        // Check whether the widget is enabled or not
+        if (!$widget->is_active) {
+            abort(503);
+        }
+
         // Check request origin with widget's allowed domains
         $origin = $request->header('origin');
         $allowedDomains = collect($widget->allowed_domains);
