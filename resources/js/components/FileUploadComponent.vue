@@ -97,41 +97,29 @@ export default {
             formData.append('room_id', this.$props.activeRoom);
             this.isUploading = true;
 
-            //SEND REQUEST FROM PROFILE UPDATE
-            axios.post('{APP_URL}/files/123qweqwe.png', formData)
-                    .then(response => {
-                        // Code in this part is run when the profile was updated successfully.
-                        
-                        window.location.reload()
-                        // You can get data from the server via the `response.data` object.
-
-                        // e.g., response.data.profilePicture contains a URL to the newly updated profile picture
-                    }
-                );
-
             // Send request to upload file to server
-            //axios.post('messages', formData)
-                //.then(response => {
-                    //const imageUrl = response.data.imageUrl;
+            axios.post('messages', formData)
+                .then(response => {
+                    const imageUrl = response.data.imageUrl;
 
                     // Fire an event to the parent component
-                    //this.$emit('upload-success', imageUrl);
+                    this.$emit('upload-success', imageUrl);
 
                     // Reset the form
-                    //this.$refs.uploadForm.reset();
+                    this.$refs.uploadForm.reset();
 
                     // Close the modal
-                    //var modalElement = document.getElementById("FileUploadModal");
-                    //var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-                    //modal.hide();
-                //})
-                //.catch((err) => {
-                    //console.error(err);
-                    //this.errors.push('Unable to upload file. Please try again later.');
-                //})
-                //.finally(() => {
-                    //this.isUploading = false;
-                //});
+                    var modalElement = document.getElementById("FileUploadModal");
+                    var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    modal.hide();
+                })
+                .catch((err) => {
+                    console.error(err);
+                    this.errors.push('Unable to upload file. Please try again later.');
+                })
+                .finally(() => {
+                    this.isUploading = false;
+                });
         }
     }
 }
