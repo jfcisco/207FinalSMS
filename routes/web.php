@@ -7,7 +7,6 @@ use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\WidgetController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -49,7 +48,6 @@ Route::middleware('auth')->group(function () {
     //region Web API Endpoints
     Route::prefix('api')->group(function () {
         Route::resource('users', UserController::class);
-        Route::resource('visitors', VisitorController::class);
         Route::resource('chat-widgets', ChatWidgetController::class);
         Route::resource('messages', MessageController::class);
         Route::resource('sessions', SessionController::class);
