@@ -91,18 +91,27 @@
                                 <div>
                                     <h5 class="card-title">Live Sessions  </h5>
                                 </div>
-                                <div
+                                <table>
+                                    <tr>
+                                        <th>Socket ID</th>
+                                        <th>IP Address</th>
+                                        <th>Browser</th>
+                                        <th>Website</th>
+                                        <th>Chatroom</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                    <tr
                                     v-for="socketReport in socketReports"
                                     :key="socketReport.socketId">
-                                    <div class="card-body">
-                                        <span>Socket ID: {{ socketReport.socketId }}</span>
-                                        <span>IP Address: {{ socketReport.ipAddress }}</span>
-                                        <span>Browser: {{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</span>
-                                        <span>Website: {{ socketReport.fromURL }}</span>
-                                        <span>Link to Chat: {{ socketReport.roomId }}</span>
-                                        <span>Duration: {{ socketReport.time }}</span>
-                                    </div>
-                                </div>
+                                        <td>{{ socketReport.socketId }}</td>
+                                        <td>{{ socketReport.ipAddress }}</td>
+                                        <td>{{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</td>
+                                        <td>{{ socketReport.fromURL }}</td>
+                                        <td>{{ socketReport.roomId }}</td>
+                                        <td>{{ socketReport.time }}</td>
+
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>
