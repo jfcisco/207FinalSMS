@@ -224,6 +224,8 @@ class WidgetController extends Controller
 
         // Validate incoming form data
         $request->validate([
+            'name' => 'string|required',
+            'is_active' => 'boolean|required',
             'availability_timezone' => 'timezone',
             'availability_start_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_end_time',
             'availability_end_time' => 'nullable|regex:/^\d\d:\d\d$/|required_with:availability_start_time|after:availability_start_time',
@@ -243,6 +245,10 @@ class WidgetController extends Controller
                 }
             ]
         ]);
+
+        // Update widget name and status
+        $widgetToUpdate->name = $request->input('name');
+        $widgetToUpdate->is_active = $request->input('is_active');
         
         // Update Allowed Domains
         if ($request->filled('allowed_domains')) {
