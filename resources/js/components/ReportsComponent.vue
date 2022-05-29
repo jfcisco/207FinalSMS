@@ -44,7 +44,7 @@
 
             <div class="row">
                 <p class="subtitle sidebartitle">Historical Analytics</p>
-                
+
                 <div class="reportblock">
                     <div class="details">
                         <div class="listHead">
@@ -80,11 +80,11 @@
         <div class="col-lg-9 reportsSection" style="overflow-y: scroll; overflow-x: hidden;">
 
             <div class="chat-container">
-                
+
                 <!--LIVE SESSION SECTION-->
                 <h1>Live Analytics</h1>
                 <div class="row reportsection livesession" style="overflow-y: scroll; overflow-x: hidden;">
-                    
+
                     <div class="col-sm-12">
                         <div class="card" id="livesessions">
                             <div  class="card-body">
@@ -104,7 +104,7 @@
                                     v-for="socketReport in socketReports"
                                     :key="socketReport.socketId">
                                         <td>{{ socketReport.socketId }}</td>
-                                        <td>{{ socketReport.ipAddress }}</td>
+                                        <td>{{ socketReport.ipAddress.split(":")[3] || "127.0.0.1" }}</td>
                                         <td>{{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</td>
                                         <td>{{ socketReport.fromURL }}</td>
                                         <td>{{ socketReport.roomId }}</td>
@@ -128,7 +128,7 @@
                                 <div class="card-title">
                                 <h5>Visitors</h5>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="card" id="livevisitors">
@@ -139,7 +139,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            
+
                             </div>
                         </div>
                     </div>
@@ -150,13 +150,13 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="card-title"><h5>Chats</h5></div>
-                                
+
                                 <div class="row">
 
                                     <!--CHATS ANSWERED-->
                                     <div class="col-sm-6">
                                         <div class="card">
-                                            <div class="card-body"> 
+                                            <div class="card-body">
                                             <h5 class="card-title">Answered</h5>
                                             <p class="card-text"><AnsweredChat></AnsweredChat></p>
                                             </div>
@@ -190,13 +190,13 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5>Visitors per hour</h5>
-                                
+
                                 <div class="card">
                                 <div class="card-body">
                                     <HourlyVisitor></HourlyVisitor>
                                 </div>
                                 </div>
-                        
+
                             </div>
                         </div>
                     </div>
@@ -207,7 +207,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5>Chats per hour</h5>
-                                
+
                                 <div class="card">
                                     <div class="card-body">
                                         <HourlyChat></HourlyChat>
@@ -245,7 +245,7 @@
                             </tbody>
                         </table>
                         </div>
-                
+
                 </div>
                 <!--HISTORICAL ANALYSIS END-->
 
@@ -399,9 +399,9 @@ export default {
                     roomId: visitor.roomId,
                     fromURL: visitor.fromURL,
                     startAt: visitor.startAt,
-                    time: visitor.time,                    
+                    time: visitor.time,
                 }
-            });            
+            });
 
         },
 
