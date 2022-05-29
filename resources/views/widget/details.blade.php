@@ -84,16 +84,22 @@
                             <label class="chat-label" for="widget-id">Widget ID</label>
                             <input class="form-control form-control-widget-full" type="text" name="widget-id" id="widget-id" readonly value="{{ $currentWidget->_id }}">
                         </div>
-                        {{-- <div class="widget-block">
-                            <label class="chat-label" for="chat-link">Direct Chat Link</label>
-                            <input class="form-control form-control-widget-full" type="text" name="chat-link" id="chat-link" readonly value="{{ $currentWidget->_id }}">
-                        </div> --}}
+                            
+                        <div class="widget-block">
+                            <label class="chat-label" for="chat-link">Widget Icon</label>
+                            <input class="form-control" type="file">
+                        </div>
+
+                        <div class="widget-block">
+                            <label class="chat-label">Widget Color</label>  
+                            <input class="form-control form-control-color form-control-widget-full" type="color" name="widget-color" id="widget-color" readonly>
+                        </div>
                     </div>
     
                     <div class="col-lg-6">
                         <!--CODE WIDGET LINK-->
                         {{-- This is the part that generates the HTML code of the widget --}}
-                        <div class="row marginallowance">
+                        <div class="row marginallowance2">
                             <h4 class="chat-subheader-2 mb-0">Widget Code</h4>
                             <p class="chat-label-2 mb-0"><strong>Copy and paste the HTML code below</strong> into your website's HTML document to give it chat functionality.</p>
                             
@@ -120,22 +126,9 @@
                 </div> 
                 
                 <div class="row">
-                    {{-- <div class="col-lg-5">
-                    <h4 class="chat-subheader">Widget Appearance</h4> 
-                        <div class="widget-block">
-                            <label class="chat-label">Widget Color</label>  
-                            <input class="form-control form-control-color form-control-widget-full" type="color" name="widget-color" id="widget-color" readonly>
-    
-                        </div>
-    
-                        <div class="widget-block">
-                            <label class="chat-label">Language</label>  
-                            <input class="form-control form-control-widget-full" type="text" name="widget-color" id="widget-color" readonly value="{{ $currentWidget->_id }}">
-                        </div>
-                    </div> --}}
-    
-                    <div class="col-lg-5">
-                        {{--<h4 class="chat-subheader">Scheduler</h4> --}}
+                        
+                    <div class="col-lg-5 scheduler-scroll" style="overflow-y: scroll; overflow-x: hidden;">
+                        
                         {{-- Custom scheduler component  --}}
                         <widget-scheduler-picker
                             editable="{{ Auth::user()->role === 'admin' }}"
@@ -193,8 +186,8 @@
 
 
                     
-                    <div class="col-lg-6">
-                        {{--<h4 class="chat-subheader-3">Availability Restrictions</h4> --}}
+                    <div class="col-lg-6 scheduler-scroll" style="overflow-y: scroll; overflow-x: hidden;">
+                        
                         <widget-domains-picker
                             editable="{{ Auth::user()->role === 'admin' }}"
 
@@ -320,7 +313,7 @@
                 </div>
 
                 @if (Auth::user()->role === "admin")
-                <div class="row my-4">
+                <div class="row my-4 widget-save">
                     <div class="col-4">
                         <button type="submit" class="btn btn-light w-100 widget-save-button">Save Changes</button>
                     </div>
