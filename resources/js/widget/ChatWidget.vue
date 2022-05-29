@@ -218,9 +218,11 @@ export default {
                 let room = rooms[0];
 
                 // Process the room's messages, attaching additional properties we need
-                room.messages = room.messages.map((msg) =>
-                    this.attachMessageProperties(room, msg)
-                );
+                room.messages = room.messages
+                    .filter(msg => !msg.isWhisper)
+                    .map((msg) =>
+                        this.attachMessageProperties(room, msg)
+                    );
 
                 this.room = room;
 
