@@ -107,7 +107,7 @@
                                         <td>{{ socketReport.ipAddress.split(":")[3] || "127.0.0.1" }}</td>
                                         <td>{{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</td>
                                         <td>{{ socketReport.fromURL }}</td>
-                                        <td>{{ socketReport.roomId }}</td>
+                                        <td><a v-bind:href="'home/?crm=' + socketReport.roomId">{{ socketReport.roomId }}</a></td>
                                         <td>{{ socketReport.time }}</td>
 
                                     </tr>
@@ -293,7 +293,7 @@ export default {
     },
 
     created() {
-
+        
         socket.auth = {
             // For admin/agent
             clientId: this.user._id,

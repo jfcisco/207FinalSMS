@@ -267,7 +267,7 @@ const socket = io(process.env.MIX_SOCKET_SERVER, {
 });
 
 export default {
-  props: ["user"],
+  props: ["user", "crm"],
 
   components: {
     FileUploadComponent,
@@ -281,11 +281,17 @@ export default {
       users: [],
       chatrooms: [],
       activeRoom: "",
+      chtRoom: this.crm,
     };
   },
 
   created() {
+    if(this.crm===null){
 
+    }else{
+      this.activeRoom = this.crm;
+    };
+    console.log("adrian",this.crm);
     socket.auth = {
       // // For visitors
       // clientId: client.getFingerprint(),
@@ -298,7 +304,7 @@ export default {
       clientName: `${this.currentUser.name}`,
       clientType: "user",
     };
-
+    
     socket.connect();
 
     // get all rooms from mongodb
@@ -316,7 +322,7 @@ export default {
       );
       console.log("this.chatrooms on socket.on 'rooms'", this.chatrooms);
     });
-
+    
     socket.on("message", (message) => {
       // console.log("message received", message);
       let found = this.getTargetRoomIndex(message.roomId);
