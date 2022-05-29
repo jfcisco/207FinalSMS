@@ -94,5 +94,19 @@
 
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
+
+<script>
+    function toggleheaderleft() {
+      var x = document.getElementById("message_main");
+      var y = document.getElementById("whisper");
+      if (x.style.display === "none") {
+        x.style.display = "flex";
+        y.style.display ="none";
+      } else {
+        x.style.display = "none";
+        y.style.display ="flex";
+      }
+    }
+</script>
 </body>
 </html>
