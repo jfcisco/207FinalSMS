@@ -119,7 +119,7 @@
                     </div>
                 </div> 
                 
-                <div class="row scheduler-scroll" style="overflow-y: scroll; overflow-x: hidden;">
+                <div class="row">
                     {{-- <div class="col-lg-5">
                     <h4 class="chat-subheader">Widget Appearance</h4> 
                         <div class="widget-block">
@@ -320,7 +320,7 @@
                 </div>
 
                 @if (Auth::user()->role === "admin")
-                <div class="row my-4 widget-save">
+                <div class="row my-4">
                     <div class="col-4">
                         <button type="submit" class="btn btn-light w-100 widget-save-button">Save Changes</button>
                     </div>
