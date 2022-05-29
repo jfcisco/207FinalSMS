@@ -108,7 +108,16 @@
                         </div>
                     </div>
                 </div>
-    
+                
+                <div class="row">
+                    
+                    <div class="col-lg-5">
+                        <h4 class="chat-subheader">Scheduler</h4>
+                    </div>                    
+                    <div class="col-lg-6">
+                        <h4 class="chat-subheader-3">Availability Restrictions</h4> 
+                    </div>
+                </div> 
                 
                 <div class="row scheduler-scroll" style="overflow-y: scroll; overflow-x: hidden;">
                     {{-- <div class="col-lg-5">
@@ -126,7 +135,7 @@
                     </div> --}}
     
                     <div class="col-lg-5">
-                        <h4 class="chat-subheader">Scheduler</h4> 
+                        {{--<h4 class="chat-subheader">Scheduler</h4> --}}
                         {{-- Custom scheduler component  --}}
                         <widget-scheduler-picker
                             editable="{{ Auth::user()->role === 'admin' }}"
@@ -185,7 +194,7 @@
 
                     
                     <div class="col-lg-6">
-                        <h4 class="chat-subheader-3">Availability Restrictions</h4> 
+                        {{--<h4 class="chat-subheader-3">Availability Restrictions</h4> --}}
                         <widget-domains-picker
                             editable="{{ Auth::user()->role === 'admin' }}"
 
