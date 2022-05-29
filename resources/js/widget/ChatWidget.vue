@@ -270,6 +270,7 @@ export default {
             const newMessage = {
                 content: this.message,
                 roomId: this.room._id,
+                conversationId: this.room.conversationId,
             };
             console.log("room._id=> ", this.room._id);
 
@@ -321,17 +322,19 @@ export default {
             });
         },
         endConversation() {
+            socket.emit("end_chat", this.room.conversationId);
             socket.disconnect();
             this.chatEnded = true;
         },
 
         // Gets code when we successfully upload a file
         handleAttachmentUpload(attachmentUrl) {
-            
+
             // axios post to laravel app - to upload the file (in the file upload widget)
             const newMessage = {
                 content: attachmentUrl,
                 roomId: this.room._id,
+                conversationId: this.room.conversationId,
             };
             console.log("room._id=> ", this.room._id);
 
@@ -347,7 +350,7 @@ export default {
             // Clear message input
             this.message = "";
         },
-        
+
     },
 };
 </script>

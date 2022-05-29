@@ -46,7 +46,7 @@
       >
         <div
           class="details"
-          v-on:click="selectIncomingRoom(chatroom._id)"
+          v-on:click="selectIncomingRoom(chatroom._id, chatroom.conversationId)"
           v-bind:id="chatroom._id"
         >
           <!--room id/username section-->
@@ -97,7 +97,7 @@
 
         <div
           class="details"
-          v-on:click="selectRoom(chatroom._id)"
+          v-on:click="selectRoom(chatroom._id, chatroom.conversationId)"
           v-bind:id="chatroom._id"
         >
 
@@ -282,6 +282,7 @@ export default {
       chatrooms: [],
       activeRoom: "",
       chtRoom: this.crm,
+      activeConversation: "",
     };
   },
 
@@ -304,7 +305,7 @@ export default {
       clientName: `${this.currentUser.name}`,
       clientType: "user",
     };
-    
+
     socket.connect();
 
     // get all rooms from mongodb
@@ -322,7 +323,7 @@ export default {
       );
       console.log("this.chatrooms on socket.on 'rooms'", this.chatrooms);
     });
-    
+
     socket.on("message", (message) => {
       // console.log("message received", message);
       let found = this.getTargetRoomIndex(message.roomId);
@@ -454,6 +455,7 @@ export default {
       const newMessage = {
         content: this.message,
         roomId: this.activeRoom,
+        conversationId: this.activeConversation,
       };
 
       // console.log("newMessage1=> ", {...newMessage});
@@ -486,15 +488,16 @@ export default {
     //     Echo.join("chat").whisper("typing", this.user);
     // },
 
-    selectRoom: function (roomId) {
+    selectRoom: function (roomId, conversationId) {
       this.activeRoom = roomId;
+      this.activeConversation = conversationId;
       this.scrollToChatBottom();
     },
 
-    selectIncomingRoom: function (roomId) {
+    selectIncomingRoom: function (roomId, conversationId) {
       // console.log("incoming block div of chatroom ", document.getElementById(`${roomId}`).parentElement)
       event.preventDefault();
-      this.selectRoom(roomId);
+      this.selectRoom(roomId, conversationId);
 
       // join the selected room
       this.joinRoom(roomId)
@@ -544,6 +547,7 @@ export default {
       const newMessage = {
         content: attachmentUrl,
         roomId: this.activeRoom,
+        conversationId: this.activeConversation,
       };
 
       socket.emit("message", newMessage);
