@@ -37,6 +37,7 @@
                             'sent-message': message.fromSelf,
                             'received-message': !message.fromSelf,
                         }"
+                        v-show="!message.isWhisper"
                         :key="index"
                     >
                         <div class="name">
