@@ -160,6 +160,13 @@ class WidgetController extends Controller
             'availabilityEndTime' => ($widgetAvailabilitySchedule['availEnd']
                 ? $widgetAvailabilitySchedule['availEnd']->toIso8601String()
                 : ""),
+
+            // Widget appearance settings
+            'color' => $widget->color,
+            'icon' => $widget->icon,
+
+            // Determines whether file sharing is enabled or not
+            'isFileSharingEnabled' => json_encode($widget->enable_file_sharing),
         ])->withHeaders([
             // Make browsers interpret this as JavaScript
             'Content-Type' => 'application/javascript',
