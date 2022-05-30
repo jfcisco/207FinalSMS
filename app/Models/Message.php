@@ -22,6 +22,7 @@ class Message extends Model
         'clientName',
         'content',
         'isWhisper',
+        'conversationId',
     ];
 
     /**
@@ -33,8 +34,8 @@ class Message extends Model
         'isWhisper' =>'boolean',
     ];
 
-    public function room(): BelongsTo
+    public function conversation(): BelongsTo
     {
-        return $this->belongsTo(Room::class, 'roomId', 'message_id');
+        return $this->belongsTo(Conversation::class, 'conversationId', 'conversation_id');
     }
 }
