@@ -241,7 +241,7 @@
             id="join-btn"
             style="display: flex"
             v-if="chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
-            v-on:click="joinRoom(chatroom._id)">
+            v-on:click="joinRoom(chatroom._id, chatroom.conversationId)">
             <span class="joinroom">Click to join room</span>
           </button>
 
@@ -309,12 +309,12 @@ export default {
     socket.connect();
 
     // get all rooms from mongodb
-    this.generateChatroomsList();
+    // this.generateChatroomsList();
 
     socket.on("rooms", ({ rooms }) => {
-      // console.log("running socket.on rooms")
+      console.log("running socket.on rooms")
       // console.log("socket.on rooms");
-      // console.log("rooms full data=> ", rooms);
+      console.log("rooms full data=> ", rooms);
       // console.log("rooms mod data=> ", rooms.map(room => ({ 'room._id': room._id, 'room.members.length': room.members.length, 'room.messages': room.messages })));
       this.chatrooms = _.unionBy(
         rooms,
@@ -325,9 +325,9 @@ export default {
     });
 
     socket.on("message", (message) => {
-      // console.log("message received", message);
-      let found = this.getTargetRoomIndex(message.roomId);
-      this.chatrooms[found].messages.push(message);
+      console.log("message received", message);
+      let foundRoom = this.chatrooms[this.getTargetRoomIndex(message.roomId)];
+      foundRoom.messages.push(message);
     });
 
     // add test data for incoming room | only 1 member of room w/ clientType: visitor
@@ -377,7 +377,7 @@ export default {
           this.convertSchemaOfRoomsResponse(results),
           (room) => room._id,
         );
-        console.log("this.chatrooms after api call", this.chatrooms)
+        // console.log("this.chatrooms after api call", this.chatrooms)
       } catch (err) {
         console.error(err);
       }
@@ -468,6 +468,7 @@ export default {
         socket.emit("whisper", newMessage);
       } else {
         socket.emit("message", newMessage);
+        console.log("message", newMessage)
       }
       // console.log("newMessage2=> ", newMessage);
 
@@ -489,21 +490,25 @@ export default {
     // },
 
     selectRoom: function (roomId, conversationId) {
+      console.log("running selectRoom");
       this.activeRoom = roomId;
+
       this.activeConversation = conversationId;
+      console.log("conversationId", conversationId)
       this.scrollToChatBottom();
     },
 
     selectIncomingRoom: function (roomId, conversationId) {
+      console.log("running selectIncomingRoom");
       // console.log("incoming block div of chatroom ", document.getElementById(`${roomId}`).parentElement)
       event.preventDefault();
       this.selectRoom(roomId, conversationId);
 
       // join the selected room
-      this.joinRoom(roomId)
+      this.joinRoom(roomId, conversationId)
     },
 
-    joinRoom: function(roomId) {
+    joinRoom: function(roomId, conversationId) {
 
       let confirmAction = confirm("Are you sure you want to join this room?");
 
@@ -523,9 +528,10 @@ export default {
         foundRoom.members.push(
             {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
         )
-        // console.log("found chatroom after joining", foundRoom);
+        console.log("found chatroom after joining", foundRoom);
+        console.log("conversationId", conversationId)
 
-        socket.emit("join", { roomId: roomId, name: this.currentUser.name });
+        socket.emit("join", { roomId: roomId, conversationId: conversationId, name: this.currentUser.name });
 
         alert("Successfully joined this room");
       }
