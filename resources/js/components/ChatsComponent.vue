@@ -330,6 +330,21 @@ export default {
       foundRoom.messages.push(message);
     });
 
+    socket.on("typing", (data) => {
+      // Leaving this log for debugging:
+      console.log("typing data => ", JSON.parse(JSON.stringify(data)));
+
+      const { clientId, conversationId, roomId, content } = data;
+
+      // "typing" event fires whenever the visitor presses a keyboard button
+
+      // clientId - Client ID of visitor typing
+      // conversationId - ID of current conversation
+      // roomId - ID of current room
+      // content - Exact text being typed by the visitor
+      // Similar properties as "message" event. I hope these are enough - jfcisco
+    });
+
     // add test data for incoming room | only 1 member of room w/ clientType: visitor
     // this.chatrooms.push({
     //   _id: "54321",

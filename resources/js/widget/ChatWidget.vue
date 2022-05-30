@@ -63,6 +63,7 @@
                                 placeholder="Enter your message..."
                                 class="form-control"
                                 autocomplete="off"
+                                @keydown="sendTypingEvent"
                             />
                         </form>
                 </div>
@@ -250,12 +251,6 @@ export default {
             }
         });
 
-        // // An admin/agent/visitor left the room
-        // socket.on("user_disconnect", (notification) => {
-        //     const update = this.attachUpdateProperties(notification);
-        //     this.room.messages.push(update);
-        // });
-
         // Log any connect_errors
         socket.on("connect_error", (err) => {
             console.error(err);
@@ -351,6 +346,16 @@ export default {
             this.message = "";
         },
 
+        sendTypingEvent() {
+            const typingData = {
+                content: this.message,
+                roomId: this.room._id,
+                conversationId: this.room.conversationId,
+            };
+
+            // console.log("Send typing data: ", typingData);
+            socket.emit("typing", typingData);
+        }
     },
 };
 </script>
