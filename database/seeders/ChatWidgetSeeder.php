@@ -27,7 +27,7 @@ class ChatWidgetSeeder extends Seeder
         $chatWidget->hide_when_on_desktop = false;
         $chatWidget->hide_when_on_mobile = false;
         $chatWidget->enable_emojis = false;
-        $chatWidget->is_active = false;
+        $chatWidget->is_active = true;
         $chatWidget->save();
 
         $user->chat_widgets()->attach($chatWidget->_id);
