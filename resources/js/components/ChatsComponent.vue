@@ -173,7 +173,7 @@
           <!-- assigned room users (Admin/Agent) -->
           <div class="listHead">
             <p style="font-weight: 500; font-style: italic;">
-              Previously Assigned: {{ getAssignedToRoom(chatroom) }}
+              Previously Assigned: {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </p>
           </div>
           <!-- assigned room users (Admin/Agent) -->
@@ -251,7 +251,7 @@
 
           <div class="mb-3">
             <h5 class="assignedmembers">
-              {{ chatroom.conversationId ? "Assigned" : "Previously Assigned" }}:  {{ getAssignedToRoom(chatroom)  }}
+              {{ chatroom.conversationId ? "Assigned" : "Previously Assigned" }}:  {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </h5>
             <h6 class="lastconversation">{{ chatroom.conversationId ? "" : "Last Conversation" }}</h6>
           </div>
