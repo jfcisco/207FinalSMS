@@ -15,7 +15,10 @@ export class Tawk {
         hasScheduledAvailability,
         availabilityStartTime,
         availabilityEndTime,
-        schedulerEnabledForToday
+        schedulerEnabledForToday,
+        color,
+        icon,
+        isFileSharingEnabled
     } = {}
     ) {
         this.baseUrl = baseUrl;
@@ -29,6 +32,16 @@ export class Tawk {
         this.availabilityStartTime = availabilityStartTime;
         this.availabilityEndTime = availabilityEndTime;
         this.schedulerEnabledForToday = schedulerEnabledForToday;
+
+        // this.color (string): 7-character hexadecimal color code (e.g., "#fdee3f")
+        this.color = color; 
+
+        // this.icon(string): URL to the chosen icon (e.g., "/assets/new-icon.svg")
+        this.icon = icon;
+        
+        /* this.isFileSharingEnabled (boolean): true, if file sharing is enabled for the widget 
+            and false otherwise */
+        this.isFileSharingEnabled = isFileSharingEnabled; 
 
         this.initialise();
         this.createStyles();
