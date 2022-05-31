@@ -201,7 +201,7 @@
 
     <!--MAIN INPUT MESSAGE BOX START-->
 
-    <div class="chatbox_input" id="message_main" style="display:flex">
+    <div class="chatbox_input" id="message_main" style="display:none">
       <ion-icon class="whisper" name="volume-high-outline" id="headerToggle1" onclick="toggleheaderleft()"></ion-icon>
       <!-- <FileUploadComponent
           :active-room="activeRoom"
@@ -605,6 +605,7 @@ export default {
       this.activeConversation = conversationId;
       console.log("conversationId", conversationId)
       this.scrollToChatBottom();
+      this.toggleMessageMainEl("show");
     },
 
     selectIncomingRoom: function (roomId, conversationId) {
@@ -631,9 +632,11 @@ export default {
         // console.log("this.chatrooms after=>", this.chatrooms);
 
         this.selectRoom(roomId, lastConversation.id);
+
       } catch (err) {
         console.error(err);
       }
+      this.toggleMessageMainEl("hide");
     },
 
     joinRoom: function(roomId, conversationId) {
@@ -661,6 +664,18 @@ export default {
         socket.emit("join", { roomId: roomId, conversationId: conversationId, name: this.currentUser.name });
 
         alert("Successfully joined this room");
+
+        this.toggleMessageMainEl("show");
+      }
+    },
+
+    toggleMessageMainEl(action) {
+      console.log("running toggleMessageMainEl")
+      const msgMainEl= document.getElementById("message_main");
+      if (action === "show") {
+        msgMainEl.style.display = "flex";
+      } else if (action === "hide") {
+        msgMainEl.style.display = "none";
       }
     },
 
