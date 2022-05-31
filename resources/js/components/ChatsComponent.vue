@@ -41,7 +41,7 @@
         }"
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
-        v-show="chatroom.members.length === 1"
+        v-show="chatroom.members.length === 1 && chatroom.conversationId"
         :key="chatroom._id"
       >
         <div
@@ -91,10 +91,11 @@
         }"
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
-        v-show="chatroom.members.length > 1"
+        v-show="chatroom.members.length > 1 && chatroom.conversationId"
         :key="chatroom._id"
       >
-
+      <!-- only display rooms that have a conversationId w/c means they still have an open conversation (no endAt) -->
+      <!-- display ended conversations in a CLOSED SESSIONS section in the dashboard -->
         <div
           class="details"
           v-on:click="selectRoom(chatroom._id, chatroom.conversationId)"
@@ -308,21 +309,19 @@ export default {
 
     socket.connect();
 
-    // get all rooms from mongodb
-    // this.generateChatroomsList();
-
     socket.on("rooms", ({ rooms }) => {
-      console.log("running socket.on rooms")
-      // console.log("socket.on rooms");
+      console.log("running socket.on rooms1")
       console.log("rooms full data=> ", rooms);
-      // console.log("rooms mod data=> ", rooms.map(room => ({ 'room._id': room._id, 'room.members.length': room.members.length, 'room.messages': room.messages })));
       this.chatrooms = _.unionBy(
         rooms,
         this.chatrooms,
         (room) => room._id,
       );
-      console.log("this.chatrooms on socket.on 'rooms'", this.chatrooms);
+      console.log("this.chatrooms=>", this.chatrooms);
     });
+
+    // get all rooms from mongodb
+    // this.generateChatroomsList();
 
     socket.on("message", (message) => {
       console.log("message received", message);
@@ -343,6 +342,18 @@ export default {
       // roomId - ID of current room
       // content - Exact text being typed by the visitor
       // Similar properties as "message" event. I hope these are enough - jfcisco
+    });
+
+    socket.on("end_chat", conversationId => {
+      console.log("visitor ended conversation", conversationId);
+      this.chatrooms.forEach(chatroom => {
+        if (chatroom.conversationId === conversationId) {
+          console.log("found the conversation");
+          chatroom.conversationId = undefined;
+        }
+        console.log(this.chatrooms)
+        return;
+      });
     });
 
     // add test data for incoming room | only 1 member of room w/ clientType: visitor
@@ -367,12 +378,22 @@ export default {
 
   methods: {
     // API CALLS TO MONGODB
-    async getAllRooms() {
+    // async getAllRooms() {
+    //   try {
+    //     const response = await axios.get("/api/rooms");
+    //     // console.log("response GET api/rooms", response.data.data.map(
+    //     //   item => ({ "roomId": item.id, "members": item.members.map(i => `${i.name} clientId(${i.id})`), "messages": item.messages })));
+    //     // console.log("look here", response.data.data)
+    //     return response.data.data;
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // },
+
+    async getRoom(roomId) {
       try {
-        const response = await axios.get("/api/rooms");
-        // console.log("response GET api/rooms", response.data.data.map(
-        //   item => ({ "roomId": item.id, "members": item.members.map(i => `${i.name} clientId(${i.id})`), "messages": item.messages })));
-        // console.log("look here", response.data.data)
+        const response = await axios.get(`/api/rooms/${roomId}`);
+        console.log("getRoom", response.data.data);
         return response.data.data;
       } catch (err) {
         console.error(err);
@@ -380,51 +401,25 @@ export default {
     },
 
     // UTILITY FUNCTIONS
-    async generateChatroomsList() {
-      try {
-        console.log("running generateChatroomsList");
-        const results = await this.getAllRooms();
-        // console.log("api call response", results);
-        // console.log("convertedResults", convertedResults);
+    // async generateChatroomsList() {
+    //   try {
+    //     console.log("running generateChatroomsList");
+    //     const results = await this.getAllRooms();
+    //     console.log("api call response", results);
 
-        this.chatrooms = _.unionBy(
-          this.chatrooms,
-          this.convertSchemaOfRoomsResponse(results),
-          (room) => room._id,
-        );
-        // console.log("this.chatrooms after api call", this.chatrooms)
-      } catch (err) {
-        console.error(err);
-      }
-    },
+    //     console.log("this.chatrooms before api call", this.chatrooms)
 
-    convertSchemaOfRoomsResponse(rooms) {
-      // this converts the schema of response data from "get" request on "/api/rooms" route
-      // to match the schema of data returned by socket.on("rooms")
-      return rooms.map(room => {
-        return {
-          _id: room.id,
-          members: room.members.map(member => {
-            return {
-              clientId: member.id,
-              clientName: member.name,
-              clientType: (member.role ? "user" : "visitor"),
-            }
-          }),
-          messages: room.messages.map(msg => {
-            return {
-              _id: msg.id,
-              clientId: msg.client_id,
-              clientType: msg.client_type,
-              content: msg.content,
-              created_at: msg.created_at,
-              isWhisper: msg.is_whisper,
-              roomId: msg.room_id,
-            }
-          }),
-        }
-      });
-    },
+    //     this.chatrooms = _.unionBy(
+    //       this.convertSchemaOfAPIRoomsResponse(results),
+    //       this.chatrooms,
+    //       (room) => room._id,
+    //     );
+    //     console.log("this.chatrooms after api call", this.chatrooms)
+
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // },
 
     getLastMsgAndSender(chatroom) {
       // ensure chatroom.messages is not undefined and is not an empty array
@@ -511,6 +506,9 @@ export default {
       this.activeConversation = conversationId;
       console.log("conversationId", conversationId)
       this.scrollToChatBottom();
+
+      // test getRoom api call
+      this.getRoom(roomId);
     },
 
     selectIncomingRoom: function (roomId, conversationId) {
