@@ -63,7 +63,7 @@
                                 placeholder="Enter your message..."
                                 class="form-control"
                                 autocomplete="off"
-                                @keydown="sendTypingEvent"
+                                @input="sendTypingEvent"
                             />
                         </form>
                 </div>
@@ -362,13 +362,12 @@ export default {
         },
 
         sendTypingEvent() {
-            const typingData = {
+                const typingData = {
                 content: this.message,
                 roomId: this.room._id,
                 conversationId: this.room.conversationId,
-            };
-
-            // console.log("Send typing data: ", typingData);
+            }
+            console.log("Send typing data: ", typingData);
             socket.emit("typing", typingData);
         },
 

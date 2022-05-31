@@ -412,17 +412,17 @@ export default {
       // content - Exact text being typed by the visitor
       // Similar properties as "message" event. I hope these are enough - jfcisco
 
-      if (this.activeRoom === data.roomId) {
+      if (this.activeRoom === roomId) {
 
         // show visitor's typing event
         const visitorTypingContainerEl = document.getElementById("visitor-typing");
         visitorTypingContainerEl.style.display = "";
 
         // display msg sender and content
-        const foundRoom = this.chatrooms[this.getTargetRoomIndex(data.roomId)];
+        const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
         visitorTypingContainerEl.querySelector("li div").innerHTML = `
           <b>${this.getMsgSender(data, foundRoom)}</b><p>&nbsp;is typing...</p><b>:</b>
-          <p>&nbsp;${data.content}</p>
+          <p>&nbsp;${content}</p>
         `;
       }
     });
