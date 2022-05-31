@@ -199,7 +199,7 @@
 
           <!--CHATBOX START-->
           <div class="chatboxfix" ref="chatWindow" v-chat-scroll style="overflow-y: scroll; overflow-x: hidden;">
-            <ul class="list-unstyled">
+            <ul class="list-unstyled" style="margin-bottom:0">
 
                 <!-- CHAT MESSAGE LINE START -->
                 <li
@@ -232,6 +232,10 @@
                     </div>
                 </li>
                 <!-- CHAT MESSAGE LINE END -->
+            </ul>
+            <!-- DISPLAY VISITOR TYPING EVENT -->
+            <ul class="list-unstyled" id="visitor-typing" style="display: none">
+              <li><div class="receivedmessage"></div></li>
             </ul>
           </div>
           <!--CHATBOX END-->
@@ -325,6 +329,12 @@ export default {
 
     socket.on("message", (message) => {
       console.log("message received", message);
+
+      // clear visitor's typing event element and hide from display
+      const visitorTypingContainerEl = document.getElementById("visitor-typing");
+      visitorTypingContainerEl.querySelector("li div").innerHTML = ""
+      visitorTypingContainerEl.style.display = "none";
+
       let foundRoom = this.chatrooms[this.getTargetRoomIndex(message.roomId)];
       foundRoom.messages.push(message);
     });
@@ -342,6 +352,20 @@ export default {
       // roomId - ID of current room
       // content - Exact text being typed by the visitor
       // Similar properties as "message" event. I hope these are enough - jfcisco
+
+      if (this.activeRoom === data.roomId) {
+
+        // show visitor's typing event
+        const visitorTypingContainerEl = document.getElementById("visitor-typing");
+        visitorTypingContainerEl.style.display = "";
+
+        // display msg sender and content
+        const foundRoom = this.chatrooms[this.getTargetRoomIndex(data.roomId)];
+        visitorTypingContainerEl.querySelector("li div").innerHTML = `
+          <b>${this.getMsgSender(data, foundRoom)}</b><p>&nbsp;is typing...</p><b>:</b>
+          <p>&nbsp;${data.content}</p>
+        `;
+      }
     });
 
     socket.on("end_chat", conversationId => {
