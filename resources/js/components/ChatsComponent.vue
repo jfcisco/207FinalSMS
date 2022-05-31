@@ -149,7 +149,7 @@
         }"
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
-        v-show="chatroom.members.length > 1 && !chatroom.conversationId"
+        v-show="!chatroom.conversationId"
         :key="chatroom._id"
       >
         <div
@@ -299,12 +299,12 @@
           </div>
           <!--CHATBOX END-->
 
-          <!-- JOIN FEATURE AVAILABLE ONLY IF CURRENT USER IS NOT ALREADY ASSIGNED -->
+          <!-- JOIN FEATURE AVAILABLE ONLY IF CONVERSATION IS OPEN AND CURRENT USER IS NOT ALREADY ASSIGNED -->
           <button
             class="joinbutton"
             id="join-btn"
             style="display: flex"
-            v-if="chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
+            v-if="chatroom.conversationId && chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
             v-on:click="joinRoom(chatroom._id, chatroom.conversationId)">
             <span class="joinroom">Click to join room</span>
           </button>
