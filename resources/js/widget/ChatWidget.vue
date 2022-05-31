@@ -173,6 +173,7 @@ import FileUploadWidget from "./FileUploadWidget.vue";
 
 // Setup client.js for device fingerprinting
 const client = new cj.ClientJS();
+var notifCount = 0;
 
 // Setup Socket.IO connection
 const socket = io(process.env.MIX_SOCKET_SERVER, {
@@ -234,8 +235,16 @@ export default {
 
         // Listen to any sent messages
         socket.on("message", (message) => {
+            var previousChatMessage;
             const chatMessage = this.attachMessageProperties(this.room, message);
             this.room.messages.push(chatMessage);
+            
+            // Show notifications in the document's title tag
+            if (chatMessage != previousChatMessage) {
+                notifCount++;
+                this.showNotifications(notifCount);
+            }
+           previousChatMessage = chatMessage;
         });
 
         // Received notification that an admin/agent has joined the room
@@ -316,6 +325,7 @@ export default {
                 messageInputRef.focus();
             });
         },
+
         endConversation() {
             socket.emit("end_chat", this.room.conversationId);
             socket.disconnect();
@@ -355,6 +365,16 @@ export default {
 
             // console.log("Send typing data: ", typingData);
             socket.emit("typing", typingData);
+        },
+
+        showNotifications(count) {
+        const pattern = /^\(\d+\)/;
+
+        if (count === 0 || pattern.test(document.title)) {
+            document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
+        } else {
+            document.title = "(" + count + ") " + document.title;
+        }
         }
     },
 };
