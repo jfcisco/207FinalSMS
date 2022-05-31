@@ -149,7 +149,7 @@
         }"
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
-        v-show="chatroom.members.length > 1 && !chatroom.conversationId"
+        v-show="!chatroom.conversationId"
         :key="chatroom._id"
       >
         <div
@@ -173,7 +173,7 @@
           <!-- assigned room users (Admin/Agent) -->
           <div class="listHead">
             <p style="font-weight: 500; font-style: italic;">
-              Previously Assigned: {{ getAssignedToRoom(chatroom) }}
+              Previously Assigned: {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </p>
           </div>
           <!-- assigned room users (Admin/Agent) -->
@@ -251,7 +251,7 @@
 
           <div class="mb-3">
             <h5 class="assignedmembers">
-              {{ chatroom.conversationId ? "Assigned" : "Previously Assigned" }}:  {{ getAssignedToRoom(chatroom)  }}
+              {{ chatroom.conversationId ? "Assigned" : "Previously Assigned" }}:  {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </h5>
             <h6 class="lastconversation">{{ chatroom.conversationId ? "" : "Last Conversation" }}</h6>
           </div>
@@ -299,12 +299,12 @@
           </div>
           <!--CHATBOX END-->
 
-          <!-- JOIN FEATURE AVAILABLE ONLY IF CURRENT USER IS NOT ALREADY ASSIGNED -->
+          <!-- JOIN FEATURE AVAILABLE ONLY IF CONVERSATION IS OPEN AND CURRENT USER IS NOT ALREADY ASSIGNED -->
           <button
             class="joinbutton"
             id="join-btn"
             style="display: flex"
-            v-if="chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
+            v-if="chatroom.conversationId && chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
             v-on:click="joinRoom(chatroom._id, chatroom.conversationId)">
             <span class="joinroom">Click to join room</span>
           </button>
@@ -412,17 +412,17 @@ export default {
       // content - Exact text being typed by the visitor
       // Similar properties as "message" event. I hope these are enough - jfcisco
 
-      if (this.activeRoom === data.roomId) {
+      if (this.activeRoom === roomId) {
 
         // show visitor's typing event
         const visitorTypingContainerEl = document.getElementById("visitor-typing");
         visitorTypingContainerEl.style.display = "";
 
         // display msg sender and content
-        const foundRoom = this.chatrooms[this.getTargetRoomIndex(data.roomId)];
+        const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
         visitorTypingContainerEl.querySelector("li div").innerHTML = `
           <b>${this.getMsgSender(data, foundRoom)}</b><p>&nbsp;is typing...</p><b>:</b>
-          <p>&nbsp;${data.content}</p>
+          <p>&nbsp;${content}</p>
         `;
       }
     });
