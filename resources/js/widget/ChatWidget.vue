@@ -175,6 +175,7 @@ import FileUploadWidget from "./FileUploadWidget.vue";
 const client = new cj.ClientJS();
 var notifCount = 0;
 var origTitle = document.title;
+var audio = new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3");
 
 
 // Setup Socket.IO connection
@@ -380,6 +381,8 @@ export default {
         } else {
             document.title = "(" + count + ") New message(s) received!";
         }
+        
+        audio.play();
 
         setInterval(checkFocus, 100);
         function checkFocus() {
