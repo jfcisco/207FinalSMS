@@ -215,7 +215,7 @@
       </div>
     </button>
     <!--HISTORY BLOCK START-->
-    <MessageHistoryComponent :chatroom="chatroomsAPIData[`${activeRoom}`]"></MessageHistoryComponent>
+    <MessageHistoryComponent :chatroom="chatroomsAPIData[`${activeRoom}`] || {}"></MessageHistoryComponent>
 
     <!--WHISPER INPUT MESSAGE BOX START-->
     <div class="chatbox_input" id="whisper" style="display:none">
