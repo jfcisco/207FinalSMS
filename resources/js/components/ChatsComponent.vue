@@ -38,8 +38,8 @@
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
         v-show="chatroom.members.length === 1 && chatroom.conversationId"
-        :key="chatroom._id">     
-
+        :key="chatroom._id">
+        
         <div
           class="details"
           v-on:click="selectIncomingRoom(chatroom._id, chatroom.conversationId)"
@@ -72,8 +72,7 @@
     <!--INCOMING SESSIONS SECTION END-->
 
     <!--ACTIVE SESSIONS START-->
-    <p class="subtitle sidebartitle">Active Chats</p>
-    
+    <p class="subtitle sidebartitle">Active Chats</p>    
     <div class="row activesessions" style="overflow-y: scroll">
 
       <!--ACTIVE CHAT BLOCK START-->
@@ -176,6 +175,7 @@
       <!--CLOSED CHAT BLOCK END-->
     </div>
     <!--CLOSED SESSIONS END-->
+
   </div>
   <!--ROOM LISTS END-->
 
@@ -267,14 +267,16 @@
                 <!-- CHAT MESSAGE LINE END -->
             </ul>
 
-
+            <!-- DISPLAY VISITOR TYPING EVENT -->
+            <ul class="list-unstyled" id="visitor-typing" style="display:none">
+              <li><div class="receivedmessage"></div></li>
+            </ul>
             
             
           </div>
           <!--CHATBOX END-->
 
-          <!-- DISPLAY VISITOR TYPING EVENT -->
-          <div class="receivedmessage" id="visitor-typing" style="display: none"></div>
+          
 
           <!-- JOIN FEATURE AVAILABLE ONLY IF CONVERSATION IS OPEN AND CURRENT USER IS NOT ALREADY ASSIGNED -->
           <button
@@ -419,7 +421,7 @@ export default {
 
       // clear visitor's typing event element and hide from display
       const visitorTypingContainerEl = document.getElementById("visitor-typing");
-      visitorTypingContainerEl.querySelector("div").innerHTML = ""
+      visitorTypingContainerEl.querySelector("li div").innerHTML = ""
       visitorTypingContainerEl.style.display = "none";
 
       let foundRoom = this.chatrooms[this.getTargetRoomIndex(message.roomId)];
