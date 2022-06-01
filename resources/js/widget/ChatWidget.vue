@@ -222,6 +222,10 @@ export default {
             clientType: "visitor",
             clientName: this.visitorName,
             widgetId: this.widgetId,
+            currentPage: {
+                title: document.title,
+                url: window.location.href, 
+            }
         };
 
         socket.connect();
