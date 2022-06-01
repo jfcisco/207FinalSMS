@@ -15,31 +15,41 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h5 class="modal-title">Transcript</h5>
 
-                        <!-- CONVERSATION DETAILS -->
-                        <p>chatroom.conversationId</p>
-                        <p>chatroom.conversationStartAt</p>
-
-                        <!-- CONVERSATION DETAILS -->
+                        <h5 class="modal-title">clientName</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                     </div>
 
 
                     <div class="modal-body">
-                        <!-- TRANSCRIPT START -->
-                        <ul class="list-unstyled" style="margin-bottom:0">
 
-                            <!-- CHAT MESSAGE LINE START -->
-                            <li>
-                                <b> insert message-sender-name: </b>
-                                <p>&nbsp; message.content </p>
-                            </li>
-                            <!-- CHAT MESSAGE LINE END -->
-                        </ul>
-                        <!-- TRANSCRIPT START -->
+                        <!-- CONVERSATION DETAILS START -->
+                        <div class="historydetails">
+                            <p>ID:&nbsp;conversationId&nbsp;|&nbsp;</p>
+                            <p>Start At:&nbsp;conversationStartAt&nbsp;|&nbsp;</p>
+                            <p>End At:&nbsp;conversationEndAt</p>
+                        </div>
+                        <!-- CONVERSATION DETAILS END-->
 
+
+                        <div class="transcriptheight" style="overflow-y: scroll">
+                            <!-- TRANSCRIPT START -->
+                            <ul class="list-unstyled" style="margin-bottom:0">
+
+                                <!-- CHAT MESSAGE LINE START -->
+                                <li>
+                                    <div class="messageline">
+                                        <b> insert message-sender-name: </b>
+                                        <p>&nbsp; message.content </p>
+                                    </div>
+                                </li>
+                                <!-- CHAT MESSAGE LINE END -->
+
+                            </ul>
+                            <!-- TRANSCRIPT START -->
+
+                        </div>
                     </div>
 
                 </div>
