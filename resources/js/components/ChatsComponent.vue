@@ -241,7 +241,7 @@
 
           <div class="mb-3">
             <h5 class="assignedmembers">
-              {{ chatroom.conversationId ? "Assigned" : "Previously Assigned" }}:  {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
+              {{ chatroom.conversationId ? "Assigned" : "Previously Assigned" }}: {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </h5>
             <h6 class="lastconversation">{{ chatroom.conversationId ? "" : "Last Conversation" }}</h6>
           </div>
@@ -393,7 +393,8 @@ export default {
       chatroomsUnreadNotif: {},
       totalNotifCount: 0,
       origTitle: document.title,
-      audio: new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3")
+      audio: new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3"),
+      titleNotificationInterval: undefined,
     };
   },
 
@@ -404,6 +405,19 @@ export default {
       this.activeRoom = this.crm;
     };
     console.log("adrian",this.crm);
+
+    document.addEventListener("focus", () => {
+      console.log("document is in focus");
+
+      // if (this.activeRoom) {
+      //   console.log("1=>", this.chatroomsUnreadNotif[this.activeRoom])
+      //   this.chatroomsUnreadNotif[this.activeRoom] = 0
+      //   console.log("2=>", this.chatroomsUnreadNotif[this.activeRoom])
+      // }
+      this.totalNotifCount = 0;
+      this.hideTitleNotifications();
+    });
+
     socket.auth = {
       // // For visitors
       // clientId: client.getFingerprint(),
@@ -452,7 +466,9 @@ export default {
       }
 
       let foundRoom = this.chatrooms[this.getTargetRoomIndex(message.roomId)];
-      foundRoom.messages.push(message);
+      if (foundRoom) {
+        foundRoom.messages.push(message);
+      }
 
       // modify room's unread notif count everytime a message is received only when that
       // message's room is not currently selected in Active Chats
@@ -465,7 +481,17 @@ export default {
 
       // increment totalNotifCount everytime a messages is received and dashboard is not in focus
       if (!document.hasFocus()) {
-        this.showNotifications(++this.totalNotifCount);
+        // let total = 0;
+        // for (let key in this.chatroomsUnreadNotif) {
+        //   if (this.chatroomsUnreadNotif.hasOwnProperty(key)){
+        //     total += this.chatroomsUnreadNotif[key];
+        //     console.log("here", total)
+        //   }
+        // }
+        // console.log("totalNotifCount", total);
+        // this.showTitleNotifications(total);
+        this.showTitleNotifications(++this.totalNotifCount);
+
       }
     });
 
@@ -682,6 +708,9 @@ export default {
 
       // clear selected room's notification count
       this.chatroomsUnreadNotif[roomId] = 0;
+
+      // adjust title notification
+      this.hideTitleNotifications();
     },
 
     selectIncomingRoom: function (roomId, conversationId) {
@@ -786,22 +815,39 @@ export default {
 
     },
 
-    showNotifications(count) {
-      const pattern = /^\(\d+\)/;
-      if (count === 0 || pattern.test(document.title)) {
-        document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
-      } else {
-        document.title = "(" + count + ") New message(s) received!";
-      }
+    hideTitleNotifications() {
+      clearInterval(this.titleNotificationInterval);
+
+      document.title = this.origTitle;
+    },
+
+    showTitleNotifications(count) {
+      // console.log("running notifications")
+      // console.log("totalNotifCount to be used", count)
+
+      this.hideTitleNotifications();
+
+      this.titleNotificationInterval = setInterval(() => {
+        const pattern = /^\(\d+\)/;
+        if (document.title === this.origTitle) {
+          if (count === 0 || pattern.test(document.title)) {
+            document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
+          } else {
+            document.title = "(" + count + ") New message(s) received!";
+          }
+        } else {
+          document.title = this.origTitle;
+        }
+      }, 1500);
 
       this.audio.play().catch(err => console.log(err));
 
-      setInterval(() => {
-        if (document.hasFocus()) {
-          document.title = this.origTitle;
-          this.totalNotifCount = 0;
-        }
-      }, 100);
+      // setInterval(() => {
+      //   if (document.hasFocus()) {
+      //     document.title = this.origTitle;
+      //     this.totalNotifCount = 0;
+      //   }
+      // }, 100);
     }
 
   },
