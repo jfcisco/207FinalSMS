@@ -168,7 +168,7 @@
                                     <div class="col-sm-6">
                                         <div class="card" id="missedchats">
                                             <div class="card-body">
-                                            <h5 class="card-title">Unanswered</h5>
+                                            <h5 class="card-title">Incoming</h5>
                                             <p class="card-text">{{ missedChats }}</p>
                                             </div>
                                         </div>
