@@ -4,16 +4,27 @@
 @section('content')
 <div class="container-fluid widget-details-container">
     <div class="row">
-        <!--MAIN SIDE BAR-->
-        <div class="col-lg-1 col-sm-2 mainsidebar">
-            <a href="/home"><ion-icon name="mail-outline"></ion-icon><span class="menutitle">Messaging</span></a>
-            <a href="/reports"><ion-icon name="bar-chart-outline"></ion-icon><span class="menutitle">Reporting</span></a>
-            <a class="activemenu" href="/widgets"><ion-icon name="copy-outline"></ion-icon><span class="menutitle">Widget</span></a>
-        </div>
-        <!--END MAIN SIDE BAR-->
+       
+
+        <!--MAIN SIDE BAR START-->
+          <div class="col-lg-1 col-sm-1 mainsidebar">
+            <a href="/home">
+              <ion-icon class="main-menu-icon" name="mail-outline"></ion-icon>
+              <span class="menutitle">Messaging</span>
+            </a>
+            <a href="/reports">
+              <ion-icon class="main-menu-icon" name="bar-chart-outline"></ion-icon>
+              <span class="menutitle">Reporting</span>
+            </a>
+            <a href="/widgets" class="activemenu">
+              <ion-icon name="copy-outline" class="main-menu-icon"></ion-icon>
+              <span class="menutitle">Widget</span>
+            </a>
+          </div>
+        <!--MAIN SIDE BAR END-->
 
         
-        <div class="col-lg-11 col-sm-10 sidebar widget-details-form">
+        <div class="col-lg-11 col-sm-11 sidebar widget-details-form">
             <form action="/widgets/{{$currentWidget->_id}}/update" method="POST">
                 
                 {{ csrf_field() }}

@@ -1,21 +1,25 @@
 <template>
     <div class="row">
-        <!--MAIN SIDE BAR-->
-        <div class="col-lg-1 mainsidebar">
-            <a href="/home"
-                ><ion-icon name="mail-outline"></ion-icon
-                ><span class="menutitle">Messaging</span></a>
-            <a class="activemenu" href="/reports"
-                ><ion-icon name="bar-chart-outline"></ion-icon
-                ><span class="menutitle">Reporting</span></a>
-            <a href="/widgets"
-                ><ion-icon name="copy-outline"></ion-icon
-                ><span class="menutitle">Widget</span></a>
-        </div>
+        <!--MAIN SIDE BAR START-->
+          <div class="col-lg-1 col-sm-1 mainsidebar">
+            <a href="/home">
+              <ion-icon class="main-menu-icon" name="mail-outline"></ion-icon>
+              <span class="menutitle">Messaging</span>
+            </a>
+            <a href="/reports" class="activemenu">
+              <ion-icon class="main-menu-icon" name="bar-chart-outline"></ion-icon>
+              <span class="menutitle">Reporting</span>
+            </a>
+            <a href="/widgets">
+              <ion-icon class="main-menu-icon" name="copy-outline"></ion-icon>
+              <span class="menutitle">Widget</span>
+            </a>
+          </div>
+        <!--MAIN SIDE BAR END-->
 
         <!--reports LISTS-->
 
-        <div class="col-lg-2 sidebar">
+        <div class="col-lg-2 col-sm-3 sidebar">
             <div class="row py-0 mt-0">
 
                 <p class="subtitle">Live Analytics</p>
@@ -77,7 +81,7 @@
         </div>
 
         <!--TABLES SECTION-->
-        <div class="col-lg-9 reportsSection" style="overflow-y: scroll; overflow-x: hidden;">
+        <div class="col-lg-9 col-sm-8 reportsSection" style="overflow-y: scroll; overflow-x: hidden;">
 
             <div class="chat-container">
 
