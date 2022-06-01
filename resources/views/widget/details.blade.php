@@ -87,7 +87,7 @@
                             
                         <div class="widget-block">
                             <label class="chat-label" for="chat-link">Widget Icon</label>
-                            <input class="form-control" type="file">
+                            <input class="form-control" type="file" name="widget-icon" id="widget-icon">
                         </div>
 
                         <div class="widget-block">

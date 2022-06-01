@@ -320,16 +320,15 @@ class WidgetController extends Controller
 
     public function update(Request $request, $widgetId)
     {
-        $widgetToUpdate = ChatWidget::find($widgetId);
-
-        if (is_null($widgetToUpdate)) {
-            abort(404);
+        a
         }
 
         // Validate incoming form data
         $request->validate([
             'name' => 'string|required',
             'is_active' => 'boolean|required',
+            'widget-icon' => 'file',
+            'widget-color' => 'color'
             
             // Availability data
             'availability_timezone' => 'timezone',
