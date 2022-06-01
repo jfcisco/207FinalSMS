@@ -36,7 +36,7 @@
                 <div class="reportblock">
                     <div class="details">
                         <div class="listHead">
-                            <p><a href="#livechats">Live Chats</a></p>
+                            <p><a href="#totalchats">Total Chats</a></p>
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,13 @@
 
             <div class="row">
                 <p class="subtitle sidebartitle">Historical Analytics</p>
-
+                <div class="reportblock ">
+                    <div class="details">
+                        <div class="listHead">
+                            <p><a href="#perHour">Per Hour Statistics</a></p>
+                        </div>
+                    </div>
+                </div>
                 <div class="reportblock">
                     <div class="details">
                         <div class="listHead">
@@ -52,7 +58,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="reportblock">
+                <!--<div class="reportblock">
                     <div class="details">
                         <div class="listHead">
                             <p><a href="#missedchats">Missed Chats</a></p>
@@ -65,14 +71,8 @@
                             <p><a href="#offlinemessages">Offline Messages</a></p>
                         </div>
                     </div>
-                </div>
-                <div class="reportblock ">
-                    <div class="details">
-                        <div class="listHead">
-                            <p><a href="#avgchat">Average Chat Duration</a></p>
-                        </div>
-                    </div>
-                </div>
+                </div>-->
+
             </div>
         </div>
 
@@ -123,7 +123,7 @@
                 <div class="row reportsection">
                     <!--VISITORS-->
                     <div class="col-sm-6">
-                        <div class="card">
+                        <div class="card" id="livevisitors">
                             <div class="card-body">
                                 <div class="card-title">
                                 <h5>Visitors</h5>
@@ -131,7 +131,7 @@
 
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <div class="card" id="livevisitors">
+                                        <div class="card">
                                             <div class="card-body">
                                                 <h5 class="card-title">Live</h5>
                                                 <p class="card-text">{{ socketReports.length }}</p>
@@ -147,7 +147,7 @@
 
                     <!--CHATS-->
                     <div class="col-sm-6">
-                        <div class="card">
+                        <div class="card" id="totalchats">
                             <div class="card-body">
                                 <div class="card-title"><h5>Chats</h5></div>
 
@@ -158,7 +158,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                             <h5 class="card-title">Answered</h5>
-                                            <p class="card-text"><AnsweredChat></AnsweredChat></p>
+                                            <p class="card-text">{{ answeredChats }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -168,8 +168,8 @@
                                     <div class="col-sm-6">
                                         <div class="card" id="missedchats">
                                             <div class="card-body">
-                                            <h5 class="card-title">Missed</h5>
-                                            <p class="card-text"><MissedChat></MissedChat></p>
+                                            <h5 class="card-title">Unanswered</h5>
+                                            <p class="card-text">{{ missedChats }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -187,7 +187,7 @@
 
                     <!--visitors per hour -->
                     <div class="col-sm-6">
-                        <div class="card">
+                        <div class="card" id="perHour">
                             <div class="card-body">
                                 <h5>Visitors per hour</h5>
 
@@ -222,10 +222,10 @@
 
 
                 <!--HISTORICAL ANALYSIS START-->
-                <div class="row reportsection">
+                <div class="row reportsection" id="chatvolume">
 
                     <h1>Historical Analytics</h1>
-                    <p id="chatvolume">Chat Volume</p>
+                    <p>Chat Volume</p>
 
                         <div class="col-sm-5">
                         <input type="date" id="start_date_input">
@@ -265,9 +265,6 @@ const socket = io(process.env.MIX_SOCKET_SERVER, {
     autoConnect: false,
 });
 
-import VisitorsToday from './Visuals/VisitorsToday.vue';
-import AnsweredChat from './Visuals/AnsweredChat.vue';
-import MissedChat from './Visuals/MissedChat.vue';
 import axios from 'axios';
 import HourlyVisitor from './Visuals/HourlyVisitor.vue';
 import HourlyChat from './Visuals/HourlyChat.vue';
@@ -275,9 +272,7 @@ import HourlyChat from './Visuals/HourlyChat.vue';
 export default {
     props: ["user"],
     components:{
-    VisitorsToday,
-    AnsweredChat,
-    MissedChat,
+
     HourlyVisitor,
     HourlyChat
 },
@@ -285,6 +280,8 @@ export default {
         return {
             currentUser: this.user,
             socketReports: [],
+            answeredChats: 0,
+            missedChats: 0,
         };
     },
 
@@ -305,18 +302,27 @@ export default {
 
         socket.on("report", ({ report }) => {
             this.socketReports.push(report);
+            this.missedChats++;
             console.log("socket", report);
         });
         socket.on("report-disconnect", ({ discon }) => {
             //console.log(discon);
             this.socketReports = this.socketReports.filter(reports => reports.socketId != discon);
         });
+        socket.on("report-answered", ({ answered }) => {
+            console.log(answered);
+            this.missedChats--;
+            this.answeredChats++;
+        });        
 
         setInterval(()=>{
             this.timeUpdate();
         }, 1000);
 
         this.generateSessionList();
+        this.getAnsweredUnanswered();
+
+
     },
 
     methods: {
@@ -364,6 +370,24 @@ export default {
 
 
         },
+        async getMissedChats(){
+             try {
+                const response = await axios.get('/api/reports/chats/missed');
+                console.log("missed", response.data.data)
+                return response.data.data;
+            } catch (err) {
+                console.error(err);
+            }           
+        },
+        async getAnsweredChats(){
+             try {
+                const response = await axios.get('/api/reports/chats/answered');
+                console.log("answered", response.data.data)
+                return response.data.data;
+            } catch (err) {
+                console.error(err);
+            }           
+        },        
         async getliveVisitors() {
             try {
                 const response = await axios.get("/api/reports/sessions/live-visitors");
@@ -374,21 +398,21 @@ export default {
             }
         },
         async generateSessionList() {
-        try {
-            console.log("running generateSessionList");
-            const results = await this.getliveVisitors();
-            // console.log("api call response", results);
-            // console.log("convertedResults", convertedResults);
+            try {
+                console.log("running generateSessionList");
+                const results = await this.getliveVisitors();
+                // console.log("api call response", results);
+                // console.log("convertedResults", convertedResults);
 
-            this.socketReports = _.unionBy(
-                this.socketReports,
-                this.convertLiveVisitors(results),
-                (socketReport) => socketReport.socketId,
-            );
-            //console.log("this.socketReports after api call", this.socketReports)
-        } catch (err) {
-            console.error(err);
-        }
+                this.socketReports = _.unionBy(
+                    this.socketReports,
+                    this.convertLiveVisitors(results),
+                    (socketReport) => socketReport.socketId,
+                );
+                //console.log("this.socketReports after api call", this.socketReports)
+            } catch (err) {
+                console.error(err);
+            }
         },
         convertLiveVisitors(liveVisitors){
             return liveVisitors.map(visitor => {
@@ -403,6 +427,14 @@ export default {
                 }
             });
 
+        },
+
+        async getAnsweredUnanswered(){
+            const results = await this.getAnsweredChats();
+            this.answeredChats = results;
+
+            const results2 = await this.getMissedChats();
+            this.missedChats = results2;
         },
 
 
