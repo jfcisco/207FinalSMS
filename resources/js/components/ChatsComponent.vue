@@ -274,7 +274,7 @@
             </ul>
 
             <!-- DISPLAY VISITOR TYPING EVENT -->
-            <ul class="list-unstyled" id="visitor-typing" style="display:none">
+            <ul class="list-unstyled" v-bind:id="'visitor-typing' + chatroom._id" style="display:none">
               <li><div class="receivedmessage"></div></li>
             </ul>
 
@@ -384,6 +384,9 @@ export default {
       chtRoom: this.crm,
       activeConversation: "",
       chatroomsUnreadNotif: {},
+      totalNotifCount: 0,
+      origTitle: document.title,
+      audio: new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3")
     };
   },
 
@@ -434,9 +437,12 @@ export default {
       console.log("message received", message);
 
       // clear visitor's typing event element and hide from display
-      const visitorTypingContainerEl = document.getElementById("visitor-typing");
-      visitorTypingContainerEl.querySelector("li div").innerHTML = ""
-      visitorTypingContainerEl.style.display = "none";
+      const visitorTypingContainerEl = document.getElementById(`visitor-typing${message.roomId}`);
+
+      if (visitorTypingContainerEl) {
+        visitorTypingContainerEl.querySelector("li div").innerHTML = ""
+        visitorTypingContainerEl.style.display = "none";
+      }
 
       let foundRoom = this.chatrooms[this.getTargetRoomIndex(message.roomId)];
       foundRoom.messages.push(message);
@@ -448,6 +454,11 @@ export default {
       if (this.activeRoom !== message.roomId) {
         // increment notif count by 1 before assignment
         ++this.chatroomsUnreadNotif[message.roomId]
+      }
+
+      // increment totalNotifCount everytime a messages is received and dashboard is not in focus
+      if (!document.hasFocus()) {
+        this.showNotifications(++this.totalNotifCount);
       }
     });
 
@@ -468,15 +479,17 @@ export default {
       if (this.activeRoom === roomId) {
 
         // show visitor's typing event
-        const visitorTypingContainerEl = document.getElementById("visitor-typing");
-        visitorTypingContainerEl.style.display = "";
-
-        // display msg sender and content
         const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
-        visitorTypingContainerEl.querySelector("li div").innerHTML = `
-          <b>${this.getMsgSender(data, foundRoom)}</b><p>&nbsp;is typing...</p><b>:</b>
-          <p>&nbsp;${content}</p>
-        `;
+        const visitorTypingContainerEl = document.getElementById(`visitor-typing${roomId}`);
+
+        if (visitorTypingContainerEl) {
+          // display msg sender and content
+          visitorTypingContainerEl.style.display = "block";
+          visitorTypingContainerEl.querySelector("li div").innerHTML = `
+            <b>${this.getMsgSender(data, foundRoom)}</b><p>&nbsp;is typing...</p><b>:</b>
+            <p>&nbsp;${content}</p>
+          `;
+        }
       }
     });
 
@@ -765,6 +778,24 @@ export default {
       });
 
     },
+
+    showNotifications(count) {
+      const pattern = /^\(\d+\)/;
+      if (count === 0 || pattern.test(document.title)) {
+        document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
+      } else {
+        document.title = "(" + count + ") New message(s) received!";
+      }
+
+      this.audio.play().catch(err => console.log(err));
+
+      setInterval(() => {
+        if (document.hasFocus()) {
+          document.title = this.origTitle;
+          this.totalNotifCount = 0;
+        }
+      }, 100);
+    }
 
   },
 };
