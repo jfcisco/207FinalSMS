@@ -23,7 +23,7 @@
   <div class="col-lg-2 col-sm-3 sidebar">
 
     <p class="subtitle">Incoming Chats</p>
-    
+
     <!--INCOMING SESSIONS SECTION START-->
     <div class="row py-0 mt-0 incomingsessions" style="overflow-y: scroll">
 
@@ -39,7 +39,7 @@
         :chatroom="chatroom"
         v-show="chatroom.members.length === 1 && chatroom.conversationId"
         :key="chatroom._id">
-        
+
         <div
           class="details"
           v-on:click="selectIncomingRoom(chatroom._id, chatroom.conversationId)"
@@ -72,7 +72,7 @@
     <!--INCOMING SESSIONS SECTION END-->
 
     <!--ACTIVE SESSIONS START-->
-    <p class="subtitle sidebartitle">Active Chats</p>    
+    <p class="subtitle sidebartitle">Active Chats</p>
     <div class="row activesessions" style="overflow-y: scroll">
 
       <!--ACTIVE CHAT BLOCK START-->
@@ -86,17 +86,23 @@
         :chatroom="chatroom"
         v-show="chatroom.members.length > 1 && chatroom.conversationId"
         :key="chatroom._id">
-        
+
         <div
           class="details"
           v-on:click="selectRoom(chatroom._id, chatroom.conversationId)"
           v-bind:id="chatroom._id">
 
           <!--room id/username section-->
-          <div class="listHead"> 
-            <p>{{ chatroom.members[0].clientName }}</p> 
+          <div class="listHead">
+            <p>{{ chatroom.members[0].clientName }}</p>
             <!-- UNREAD MESSAGES NOTIF-->
-            <b class="unreadnotif">1</b>
+            <!-- <b class="unreadnotif">1</b> -->
+            <b
+              class="unreadnotif"
+              v-if="chatroomsUnreadNotif[chatroom._id] > 0"
+            >
+              {{ chatroomsUnreadNotif[chatroom._id] }}
+            </b>
           </div>
 
           <!-- HIDE BEFORE COMMIT -->
@@ -181,14 +187,14 @@
 
   <!--MAIN CHAT WINDOW START-->
   <div class="col-lg-7 col-sm-5 mainchat">
-    
+
     <!--MAIN INPUT MESSAGE BOX START-->
 
     <div class="chatbox_input" id="message_main" style="display:none">
       <span title="Click to send whisper message" id="headerToggle1" onclick="toggleheaderleft()">
         <ion-icon class="whisper" name="volume-high-outline"></ion-icon>
       </span>
-      
+
       <FileUploadComponent v-on:upload-success="handleAttachmentUpload"></FileUploadComponent>
       <input
           @keyup.enter="sendMessage"
@@ -255,14 +261,14 @@
                         receivedmessage: message.clientId !== user._id,
                         whisper_text: message.isWhisper
                       }" >
-                        
+
                         <b>
                           {{ getMsgSender(message, chatroom) }}:
                         </b>
                         <p v-if="!message.content.startsWith('files/')">&nbsp;{{ message.content }}</p>
                         <p v-else><a :href="message.content">&nbsp;{{ message.content.slice(6, message.content.length) }}</a></p>
                     </div>
-                
+
                 </li>
                 <!-- CHAT MESSAGE LINE END -->
             </ul>
@@ -271,12 +277,12 @@
             <ul class="list-unstyled" id="visitor-typing" style="display:none">
               <li><div class="receivedmessage"></div></li>
             </ul>
-            
-            
+
+
           </div>
           <!--CHATBOX END-->
 
-          
+
 
           <!-- JOIN FEATURE AVAILABLE ONLY IF CONVERSATION IS OPEN AND CURRENT USER IS NOT ALREADY ASSIGNED -->
           <button
@@ -302,30 +308,30 @@
       :chatroom="chatroom"
       v-show="chatroom._id == activeRoom"
       :key="chatroom._id">
-          
+
             <div class="chathistoryfull">
-              
+
               <div class="row mt-5">
                 <div class="chathistory"> {{ chatroom.members[0].clientName }}</div>
                 <div class="chathistory"> visitor location/country</div>
                 <div class="chathistory"> visitor IP</div>
                 <div class="chathistory"> visitor device details</div>
               </div>
-              
+
 
               <div class="row" style="text-align:center">
                 <div class="col chathistory">DUR</div>
                 <div class="col chathistory">VLV</div>
                 <div class="col chathistory">NOC</div>
               </div>
-        
+
               <div class="row">
                 <div class="chathistory mt-2">
                   <h5 style="font-weight:600; font-size:16px">Chat History</h5>
-                    
+
                   <!--HISTORY LIST START-->
                   <div class="chathistorylist" style="overflow-y: scroll">
-                    
+
                     <!--HISTORY BLOCK START-->
                     <div class="historyblock">
                       <p>Date : <span>History ID</span></p>
@@ -337,14 +343,14 @@
 
                 </div>
               </div>
-            </div>   
-            
+            </div>
+
     </div>
     <!--CHAT HISTORY-->
   </div>
   <!--CHAT HISTORY-->
 
-</div> 
+</div>
 <!--ROW END-->
 </template>
 
@@ -377,6 +383,7 @@ export default {
       activeRoom: "",
       chtRoom: this.crm,
       activeConversation: "",
+      chatroomsUnreadNotif: {},
     };
   },
 
@@ -411,6 +418,13 @@ export default {
         (room) => room._id,
       );
       console.log("this.chatrooms=>", this.chatrooms);
+
+      // initialize chatroomsUnreadNotif
+      rooms.map(room => {
+        this.chatroomsUnreadNotif[`${room._id}`] = 0;
+      });
+      // console.log("chatroomsUnreadNotif", this.chatroomsUnreadNotif)
+      // console.log("test", this.chatroomsUnreadNotif["46c3823aaa58ac14"])
     });
 
     // get all rooms from mongodb
@@ -426,6 +440,15 @@ export default {
 
       let foundRoom = this.chatrooms[this.getTargetRoomIndex(message.roomId)];
       foundRoom.messages.push(message);
+
+      // modify room's unread notif count everytime a message is received only when that
+      // message's room is not currently selected in Active Chats
+
+      // check if selected room is not the same as message's room
+      if (this.activeRoom !== message.roomId) {
+        // increment notif count by 1 before assignment
+        ++this.chatroomsUnreadNotif[message.roomId]
+      }
     });
 
     socket.on("typing", (data) => {
@@ -636,6 +659,9 @@ export default {
       console.log("conversationId", conversationId)
       this.scrollToChatBottom();
       this.toggleMessageMainEl("show");
+
+      // clear selected room's notification count
+      this.chatroomsUnreadNotif[roomId] = 0;
     },
 
     selectIncomingRoom: function (roomId, conversationId) {
