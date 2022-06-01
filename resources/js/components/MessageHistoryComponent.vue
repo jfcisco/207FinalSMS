@@ -11,13 +11,13 @@
         <!-- Check Transcript Modal -->
         <div class="modal" id="CheckTranscript" role="dialog" tabindex="-1">
             <div class="modal-dialog">
-            
+
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h5 class="modal-title">Transcript</h5>
-                        
+
                         <!-- CONVERSATION DETAILS -->
                         <p>chatroom.conversationId</p>
                         <p>chatroom.conversationStartAt</p>
@@ -25,8 +25,8 @@
                         <!-- CONVERSATION DETAILS -->
 
                     </div>
-                    
-                    
+
+
                     <div class="modal-body">
                         <!-- TRANSCRIPT START -->
                         <ul class="list-unstyled" style="margin-bottom:0">
@@ -42,8 +42,8 @@
 
                     </div>
 
-                </div> 
-            </div>  
+                </div>
+            </div>
         </div>
 
 
