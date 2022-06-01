@@ -215,7 +215,7 @@
       </div>
     </button>
     <!--HISTORY BLOCK START-->
-    <MessageHistoryComponent :chatroom="chatroomsAPIData[`${activeRoom}`] || {}"></MessageHistoryComponent>
+    <MessageHistoryComponent :chatroom="chatroomsAPIData.find(room => room.id)"></MessageHistoryComponent>
 
     <!--WHISPER INPUT MESSAGE BOX START-->
     <div class="chatbox_input" id="whisper" style="display:none">
@@ -391,7 +391,7 @@ export default {
       message: "",
       users: [],
       chatrooms: [],
-      chatroomsAPIData: {},
+      chatroomsAPIData: [],
       activeRoom: "",
       chtRoom: this.crm,
       activeConversation: "",
@@ -452,16 +452,16 @@ export default {
       rooms.map(room => {
         this.chatroomsUnreadNotif[`${room._id}`] = 0;
       });
-      rooms.map(room => {
-        this.chatroomsAPIData[`${room._id}`] = {
-          id: room._id,
-          members: [],
-          conversations: []
-        };
-      });
+      // rooms.map(room => {
+      //   this.chatroomsAPIData[`${room._id}`] = {
+      //     id: room._id,
+      //     members: [],
+      //     conversations: []
+      //   };
+      // });
       // console.log("chatroomsUnreadNotif", this.chatroomsUnreadNotif)
       // console.log("test", this.chatroomsUnreadNotif["46c3823aaa58ac14"])
-      console.log("test", this.chatroomsAPIData["c939991f5a528485"])
+      // console.log("test", this.chatroomsAPIData["c939991f5a528485"])
     });
 
     // get all rooms from mongodb
@@ -726,10 +726,17 @@ export default {
       this.hideTitleNotifications();
 
       try {
-        const results = await this.getRoom(roomId);
+        const results = [];
+        results.push(await this.getRoom(roomId));
         console.log("start here", results)
-        this.chatroomsAPIData[`${roomId}`] = results;
-        console.log(this.chatroomsAPIData[`${roomId}`])
+        // this.chatroomsAPIData[`${roomId}`] = results;
+        // console.log(this.chatroomsAPIData[`${roomId}`])
+        this.chatroomsAPIData = _.unionBy(
+          this.chatroomsAPIData,
+          results,
+          (room) => room.id,
+        );
+        console.log("check", this.chatroomsAPIData);
         document.getElementById("historyModalBtn").style.display = "";
 
       } catch (err) {
