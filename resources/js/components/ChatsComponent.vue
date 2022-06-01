@@ -196,6 +196,8 @@
       </span>
 
       <FileUploadComponent v-on:upload-success="handleAttachmentUpload"></FileUploadComponent>
+      <MessageHistoryComponent></MessageHistoryComponent>
+
       <input
           @keyup.enter="sendMessage"
           v-model="message"
@@ -333,7 +335,12 @@
                   <div class="chathistorylist" style="overflow-y: scroll">
 
                     <!--HISTORY BLOCK START-->
-                    <MessageHistoryComponent></MessageHistoryComponent>
+                    <!-- <MessageHistoryComponent></MessageHistoryComponent> -->
+                    <button class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript">
+                        <div>
+                            <p>Date : <span>History ID</span></p>
+                        </div>
+                    </button>
                     <!--HISTORY BLOCK START-->
 
                   </div>

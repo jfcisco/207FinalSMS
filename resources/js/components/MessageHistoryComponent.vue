@@ -1,11 +1,11 @@
 <template>
-    <div class="UploadButton-container">
+    <div class="MessageHistory-container">
         <!--HISTORY BLOCK START-->
-        <button class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript">
+        <!-- <button class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript">
             <div>
                 <p>Date : <span>History ID</span></p>
             </div>
-        </button>
+        </button> -->
         <!--HISTORY BLOCK END-->
 
         <!-- Check Transcript Modal -->
@@ -15,7 +15,7 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                         <h5 class="modal-title">Transcript</h5>
 
                         <!-- CONVERSATION DETAILS -->
@@ -49,4 +49,3 @@
 
     </div>
 </template>
-
