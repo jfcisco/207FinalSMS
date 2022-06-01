@@ -333,9 +333,7 @@
                   <div class="chathistorylist" style="overflow-y: scroll">
 
                     <!--HISTORY BLOCK START-->
-                    <div class="historyblock">
-                      <p>Date : <span>History ID</span></p>
-                    </div>
+                    <MessageHistoryComponent></MessageHistoryComponent>
                     <!--HISTORY BLOCK START-->
 
                   </div>
@@ -357,6 +355,7 @@
 <script>
 import FileUploadComponent from "./FileUploadComponent.vue";
 import ProfileUpdateComponent from "./ProfileUpdateComponent.vue";
+import MessageHistoryComponent from "./MessageHistoryComponent.vue";
 import axios from 'axios';
 
 const client = new cj.ClientJS();
@@ -372,6 +371,7 @@ export default {
   components: {
     FileUploadComponent,
     ProfileUpdateComponent,
+    MessageHistoryComponent,
   },
 
   data() {
