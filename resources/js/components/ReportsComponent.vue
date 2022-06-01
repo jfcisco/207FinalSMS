@@ -40,7 +40,7 @@
                 <div class="reportblock">
                     <div class="details">
                         <div class="listHead">
-                            <p><a href="#totalchats">Total Chats</a></p>
+                            <p><a href="#chats">Answered and Missed Chats</a></p>
                         </div>
                     </div>
                 </div>
@@ -151,7 +151,7 @@
 
                     <!--CHATS-->
                     <div class="col-sm-6">
-                        <div class="card" id="totalchats">
+                        <div class="card" id="chats">
                             <div class="card-body">
                                 <div class="card-title"><h5>Chats</h5></div>
 
@@ -172,7 +172,7 @@
                                     <div class="col-sm-6">
                                         <div class="card" id="missedchats">
                                             <div class="card-body">
-                                            <h5 class="card-title">Incoming</h5>
+                                            <h5 class="card-title">Missed</h5>
                                             <p class="card-text">{{ missedChats }}</p>
                                             </div>
                                         </div>
@@ -306,7 +306,6 @@ export default {
 
         socket.on("report", ({ report }) => {
             this.socketReports.push(report);
-            this.missedChats++;
             console.log("socket", report);
         });
         socket.on("report-disconnect", ({ discon }) => {
@@ -315,9 +314,12 @@ export default {
         });
         socket.on("report-answered", ({ answered }) => {
             console.log(answered);
-            this.missedChats--;
             this.answeredChats++;
-        });        
+        });     
+        socket.on("report-missed", ({ missed }) => {
+            console.log(missed);
+            this.missedChats++;
+        });             
 
         setInterval(()=>{
             this.timeUpdate();

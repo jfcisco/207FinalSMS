@@ -6,6 +6,7 @@ use App\Models\Message;
 use App\Models\Room;
 use App\Models\Session;
 use App\Models\Visitor;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -109,16 +110,25 @@ class ReportsController extends Controller
     public function missedChatsCount()
     {
         $rooms = Room::all();
-
-        $answeredChatCount = 0;
-        foreach ($rooms as $room) {
+        $emptyRooms = array();
+        foreach($rooms as $room){
             $count = count($room->members);
-            if ($count <= 1) {
-                $answeredChatCount++;
+            if($count <= 1){
+                $emptyRooms[] =  $room->_id;
+            }
+        }
+        $conversations = Conversation::all();
+
+        $missed = 0;
+        foreach ($conversations as $convo) {
+            if($convo->endAt == !null){
+                if(in_array($convo->roomId, $emptyRooms)){
+                    $missed++;
+                }
             }
         }
 
-        return response(['data' => $answeredChatCount], 200);
+        return response(['data' => $missed], 200);
     }
 
     public function todaysMissedChatsCount()
