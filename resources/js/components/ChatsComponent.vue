@@ -196,7 +196,6 @@
       </span>
 
       <FileUploadComponent v-on:upload-success="handleAttachmentUpload"></FileUploadComponent>
-      <MessageHistoryComponent></MessageHistoryComponent>
 
       <input
           @keyup.enter="sendMessage"
@@ -207,6 +206,16 @@
           class="form-control"/>
     </div>
     <!--MAIN INPUT MESSAGE BOX END-->
+
+    <!--HISTORY BLOCK START-->
+    <!-- <MessageHistoryComponent></MessageHistoryComponent> -->
+    <button id="historyModalBtn" class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript" style="display:none">
+      <div>
+        <p>CHAT HISTORY</p>
+      </div>
+    </button>
+    <!--HISTORY BLOCK START-->
+    <MessageHistoryComponent :chatroom="chatroomsAPIData[`${activeRoom}`]"></MessageHistoryComponent>
 
     <!--WHISPER INPUT MESSAGE BOX START-->
     <div class="chatbox_input" id="whisper" style="display:none">
@@ -382,6 +391,7 @@ export default {
       message: "",
       users: [],
       chatrooms: [],
+      chatroomsAPIData: {},
       activeRoom: "",
       chtRoom: this.crm,
       activeConversation: "",
@@ -438,12 +448,20 @@ export default {
       );
       console.log("this.chatrooms=>", this.chatrooms);
 
-      // initialize chatroomsUnreadNotif
+      // initialize chatroomsUnreadNotif and chatroomsAPIData
       rooms.map(room => {
         this.chatroomsUnreadNotif[`${room._id}`] = 0;
       });
+      rooms.map(room => {
+        this.chatroomsAPIData[`${room._id}`] = {
+          id: room._id,
+          members: [],
+          conversations: []
+        };
+      });
       // console.log("chatroomsUnreadNotif", this.chatroomsUnreadNotif)
       // console.log("test", this.chatroomsUnreadNotif["46c3823aaa58ac14"])
+      console.log("test", this.chatroomsAPIData["c939991f5a528485"])
     });
 
     // get all rooms from mongodb
@@ -693,7 +711,7 @@ export default {
     //     Echo.join("chat").whisper("typing", this.user);
     // },
 
-    selectRoom: function(roomId, conversationId) {
+    selectRoom: async function(roomId, conversationId) {
       console.log("running selectRoom");
       this.activeRoom = roomId;
       this.activeConversation = conversationId;
@@ -706,6 +724,17 @@ export default {
 
       // adjust title notification
       this.hideTitleNotifications();
+
+      try {
+        const results = await this.getRoom(roomId);
+        console.log("start here", results)
+        this.chatroomsAPIData[`${roomId}`] = results;
+        console.log(this.chatroomsAPIData[`${roomId}`])
+        document.getElementById("historyModalBtn").style.display = "";
+
+      } catch (err) {
+        console.error(err);
+      }
     },
 
     selectIncomingRoom: function (roomId, conversationId) {

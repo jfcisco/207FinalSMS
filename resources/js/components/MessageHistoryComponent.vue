@@ -25,31 +25,53 @@
                     <div class="modal-body">
 
                         <!-- CONVERSATION DETAILS START -->
-                        <div class="historydetails">
+                        <!-- <div class="historydetails">
                             <p>ID:&nbsp;conversationId&nbsp;|&nbsp;</p>
                             <p>Start At:&nbsp;conversationStartAt&nbsp;|&nbsp;</p>
                             <p>End At:&nbsp;conversationEndAt</p>
-                        </div>
+                        </div> -->
                         <!-- CONVERSATION DETAILS END-->
 
+                        <ul
+                            v-for="conversation in chatroom.conversations"
+                            :conversation="conversation"
+                            :key="conversation.id">
 
-                        <div class="transcriptheight" style="overflow-y: scroll">
+                            <li>
+                                <p>conversation ID: {{ conversation.id }}</p>
+                                <p>Started At: {{ conversation.startAt }}</p>
+                                <p>Ended At: {{ conversation.endAt }}</p>
+                                <ul
+                                    v-for="message in conversation.messages"
+                                    :message="message"
+                                    :key="message.id">
+                                    <li>
+                                        <p>{{ message.client_name }}: {{ message.content }}</p>
+                                        <p>{{ message.is_whisper }}</p>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        </ul>
+
+
+                        <!-- <div class="transcriptheight" style="overflow-y: scroll"> -->
                             <!-- TRANSCRIPT START -->
-                            <ul class="list-unstyled" style="margin-bottom:0">
+                            <!-- <ul class="list-unstyled" style="margin-bottom:0"> -->
 
                                 <!-- CHAT MESSAGE LINE START -->
-                                <li>
+                                <!-- <li>
                                     <div class="messageline">
                                         <b> insert message-sender-name: </b>
                                         <p>&nbsp; message.content </p>
                                     </div>
-                                </li>
+                                </li> -->
                                 <!-- CHAT MESSAGE LINE END -->
 
-                            </ul>
+                            <!-- </ul> -->
                             <!-- TRANSCRIPT START -->
 
-                        </div>
+                        <!-- </div> -->
                     </div>
 
                 </div>
@@ -59,3 +81,15 @@
 
     </div>
 </template>
+
+<script>
+export default {
+    props: ['chatroom'],
+    // data() {
+    //     return {
+    //         room: this.chatroom,
+    //     };
+    // },
+}
+
+</script>
