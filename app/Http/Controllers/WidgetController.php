@@ -328,7 +328,7 @@ class WidgetController extends Controller
             'name' => 'string|required',
             'is_active' => 'boolean|required',
             'widget-icon' => 'file',
-            'widget-color' => 'color'
+            'color' => 'regex:/^.+@.+$/i'
             
             // Availability data
             'availability_timezone' => 'timezone',
@@ -382,6 +382,8 @@ class WidgetController extends Controller
         // Update widget name and status
         $widgetToUpdate->name = $request->input('name');
         $widgetToUpdate->is_active = $request->boolean('is_active');
+        $widgetToUpdate->color = $request->color('color');
+        $widgetToUpdate->icon = $request->icon('widget-icon');
         
         // Update Allowed Domains
         if ($request->filled('allowed_domains')) {
