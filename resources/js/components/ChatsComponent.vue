@@ -335,12 +335,7 @@
                   <div class="chathistorylist" style="overflow-y: scroll">
 
                     <!--HISTORY BLOCK START-->
-                    <!-- <MessageHistoryComponent></MessageHistoryComponent> -->
-                    <button class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript">
-                        <div>
-                            <p>Date : <span>History ID</span></p>
-                        </div>
-                    </button>
+                    <MessageHistoryComponent></MessageHistoryComponent>
                     <!--HISTORY BLOCK START-->
 
                   </div>
