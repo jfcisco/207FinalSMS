@@ -12,6 +12,7 @@ const localeTimeFormat = {
 export class Tawk {
     constructor({ position = 'bottom-right',
         baseUrl,
+        widgetId,
         hasScheduledAvailability,
         availabilityStartTime,
         availabilityEndTime,
@@ -22,6 +23,7 @@ export class Tawk {
     } = {}
     ) {
         this.baseUrl = baseUrl;
+        this.widgetId = widgetId;
         this.position = this.getPosition(position);
         this.open = false;
         this.sessionStarted = false;
@@ -374,7 +376,12 @@ export class Tawk {
         document.head.appendChild(gIconsHeader);
 
         // Set up Vue component
-        this.messageContainer.innerHTML = `<chat-widget visitor-name="${formSubmission.name}"></chat-widget>`;
+        this.messageContainer.innerHTML = `
+            <chat-widget
+                visitor-name="${formSubmission.name}"
+                widget-id="${this.widgetId}"
+                :is-file-sharing-enabled="${this.isFileSharingEnabled}"
+                ></chat-widget>`;
 
         Vue.use(VueChatScroll);
         this.vue = new Vue({
