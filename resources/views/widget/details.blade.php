@@ -101,18 +101,18 @@
 
                             <div class="w-100 d-flex flex-column">
                                 <div class="widget-icon-option w-100 d-flex justify-content-start mb-2">
-                                    <input type="radio" name="widget-icon" value="/assets/chat.svg" class="me-2 align-self-center" id="default-icon" checked="checked">
+                                    <input type="radio" name="widget-icon" value="/assets/chat.svg" class="me-3 align-self-center" id="default-icon" checked="checked">
                                         
-                                    <label class="d-flex" for="default-icon">
-                                        <img src="/assets/chat.svg">
+                                    <label for="default-icon">
+                                        <img class="img-fluid" src="/assets/chat.svg">
                                     </label>
                                 </div>
 
                                 <div class="widget-icon-option w-100 d-flex justify-content-start mb-2">
-                                    <input type="radio" name="widget-icon" value="/assets/comment-medical-solid.svg.svg" class="me-2 align-self-center" id="chat-medical-icon">
+                                    <input type="radio" name="widget-icon" value="/assets/comment-medical-solid.svg.svg" class="me-3 align-self-center" id="chat-medical-icon">
                                         
-                                    <label class="d-flex" for="chat-medical-icon">
-                                        <img src="/assets/comment-medical-solid.svg">
+                                    <label for="chat-medical-icon">
+                                        <img class="img-fluid" src="/assets/comment-medical-solid.svg">
                                     </label>
                                 </div>
                             </div>
