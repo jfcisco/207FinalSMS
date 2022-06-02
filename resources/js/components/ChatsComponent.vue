@@ -209,13 +209,13 @@
 
     <!--HISTORY BLOCK START-->
     <!-- <MessageHistoryComponent></MessageHistoryComponent> -->
-    <button id="historyModalBtn" class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript" style="display:none">
+    <!-- <button id="historyModalBtn" class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript" style="display:none">
       <div>
         <p>CHAT HISTORY</p>
       </div>
-    </button>
+    </button> -->
     <!--HISTORY BLOCK START-->
-    <MessageHistoryComponent :chatroom="chatroomsAPIData.find(room => room.id)"></MessageHistoryComponent>
+    <MessageHistoryComponent :chatroom="chatroomsAPIData.find(room => room.id === activeRoom ) || {}"></MessageHistoryComponent>
 
     <!--WHISPER INPUT MESSAGE BOX START-->
     <div class="chatbox_input" id="whisper" style="display:none">
@@ -338,15 +338,32 @@
 
               <div class="row">
                 <div class="chathistory mt-2">
-                  <h5 style="font-weight:600; font-size:16px">Chat History</h5>
+                  <button
+                    style="font-weight:600; font-size:16px"
+                    v-on:click="populateMessageHistoryList(chatroom)"
+                    v-bind:id="'msg-list-btn'+chatroom._id"
+                  >
+                    Chat History
+                  </button>
 
                   <!--HISTORY LIST START-->
-                  <div class="chathistorylist" style="overflow-y: scroll">
-
+                  <div class="chathistorylist" style="overflow-y: scroll" >
                     <!--HISTORY BLOCK START-->
-                    <MessageHistoryComponent></MessageHistoryComponent>
+                    <!-- <MessageHistoryComponent></MessageHistoryComponent> -->
+                    <div
+                      v-for="conversation in chatroomsAPIData.find(room => room.id === chatroom._id) ? chatroomsAPIData.find(room => room.id === chatroom._id).conversations : [] "
+                      :key="conversation.id"
+                      :conversation="conversation"
+                    >
+                      <button class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript">
+                        <div>
+                            <span>Convo Id: {{ conversation.id }}</span>
+                            <p>started: {{ conversation.startAt }}</p>
+                            <p>ended: {{ conversation.endAt }} </p>
+                        </div>
+                      </button>
+                    </div>
                     <!--HISTORY BLOCK START-->
-
                   </div>
                   <!--HISTORY LIST END-->
 
@@ -586,9 +603,10 @@ export default {
     // },
 
     async getRoom(roomId) {
+      console.log("executing getRoom")
       try {
         const response = await axios.get(`/api/rooms/${roomId}`);
-        // console.log("getRoom", response.data.data);
+        console.log("getRoom", response.data.data);
         return response.data.data;
       } catch (err) {
         console.error(err);
@@ -711,13 +729,14 @@ export default {
     //     Echo.join("chat").whisper("typing", this.user);
     // },
 
-    selectRoom: async function(roomId, conversationId) {
+    selectRoom: function(roomId, conversationId) {
       console.log("running selectRoom");
       this.activeRoom = roomId;
       this.activeConversation = conversationId;
       console.log("conversationId", conversationId)
       this.scrollToChatBottom();
       this.toggleMessageMainEl("show");
+      this.toggleMsgHistoryListBtn(roomId, conversationId);
 
       // clear selected room's notification count
       this.chatroomsUnreadNotif[roomId] = 0;
@@ -725,23 +744,23 @@ export default {
       // adjust title notification
       this.hideTitleNotifications();
 
-      try {
-        const results = [];
-        results.push(await this.getRoom(roomId));
-        console.log("start here", results)
+      // try {
+      //   const results = [];
+      //   results.push(await this.getRoom(roomId));
+      //   console.log("start here", results)
         // this.chatroomsAPIData[`${roomId}`] = results;
         // console.log(this.chatroomsAPIData[`${roomId}`])
-        this.chatroomsAPIData = _.unionBy(
-          this.chatroomsAPIData,
-          results,
-          (room) => room.id,
-        );
-        console.log("check", this.chatroomsAPIData);
-        document.getElementById("historyModalBtn").style.display = "";
+        // this.chatroomsAPIData = _.unionBy(
+        //   this.chatroomsAPIData,
+        //   results,
+        //   (room) => room.id,
+        // );
+        // console.log("check", this.chatroomsAPIData);
+        // document.getElementById("historyModalBtn").style.display = "";
 
-      } catch (err) {
-        console.error(err);
-      }
+      // } catch (err) {
+      //   console.error(err);
+      // }
     },
 
     selectIncomingRoom: function (roomId, conversationId) {
@@ -759,6 +778,11 @@ export default {
       event.preventDefault();
       try {
         const results = await this.getRoom(roomId);
+
+        this.populateMessageHistoryList(results);
+
+        this.selectRoom(roomId, undefined);
+
         // console.log("results", results);
         // console.log("this.chatrooms before=>", this.chatrooms);
         const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
@@ -767,7 +791,7 @@ export default {
         foundRoom.messages = this.convertConvoMsgSchema(roomId, lastConversation);
         // console.log("this.chatrooms after=>", this.chatrooms);
 
-        this.selectRoom(roomId, lastConversation.id);
+
 
       } catch (err) {
         console.error(err);
@@ -802,6 +826,47 @@ export default {
         alert("Successfully joined this room");
 
         this.toggleMessageMainEl("show");
+      }
+    },
+
+    toggleMsgHistoryListBtn(roomId, conversationId) {
+      if (conversationId) {
+        const msgHistoryListBtnEl = document.getElementById(`msg-list-btn${roomId}`);
+        console.log(msgHistoryListBtnEl)
+        msgHistoryListBtnEl.disabled = false;
+      } else {
+        const msgHistoryListBtnEl = document.getElementById(`msg-list-btn${roomId}`);
+        console.log(msgHistoryListBtnEl);
+        msgHistoryListBtnEl.disabled = true;
+      }
+    },
+
+    populateMessageHistoryList: async function(chatroom) {
+      console.log("running populateMessageHistoryList");
+      console.log(chatroom)
+      try {
+        const results = [];
+        if (chatroom.conversationId) {
+          // if it is an active or incoming chat, get request to "api/room/{roomId}"
+          console.log("chatroom.conversationId is truthy");
+          results.push(await this.getRoom(chatroom._id));
+        } else {
+          // closed chat since no conversationId
+          // if it is a closed chat, we already have result from get request to "api/room/{roomId}"
+          //    passed as param when selectClosedRoom executes
+          console.log("chatroom.conversationId is falsy", chatroom.conversationId);
+          results.push(chatroom);
+
+        }
+        console.log("start here", results)
+        this.chatroomsAPIData = _.unionBy(
+          this.chatroomsAPIData,
+          results,
+          (room) => room.id,
+        );
+        console.log("check", this.chatroomsAPIData);
+      } catch(err) {
+        console.error(err);
       }
     },
 
