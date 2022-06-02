@@ -52,24 +52,26 @@
             </div>
             <!--INPUT MESSAGE BOX-->
             <div class="inputs">
-                <div>
-                        <form @submit.prevent="sendMessage()">
-                            <input
-                                ref="messageInput"
-                                :disabled="!room._id"
-                                v-model="message"
-                                type="text"
-                                name="message"
-                                placeholder="Enter your message..."
-                                class="form-control"
-                                autocomplete="off"
-                                @input="sendTypingEvent"
-                            />
-                        </form>
+                <div class="message-input">
+                    <form @submit.prevent="sendMessage()">
+                        <input
+                            ref="messageInput"
+                            :disabled="!room._id"
+                            v-model="message"
+                            type="text"
+                            name="message"
+                            placeholder="Enter your message..."
+                            class="form-control"
+                            autocomplete="off"
+                            @input="sendTypingEvent"
+                        />
+                    </form>
                 </div>
-                <FileUploadWidget
-                v-on:upload-success="handleAttachmentUpload"
-                ></FileUploadWidget>
+                <div v-if="isFileSharingEnabled" class="file-sharing">
+                    <FileUploadWidget
+                    v-on:upload-success="handleAttachmentUpload"
+                    ></FileUploadWidget>
+                </div>
             </div>
         </div>
     </div>
@@ -155,10 +157,15 @@
         font-style: italic;
     }
     .inputs {
-        display: grid;
-        grid-template-columns: 90% 10%;
+        display: flex;
         margin-bottom: 5px;
         align-content: space-around;
+    }
+    .inputs > .message-input {
+        flex: 1 0 90%;
+    }
+    .inputs > .file-sharing {
+        flex: 1 0 10%;
     }
     .end-chat {
         text-align: center;
@@ -185,11 +192,15 @@ const socket = io(process.env.MIX_SOCKET_SERVER, {
 });
 
 export default {
-    props: ["visitorName"],
+    props: {
+        visitorName: String,
+        widgetId: String,
+        isFileSharingEnabled: Boolean,
+    },
 
-        components: {
-            FileUploadWidget,
-        },
+    components: {
+        FileUploadWidget,
+    },
 
     data() {
         return {
@@ -210,7 +221,11 @@ export default {
             clientId: `${client.getFingerprint()}`,
             clientType: "visitor",
             clientName: this.visitorName,
-            widgetId: "widget1",
+            widgetId: this.widgetId,
+            currentPage: {
+                title: document.title,
+                url: window.location.href, 
+            }
         };
 
         socket.connect();

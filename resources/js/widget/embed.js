@@ -12,6 +12,7 @@ import { Tawk } from './Tawk';
 
 const tawk = new Tawk({
     baseUrl: "<?php echo $baseUrl; ?>",
+    widgetId: "<?php echo $widgetId; ?>",
     
     // Scheduler configuration variables
     hasScheduledAvailability: ("<?php echo $hasScheduledAvailability; ?>" === "true"),

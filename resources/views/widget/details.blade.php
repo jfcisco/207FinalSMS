@@ -4,16 +4,27 @@
 @section('content')
 <div class="container-fluid widget-details-container">
     <div class="row">
-        <!--MAIN SIDE BAR-->
-        <div class="col-lg-1 col-sm-2 mainsidebar">
-            <a href="/home"><ion-icon name="mail-outline"></ion-icon><span class="menutitle">Messaging</span></a>
-            <a href="/reports"><ion-icon name="bar-chart-outline"></ion-icon><span class="menutitle">Reporting</span></a>
-            <a class="activemenu" href="/widgets"><ion-icon name="copy-outline"></ion-icon><span class="menutitle">Widget</span></a>
-        </div>
-        <!--END MAIN SIDE BAR-->
+       
+
+        <!--MAIN SIDE BAR START-->
+          <div class="col-lg-1 col-sm-1 mainsidebar">
+            <a href="/home">
+              <ion-icon class="main-menu-icon" name="mail-outline"></ion-icon>
+              <span class="menutitle">Messaging</span>
+            </a>
+            <a href="/reports">
+              <ion-icon class="main-menu-icon" name="bar-chart-outline"></ion-icon>
+              <span class="menutitle">Reporting</span>
+            </a>
+            <a href="/widgets" class="activemenu">
+              <ion-icon name="copy-outline" class="main-menu-icon"></ion-icon>
+              <span class="menutitle">Widget</span>
+            </a>
+          </div>
+        <!--MAIN SIDE BAR END-->
 
         
-        <div class="col-lg-11 col-sm-10 sidebar widget-details-form">
+        <div class="col-lg-11 col-sm-11 sidebar widget-details-form">
             <form action="/widgets/{{$currentWidget->_id}}/update" method="POST">
                 
                 {{ csrf_field() }}
@@ -92,7 +103,23 @@
 
                         <div class="widget-block">
                             <label class="chat-label">Widget Color</label>  
-                            <input class="form-control form-control-color form-control-widget-full" type="color" name="widget-color" id="widget-color" readonly>
+                            <input class="form-control form-control-color form-control-widget-full" type="color" name="widget-color" id="widget-color" >
+                        </div>
+
+                        <div class="widget-block">
+                            <span class="chat-label">File Sharing Enabled</span>
+                            <label class="switch">
+                                <input type="checkbox" name="enable_file_sharing" 
+                                    @if (old('enable_file_sharing', $currentWidget->enable_file_sharing) === true)
+                                        checked="checked"
+                                    @endif
+
+                                    @if (Auth::user()->role !== 'admin')
+                                        disabled
+                                    @endif
+                                >
+                                <span class="slider round"></span>
+                            </label> 
                         </div>
                     </div>
     
@@ -194,123 +221,6 @@
                             initial-domains-list-json="{{old('allowed_domains', json_encode($currentWidget->allowed_domains ?? array("")))}}"
                         ></widget-domains-picker>
                     </div>
-
-                    {{-- Widget Behavior Settings --}}
-                    {{-- <div class="col-lg-6">
-                        <h4 class="chat-subheader">Widget Behavior</h4> 
-                        <div class="widget-block">
-                            <label class="chat-label" for="visiibility-settings">Visibility Settings</label>
-                        </div>
-    
-                        <!-- not sure how to visualize this? can you give a sample? did this based on what i saw sa tawk.to-->
-    
-                        <div class="widget-block">
-                            <label class="switch">
-                                <input disabled type="checkbox" value="hide-widget-offline"
-                                    @if ($currentWidget->hide_when_offline)
-                                        checked
-                                    @endif
-                                >
-                                <span class="slider round"></span>
-                            </label> 
-                            <span class="chat-label">Hide widget when offline</span>
-    
-                            <label class="switch">
-                                <input disabled type="checkbox"
-                                    @if ($currentWidget->hide_when_on_desktop)
-                                        checked
-                                    @endif
-                                >
-                                <span class="slider round"></span>
-                            </label> 
-                            <span class="chat-label">Hide widget on load in desktop</span>
-    
-                            <label class="switch">
-                                <input disabled type="checkbox"
-                                    @if ($currentWidget->hide_when_on_mobile)
-                                        checked
-                                    @endif 
-                                >
-                                <span class="slider round"></span>
-                            </label> 
-                            <span class="chat-label">Hide widget on load in mobile</span>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="widget-block">
-                            <label class="chat-label" for="feature-settings">Feature Settings</label>
-                        </div>
-    
-                        <!-- not sure how to visualize this? can you give a sample? did this based on what i saw sa tawk.to-->
-    
-                        <div class="widget-block">
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider round"></span>
-                            </label> 
-                            <span class="chat-label">Option</span>
-    
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider round"></span>
-                            </label> 
-                            <span class="chat-label">Option</span>
-    
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider round"></span>
-                            </label> 
-                            <span class="chat-label">Option</span>
-                        </div>
-                    </div>--}}
-                </div> 
-    
-                <div class="row">
-                    {{--<h4 class="chat-subheader-3">Availability Restrictions</h4> 
-                    
-                    <div class="col-lg-4">
-                        <widget-domains-picker
-                            initial-domains-list-json="{{old('allowed_domains', json_encode($currentWidget->allowed_domains ?? array("")))}}"
-                        ></widget-domains-picker>
-                    </div>--}}
-
-                    {{-- Platform and Country Restrictions --}}
-                    {{-- <div class="col-lg-4">
-                        <div class="widget-block">
-                            <label class="chat-label" for="platform-restriction">Platform Restriction</label>
-                        </div>
-                        <div class="widget-block">
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider round"></span>
-                            </label> 
-                            <span class="chat-label">Disabled</span>
-                            
-                        </div>
-                        <div class="widget-block">
-                            
-                            <p class="chat-label-2 mb-0">By default, the widget will be shown to all visitors. To show or hide the widget for visitors from specific platforms, enable this functionality and specify the platforms.</p>
-                        </div>
-                    </div>
-    
-                    <div class="col-lg-4">
-                        <div class="widget-block">
-                            <label class="chat-label" for="country-restriction">Country Restriction</label>
-                        </div>
-                        <div class="widget-block">
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider round"></span>
-                            </label> 
-                            <span class="chat-label">Disabled</span>
-                            
-                        </div>
-                        <div class="widget-block">
-                            
-                            <p class="chat-label-2 mb-0">By default, the widget will be shown to all visitors. To show or hide the widget for visitors from specific countris, enable this functionality and specify the countries.</p>
-                        </div>
-                    </div> --}}
-                </div>
 
                 @if (Auth::user()->role === "admin")
                 <div class="row my-4 widget-save">

@@ -2,36 +2,32 @@
 <div class="row">
 
   <!--MAIN SIDE BAR START-->
-  <div class="col-lg-1 col-sm-2 mainsidebar">
+  <div class="col-lg-1 col-sm-1 mainsidebar">
     <a class="activemenu" href="/home">
-      <ion-icon name="mail-outline"></ion-icon>
+      <ion-icon class="main-menu-icon" name="mail-outline"></ion-icon>
       <span class="menutitle">Messaging</span>
     </a>
     <a href="/reports">
-      <ion-icon name="bar-chart-outline"></ion-icon>
+      <ion-icon class="main-menu-icon" name="bar-chart-outline"></ion-icon>
       <span class="menutitle">Reporting</span>
     </a>
     <a href="/widgets">
-      <ion-icon name="copy-outline"></ion-icon>
+      <ion-icon class="main-menu-icon" name="copy-outline"></ion-icon>
       <span class="menutitle">Widget</span>
     </a>
   </div>
   <!--MAIN SIDE BAR END-->
 
+
   <!--ROOM LISTS START-->
-  <div class="col-lg-2 col-sm-3 sidebar" style="overflow-y: scroll">
+  <div class="col-lg-2 col-sm-3 sidebar">
+
+    <p class="subtitle">Incoming Chats</p>
 
     <!--INCOMING SESSIONS SECTION START-->
-
-    <div class="row py-0 mt-0">
-      <p class="subtitle">Incoming Sessions</p>
+    <div class="row py-0 mt-0 incomingsessions" style="overflow-y: scroll">
 
       <!--INCOMING CHAT BLOCK START-->
-      <!-- <div
-        class="block incoming"
-        v-for="chatroom in chatrooms"
-        :key="chatroom._id"
-      > -->
       <div
         class="block incoming"
         :class="{
@@ -42,13 +38,13 @@
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
         v-show="chatroom.members.length === 1 && chatroom.conversationId"
-        :key="chatroom._id"
-      >
+        :key="chatroom._id">
+
         <div
           class="details"
           v-on:click="selectIncomingRoom(chatroom._id, chatroom.conversationId)"
-          v-bind:id="chatroom._id"
-        >
+          v-bind:id="chatroom._id">
+
           <!--room id/username section-->
           <!-- start here -->
           <div class="listHead">
@@ -57,9 +53,7 @@
 
           <!-- HIDE BEFORE COMMIT -->
           <!-- show chatroom ids in incoming -->
-          <!-- <div class="listHead">
-            <p>room._id: {{ chatroom._id }}</p>
-          </div> -->
+          <!-- <div class="listHead"> <p>room._id: {{ chatroom._id }}</p> </div> -->
           <!-- HIDE BEFORE COMMIT -->
 
           <!--room id/username section-->
@@ -74,14 +68,12 @@
         </div>
       </div>
       <!--INCOMING CHAT BLOCK END-->
-
     </div>
     <!--INCOMING SESSIONS SECTION END-->
 
     <!--ACTIVE SESSIONS START-->
-    <div class="row">
-
-      <p class="subtitle sidebartitle">Active Sessions</p>
+    <p class="subtitle sidebartitle">Active Chats</p>
+    <div class="row activesessions" style="overflow-y: scroll">
 
       <!--ACTIVE CHAT BLOCK START-->
       <!-- Display open conversations, which have a conversationId (no endAt property for that conversation) -->
@@ -93,24 +85,29 @@
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
         v-show="chatroom.members.length > 1 && chatroom.conversationId"
-        :key="chatroom._id"
-      >
+        :key="chatroom._id">
+
         <div
           class="details"
           v-on:click="selectRoom(chatroom._id, chatroom.conversationId)"
-          v-bind:id="chatroom._id"
-        >
+          v-bind:id="chatroom._id">
 
           <!--room id/username section-->
           <div class="listHead">
             <p>{{ chatroom.members[0].clientName }}</p>
+            <!-- UNREAD MESSAGES NOTIF-->
+            <!-- <b class="unreadnotif">1</b> -->
+            <b
+              class="unreadnotif"
+              v-if="chatroomsUnreadNotif[chatroom._id] > 0"
+            >
+              {{ chatroomsUnreadNotif[chatroom._id] }}
+            </b>
           </div>
 
           <!-- HIDE BEFORE COMMIT -->
           <!-- show chatroom ids in active sessions -->
-          <!-- <div class="listHead">
-            <p>room._id: {{ chatroom._id }}</p>
-          </div> -->
+          <!-- <div class="listHead"> <p>room._id: {{ chatroom._id }}</p> </div> -->
           <!-- HIDE BEFORE COMMIT -->
 
           <!-- assigned room users (Admin/Agent) -->
@@ -128,17 +125,14 @@
             </p>
           </div>
         </div>
-
       </div>
       <!--ACTIVE CHAT BLOCK END-->
-
     </div>
     <!--ACTIVE SESSIONS END-->
 
     <!--CLOSED SESSIONS START-->
-    <div class="row">
-
-      <p class="subtitle sidebartitle">Closed Sessions</p>
+    <p class="subtitle sidebartitle">Closed Chats</p>
+    <div class="row inactivesessions" style="overflow-y: scroll">
 
       <!--CLOSED CHAT BLOCK START-->
       <!-- display ended conversations, which have no conversationId (with an endAt property for that conversation) -->
@@ -150,13 +144,11 @@
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
         v-show="!chatroom.conversationId"
-        :key="chatroom._id"
-      >
+        :key="chatroom._id">
         <div
           class="details"
           v-on:click="selectClosedRoom(chatroom._id)"
-          v-bind:id="chatroom._id"
-        >
+          v-bind:id="chatroom._id">
 
           <!--room id/username section-->
           <div class="listHead">
@@ -185,10 +177,8 @@
             </p>
           </div>
         </div>
-
       </div>
       <!--CLOSED CHAT BLOCK END-->
-
     </div>
     <!--CLOSED SESSIONS END-->
 
@@ -196,20 +186,16 @@
   <!--ROOM LISTS END-->
 
   <!--MAIN CHAT WINDOW START-->
-
-  <div class="col-lg-9 col-sm-7 mainchat">
+  <div class="col-lg-7 col-sm-5 mainchat">
 
     <!--MAIN INPUT MESSAGE BOX START-->
 
     <div class="chatbox_input" id="message_main" style="display:none">
-      <ion-icon class="whisper" name="volume-high-outline" id="headerToggle1" onclick="toggleheaderleft()"></ion-icon>
-      <!-- <FileUploadComponent
-          :active-room="activeRoom"
-          v-on:upload-success="handleAttachmentUpload"
-      ></FileUploadComponent> -->
-      <FileUploadComponent
-          v-on:upload-success="handleAttachmentUpload"
-      ></FileUploadComponent>
+      <span title="Click to send whisper message" id="headerToggle1" onclick="toggleheaderleft()">
+        <ion-icon class="whisper" name="volume-high-outline"></ion-icon>
+      </span>
+
+      <FileUploadComponent v-on:upload-success="handleAttachmentUpload"></FileUploadComponent>
       <input
           @keyup.enter="sendMessage"
           v-model="message"
@@ -222,7 +208,9 @@
 
     <!--WHISPER INPUT MESSAGE BOX START-->
     <div class="chatbox_input" id="whisper" style="display:none">
-      <ion-icon class="whisper2" name="volume-mute-outline" id="headerToggle2" onclick="toggleheaderleft()"></ion-icon>
+      <span title="Click to send chat to visitor" id="headerToggle2" onclick="toggleheaderleft()">
+        <ion-icon class="whisper2" name="volume-mute-outline"></ion-icon>
+      </span>
       <input
           @keyup.enter="sendMessage"
           v-model="message"
@@ -272,32 +260,29 @@
                         sentmessage: message.clientId == user._id,
                         receivedmessage: message.clientId !== user._id,
                         whisper_text: message.isWhisper
-                      }"
-                    >
-                        <!-- <b>{{ message.clientId === user._id ? "You: " : `${chatroom.members[0].clientName}: ` }}</b> -->
-                        <!-- <b>
-                          {{
-                            message.clientId === user._id ? "You: " :
-                              `${chatroom.members
-                              .filter(member => member.clientId === message.clientId)
-                              [0].clientName}: `
-                          }}
-                        </b> -->
+                      }" >
+
                         <b>
                           {{ getMsgSender(message, chatroom) }}:
                         </b>
                         <p v-if="!message.content.startsWith('files/')">&nbsp;{{ message.content }}</p>
                         <p v-else><a :href="message.content">&nbsp;{{ message.content.slice(6, message.content.length) }}</a></p>
                     </div>
+
                 </li>
                 <!-- CHAT MESSAGE LINE END -->
             </ul>
+
             <!-- DISPLAY VISITOR TYPING EVENT -->
-            <ul class="list-unstyled" id="visitor-typing" style="display: none">
+            <ul class="list-unstyled" v-bind:id="'visitor-typing' + chatroom._id" style="display:none">
               <li><div class="receivedmessage"></div></li>
             </ul>
+
+
           </div>
           <!--CHATBOX END-->
+
+
 
           <!-- JOIN FEATURE AVAILABLE ONLY IF CONVERSATION IS OPEN AND CURRENT USER IS NOT ALREADY ASSIGNED -->
           <button
@@ -311,11 +296,62 @@
 
       </div>
     </div>
-
   </div>
   <!--MAIN CHAT WINDOW END-->
 
-</div> <!--ROW END-->
+  <!--CHAT HISTORY-->
+  <div class="col-lg-2 col-sm-3">
+    <!--CHAT HISTORY-->
+    <div
+      class="mainchat2"
+      v-for="chatroom in chatrooms"
+      :chatroom="chatroom"
+      v-show="chatroom._id == activeRoom"
+      :key="chatroom._id">
+
+            <div class="chathistoryfull">
+
+              <div class="row mt-5">
+                <div class="chathistory"> {{ chatroom.members[0].clientName }}</div>
+                <div class="chathistory"> visitor location/country</div>
+                <div class="chathistory"> visitor IP</div>
+                <div class="chathistory"> visitor device details</div>
+              </div>
+
+
+              <div class="row" style="text-align:center">
+                <div class="col chathistory">DUR</div>
+                <div class="col chathistory">VLV</div>
+                <div class="col chathistory">NOC</div>
+              </div>
+
+              <div class="row">
+                <div class="chathistory mt-2">
+                  <h5 style="font-weight:600; font-size:16px">Chat History</h5>
+
+                  <!--HISTORY LIST START-->
+                  <div class="chathistorylist" style="overflow-y: scroll">
+
+                    <!--HISTORY BLOCK START-->
+                    <div class="historyblock">
+                      <p>Date : <span>History ID</span></p>
+                    </div>
+                    <!--HISTORY BLOCK START-->
+
+                  </div>
+                  <!--HISTORY LIST END-->
+
+                </div>
+              </div>
+            </div>
+
+    </div>
+    <!--CHAT HISTORY-->
+  </div>
+  <!--CHAT HISTORY-->
+
+</div>
+<!--ROW END-->
 </template>
 
 <script>
@@ -347,6 +383,10 @@ export default {
       activeRoom: "",
       chtRoom: this.crm,
       activeConversation: "",
+      chatroomsUnreadNotif: {},
+      totalNotifCount: 0,
+      origTitle: document.title,
+      audio: new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3")
     };
   },
 
@@ -381,6 +421,13 @@ export default {
         (room) => room._id,
       );
       console.log("this.chatrooms=>", this.chatrooms);
+
+      // initialize chatroomsUnreadNotif
+      rooms.map(room => {
+        this.chatroomsUnreadNotif[`${room._id}`] = 0;
+      });
+      // console.log("chatroomsUnreadNotif", this.chatroomsUnreadNotif)
+      // console.log("test", this.chatroomsUnreadNotif["46c3823aaa58ac14"])
     });
 
     // get all rooms from mongodb
@@ -390,12 +437,29 @@ export default {
       console.log("message received", message);
 
       // clear visitor's typing event element and hide from display
-      const visitorTypingContainerEl = document.getElementById("visitor-typing");
-      visitorTypingContainerEl.querySelector("li div").innerHTML = ""
-      visitorTypingContainerEl.style.display = "none";
+      const visitorTypingContainerEl = document.getElementById(`visitor-typing${message.roomId}`);
+
+      if (visitorTypingContainerEl) {
+        visitorTypingContainerEl.querySelector("li div").innerHTML = ""
+        visitorTypingContainerEl.style.display = "none";
+      }
 
       let foundRoom = this.chatrooms[this.getTargetRoomIndex(message.roomId)];
       foundRoom.messages.push(message);
+
+      // modify room's unread notif count everytime a message is received only when that
+      // message's room is not currently selected in Active Chats
+
+      // check if selected room is not the same as message's room
+      if (this.activeRoom !== message.roomId) {
+        // increment notif count by 1 before assignment
+        ++this.chatroomsUnreadNotif[message.roomId]
+      }
+
+      // increment totalNotifCount everytime a messages is received and dashboard is not in focus
+      if (!document.hasFocus()) {
+        this.showNotifications(++this.totalNotifCount);
+      }
     });
 
     socket.on("typing", (data) => {
@@ -415,15 +479,17 @@ export default {
       if (this.activeRoom === roomId) {
 
         // show visitor's typing event
-        const visitorTypingContainerEl = document.getElementById("visitor-typing");
-        visitorTypingContainerEl.style.display = "";
-
-        // display msg sender and content
         const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
-        visitorTypingContainerEl.querySelector("li div").innerHTML = `
-          <b>${this.getMsgSender(data, foundRoom)}</b><p>&nbsp;is typing...</p><b>:</b>
-          <p>&nbsp;${content}</p>
-        `;
+        const visitorTypingContainerEl = document.getElementById(`visitor-typing${roomId}`);
+
+        if (visitorTypingContainerEl) {
+          // display msg sender and content
+          visitorTypingContainerEl.style.display = "block";
+          visitorTypingContainerEl.querySelector("li div").innerHTML = `
+            <b>${this.getMsgSender(data, foundRoom)}</b><p>&nbsp;is typing...</p><b>:</b>
+            <p>&nbsp;${content}</p>
+          `;
+        }
       }
     });
 
@@ -606,6 +672,9 @@ export default {
       console.log("conversationId", conversationId)
       this.scrollToChatBottom();
       this.toggleMessageMainEl("show");
+
+      // clear selected room's notification count
+      this.chatroomsUnreadNotif[roomId] = 0;
     },
 
     selectIncomingRoom: function (roomId, conversationId) {
@@ -709,6 +778,24 @@ export default {
       });
 
     },
+
+    showNotifications(count) {
+      const pattern = /^\(\d+\)/;
+      if (count === 0 || pattern.test(document.title)) {
+        document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
+      } else {
+        document.title = "(" + count + ") New message(s) received!";
+      }
+
+      this.audio.play().catch(err => console.log(err));
+
+      setInterval(() => {
+        if (document.hasFocus()) {
+          document.title = this.origTitle;
+          this.totalNotifCount = 0;
+        }
+      }, 100);
+    }
 
   },
 };
