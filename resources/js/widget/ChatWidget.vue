@@ -180,9 +180,7 @@ import FileUploadWidget from "./FileUploadWidget.vue";
 
 // Setup client.js for device fingerprinting
 const client = new cj.ClientJS();
-var notifCount = 0;
-var origTitle = document.title;
-var audio = new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3");
+
 
 
 // Setup Socket.IO connection
@@ -212,6 +210,9 @@ export default {
                 messages: [],
                 members: []
             },
+            notifCount: 0,
+            origTitle: document.title,
+            audio: new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3")
         };
     },
 
@@ -227,6 +228,12 @@ export default {
                 url: window.location.href, 
             }
         };
+
+        window.addEventListener("focus", () => {
+            console.log("document is in focus");
+            this.notifCount = 0;
+            this.hideNotifications();
+        });
 
         socket.connect();
 
@@ -260,8 +267,8 @@ export default {
             // Show notifications in the document's title tag
             if (!document.hasFocus()) {
                 if (chatMessage != previousChatMessage) {
-                    notifCount++;
-                    this.showNotifications(notifCount);
+                    this.notifCount++;
+                    this.showNotifications(this.notifCount);
                 }
             }
             previousChatMessage = chatMessage;
@@ -388,24 +395,44 @@ export default {
         },
 
         showNotifications(count) {
-        const pattern = /^\(\d+\)/;
+            // const pattern = /^\(\d+\)/;
 
-        if (count === 0 || pattern.test(document.title)) {
-            document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
-        } else {
-            document.title = "(" + count + ") New message(s) received!";
-        }
+            // if (count === 0 || pattern.test(document.title)) {
+            //     document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
+            // } else {
+            //     document.title = "(" + count + ") New message(s) received!";
+            // }
+            
+            // this.audio.play();
+
+            // notifInterval = setInterval(checkFocus, 100);
+            // function checkFocus() {
+            //     if (window.hasFocus()) {
+            //     this.hideNotifications();
+            //     this.notifCount = 0;
+            //     }
+            // };
+
+            this.hideNotifications();
+            this.notifInterval = setInterval(() => {
+                const pattern = /^\(\d+\)/;
+                if (document.title === this.origTitle) {
+                if (count === 0 || pattern.test(document.title)) {
+                    document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
+                } else {
+                    document.title = "(" + count + ") New message(s) received!";
+                }
+                } else {
+                document.title = this.origTitle;
+                }
+            }, 1500);
+
+            this.audio.play().catch(err => console.log(err));
+        },
         
-        audio.play();
-
-        setInterval(checkFocus, 100);
-        function checkFocus() {
-            if (document.hasFocus()) {
-            document.title = origTitle;
-            notifCount = 0;
-            }
-        };
-        return;
+        hideNotifications() {
+            clearInterval(this.notifInterval);
+            document.title = this.origTitle;
         }
 
     },
