@@ -387,6 +387,7 @@ class WidgetController extends Controller
         $widgetToUpdate->is_active = $request->boolean('is_active');
         $widgetToUpdate->color = $request->input('widget-color');
         $widgetToUpdate->icon = $request->input('widget-icon');
+        $widgetToUpdate->enable_file_sharing = $request->boolean('enable_file_sharing');
         
         // Update Allowed Domains
         if ($request->filled('allowed_domains')) {
