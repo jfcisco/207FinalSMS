@@ -215,7 +215,14 @@
       </div>
     </button> -->
     <!--HISTORY BLOCK START-->
-    <MessageHistoryComponent :chatroom="chatroomsAPIData.find(room => room.id === activeRoom ) || {}"></MessageHistoryComponent>
+    <MessageHistoryComponent
+      :conversation="chatroomsAPIData.find(room => room.id === activeRoom) ?
+        chatroomsAPIData
+          .find(room => room.id === activeRoom)
+          .conversations
+          .find(conversation => conversation.id === activeConversationHistoryId) || {} :
+        {}"
+    ></MessageHistoryComponent>
 
     <!--WHISPER INPUT MESSAGE BOX START-->
     <div class="chatbox_input" id="whisper" style="display:none">
@@ -351,11 +358,19 @@
                     <!--HISTORY BLOCK START-->
                     <!-- <MessageHistoryComponent></MessageHistoryComponent> -->
                     <div
-                      v-for="conversation in chatroomsAPIData.find(room => room.id === chatroom._id) ? chatroomsAPIData.find(room => room.id === chatroom._id).conversations : [] "
+                      v-for="conversation in chatroomsAPIData.find(room => room.id === chatroom._id) ?
+                        chatroomsAPIData.find(room => room.id === chatroom._id).conversations :
+                        []"
                       :key="conversation.id"
                       :conversation="conversation"
                     >
-                      <button class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript">
+                      <button
+                        class="historyblock"
+                        title="Check Transcript"
+                        data-bs-toggle="modal"
+                        data-bs-target="#CheckTranscript"
+                        v-on:click="() => { activeConversationHistoryId = conversation.id }"
+                      >
                         <div>
                             <span>Convo Id: {{ conversation.id }}</span>
                             <p>started: {{ conversation.startAt }}</p>
@@ -412,6 +427,7 @@ export default {
       activeRoom: "",
       chtRoom: this.crm,
       activeConversation: "",
+      activeConversationHistoryId: "",
       chatroomsUnreadNotif: {},
       totalNotifCount: 0,
       origTitle: document.title,

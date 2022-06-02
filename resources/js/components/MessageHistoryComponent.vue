@@ -16,7 +16,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
 
-                        <h5 class="modal-title">{{ chatroom.hasOwnProperty("members") ? chatroom.members[0].name : [] }}</h5>
+                        <!-- <h5 class="modal-title">{{ chatroom.hasOwnProperty("members") ? chatroom.members[0].name : [] }}</h5> -->
+                        <h5 class="modal-title">{{ conversation.hasOwnProperty("members") ? conversation.members[0].name : "" }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                     </div>
@@ -32,12 +33,12 @@
                         </div> -->
                         <!-- CONVERSATION DETAILS END-->
 
-                        <ul
+                        <!-- <ul
                             v-for="conversation in chatroom.conversations"
                             :conversation="conversation"
                             :key="conversation.id">
 
-                            <li>
+                            <li> -->
                                 <p>conversation ID: {{ conversation.id }}</p>
                                 <p>Started At: {{ conversation.startAt }}</p>
                                 <p>Ended At: {{ conversation.endAt }}</p>
@@ -50,9 +51,9 @@
                                         <p>{{ message.is_whisper }}</p>
                                     </li>
                                 </ul>
-                            </li>
+                            <!-- </li>
 
-                        </ul>
+                        </ul> -->
 
 
                         <!-- <div class="transcriptheight" style="overflow-y: scroll"> -->
@@ -84,7 +85,7 @@
 
 <script>
 export default {
-    props: ['chatroom'],
+    props: ['conversation'],
     // data() {
     //     return {
     //         room: this.chatroom,
