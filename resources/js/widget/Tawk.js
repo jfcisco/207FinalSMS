@@ -68,7 +68,7 @@ export class Tawk {
         buttonContainer.classList.add('button-container')
 
         const chatIcon = document.createElement('img');
-        chatIcon.src = `${this.baseUrl}/assets/chat.svg`;
+        chatIcon.src = `${this.baseUrl}`+this.icon;
         chatIcon.classList.add('icon');
         this.chatIcon = chatIcon;
 
