@@ -1,11 +1,11 @@
 <template>
     <div class="UploadButton-container">
         <!--HISTORY BLOCK START-->
-        <button class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript">
+        <!-- <button class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript">
             <div>
                 <p>Date : <span>History ID</span></p>
             </div>
-        </button>
+        </button> -->
         <!--HISTORY BLOCK END-->
 
         <!-- Check Transcript Modal -->
@@ -17,7 +17,9 @@
                     <div class="modal-header">
 
                         <!-- <h5 class="modal-title">{{ chatroom.hasOwnProperty("members") ? chatroom.members[0].name : [] }}</h5> -->
-                        <h5 class="modal-title">{{ conversation.hasOwnProperty("members") ? conversation.members[0].name : "" }}</h5>
+                        <!-- <h5 class="modal-title">{{ conversation.hasOwnProperty("members") ? conversation.members.map(member => member.name): "" }}</h5> -->
+                        <h5 class="modal-title">Visitor: {{chatroomMembers[0] ? chatroomMembers[0].name : ""}} | Assigned User: {{ chatroomMembers.length === 1 ? "None" : chatroomMembers.slice(1, chatroomMembers.length).reduce((result, member) => result + `${member.name}, `,"").slice(0, -2) }}</h5>
+
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                     </div>
@@ -43,12 +45,15 @@
                                 <p>Started At: {{ conversation.startAt }}</p>
                                 <p>Ended At: {{ conversation.endAt }}</p>
                                 <ul
+                                    class="list-unstyled"
                                     v-for="message in conversation.messages"
                                     :message="message"
                                     :key="message.id">
                                     <li>
-                                        <p>{{ message.client_name }}: {{ message.content }}</p>
-                                        <p>{{ message.is_whisper }}</p>
+                                        <!-- api call returns null for all message.client_name -->
+                                        <!-- <p>{{ message.client_type === "user" ? "user" : "visitor" }} <i>{{ message.is_whisper ? "(whisper)" : "" }}</i>: {{ message.content }}</p> -->
+                                        <p>{{ chatroomMembers.find(member => member.id === message.client_id).name }} <i>{{ message.is_whisper ? "(whisper)" : "" }}</i>: {{ message.content }}</p>
+
                                     </li>
                                 </ul>
                             <!-- </li>
@@ -85,7 +90,7 @@
 
 <script>
 export default {
-    props: ['conversation'],
+    props: ['conversation', 'chatroomMembers'],
     // data() {
     //     return {
     //         room: this.chatroom,

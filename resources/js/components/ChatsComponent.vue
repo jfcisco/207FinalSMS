@@ -222,6 +222,9 @@
           .conversations
           .find(conversation => conversation.id === activeConversationHistoryId) || {} :
         {}"
+      :chatroomMembers="chatroomsAPIData.find(room => room.id === activeRoom) ?
+        chatroomsAPIData.find(room => room.id === activeRoom).members :
+        []"
     ></MessageHistoryComponent>
 
     <!--WHISPER INPUT MESSAGE BOX START-->
