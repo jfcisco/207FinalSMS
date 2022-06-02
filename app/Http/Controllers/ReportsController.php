@@ -267,7 +267,8 @@ class ReportsController extends Controller
                         "fullUrl" => $vSession->fullUrl,
                     );
                 }else{
-                    //$vSession->endAt = new Date();
+                    $vSession->endAt = now();
+                    $vSession->save();
                 }
             }
         }
