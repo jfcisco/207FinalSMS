@@ -97,8 +97,25 @@
                         </div>
                             
                         <div class="widget-block">
-                            <label class="chat-label" for="chat-link">Widget Icon</label>
-                            <input class="form-control" type="file" name="widget-icon" id="widget-icon">
+                            <label class="chat-label" for="chat-icon">Widget Icon</label>
+
+                            <div class="w-100 d-flex flex-column">
+                                <div class="widget-icon-option w-100 d-flex justify-content-start mb-2">
+                                    <input type="radio" name="widget-icon" value="/assets/chat.svg" class="me-2 align-self-center" id="default-icon" checked="checked">
+                                        
+                                    <label class="d-flex" for="default-icon">
+                                        <img src="/assets/chat.svg">
+                                    </label>
+                                </div>
+
+                                <div class="widget-icon-option w-100 d-flex justify-content-start mb-2">
+                                    <input type="radio" name="widget-icon" value="/assets/comment-medical-solid.svg.svg" class="me-2 align-self-center" id="chat-medical-icon">
+                                        
+                                    <label class="d-flex" for="chat-medical-icon">
+                                        <img src="/assets/comment-medical-solid.svg">
+                                    </label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="widget-block">

@@ -101,6 +101,7 @@
                                         <th>IP Address</th>
                                         <th>Browser</th>
                                         <th>Website</th>
+                                        <th>Page Title</th>
                                         <th>Chatroom</th>
                                         <th>Duration</th>
                                     </tr>
@@ -110,7 +111,8 @@
                                         <td>{{ socketReport.socketId }}</td>
                                         <td>{{ socketReport.ipAddress.split(":")[3] || "127.0.0.1" }}</td>
                                         <td>{{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</td>
-                                        <td>{{ socketReport.fromURL }}</td>
+                                        <td>{{ socketReport.fullUrl }}</td>
+                                        <td>{{ socketReport.pageTitle }}</td>
                                         <td><a v-bind:href="'home/?crm=' + socketReport.roomId">{{ socketReport.roomId }}</a></td>
                                         <td>{{ socketReport.time }}</td>
 
@@ -430,6 +432,8 @@ export default {
                     fromURL: visitor.fromURL,
                     startAt: visitor.startAt,
                     time: visitor.time,
+                    pageTitle: visitor.pageTitle,
+                    fullUrl: visitor.fullUrl,
                 }
             });
 

@@ -260,6 +260,8 @@ class ReportsController extends Controller
                     "fromURL" => $visitor->webpage_source,
                     "startAt" => $vSession->startAt->toDateTime()->format(DATE_ISO8601),
                     "time" => "",
+                    "pageTitle" => $vSession->pageTitle,
+                    "fullUrl" => $vSession->fullUrl,
                 );
             }
         }

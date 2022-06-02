@@ -437,6 +437,39 @@ ion-icon {
   cursor: pointer;
 }
 
+
+//MESSAGE HISTORY MODAL COMPONENTS
+
+.historyblock{
+  position: relative;
+  width:  100%;
+  border-bottom: 1px solid rgba(233,237,238,0.1);
+  cursor:  pointer;
+  border-radius: 10px;
+  padding:5px 10px;
+  text-align:left;
+  border:none;
+  background:white;
+  p{
+    color:#627894;
+    margin-bottom:0px;
+  }
+  
+
+}
+
+.historyblock:hover{
+  background:#E9EDEE;
+  transition: 0.18s linear;
+  p{
+  color:#fa6121;
+  }
+}
+
+.checktranscript{
+	width:300px;
+}
+
 //FILE UPLOAD COMPONENTS
 .file-upload-button{
   color: #fa6121;
@@ -536,29 +569,7 @@ ion-icon {
 }
 
 
-.historyblock{
-  position: relative;
-  width:  100%;
-  border-bottom: 1px solid rgba(233,237,238,0.1);
-  cursor:  pointer;
-  border-radius: 10px;
-  padding:5px 10px;
 
-  p{
-    color:#627894;
-    margin-bottom:0px;
-  }
-  
-
-}
-
-.historyblock:hover{
-  background:#E9EDEE;
-  transition: 0.18s linear;
-  p{
-  color:#fa6121;
-  }
-}
 
 // ADDITIONAL MODAL FORMATTING
 
