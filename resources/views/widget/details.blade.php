@@ -109,7 +109,7 @@
                                 </div>
 
                                 <div class="widget-icon-option w-100 d-flex justify-content-start mb-2">
-                                    <input type="radio" name="widget-icon" value="/assets/comment-medical-solid.svg.svg" class="me-3 align-self-center" id="chat-medical-icon">
+                                    <input type="radio" name="widget-icon" value="/assets/comment-medical-solid.svg" class="me-3 align-self-center" id="chat-medical-icon">
                                         
                                     <label for="chat-medical-icon">
                                         <img class="img-fluid" src="/assets/comment-medical-solid.svg">
@@ -120,7 +120,7 @@
 
                         <div class="widget-block">
                             <label class="chat-label">Widget Color</label>  
-                            <input class="form-control form-control-color form-control-widget-full" type="color" name="widget-color" id="widget-color" >
+                            <input class="form-control form-control-color form-control-widget-full" type="color" name="widget-color" id="widget-color" value="{{ old('widget-color', $currentWidget->color) }}">
                         </div>
 
                         <div class="widget-block">
