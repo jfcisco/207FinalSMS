@@ -330,8 +330,8 @@ class WidgetController extends Controller
         $request->validate([
             'name' => 'string|required',
             'is_active' => 'boolean|required',
-            'widget-icon' => 'file',
-            'color' => 'regex:/[#]{0-9a-zA-Z]{6}',
+            'widget-icon' => 'string|exists:icons,path',
+            'widget-color' => 'regex:/^[#][0-9a-zA-Z]{6}$/',
             
             // Availability data
             'availability_timezone' => 'timezone',
@@ -385,8 +385,8 @@ class WidgetController extends Controller
         // Update widget name and status
         $widgetToUpdate->name = $request->input('name');
         $widgetToUpdate->is_active = $request->boolean('is_active');
-        $widgetToUpdate->color = $request->color('color');
-        $widgetToUpdate->icon = $request->icon('widget-icon');
+        $widgetToUpdate->color = $request->input('widget-color');
+        $widgetToUpdate->icon = $request->input('widget-icon');
         
         // Update Allowed Domains
         if ($request->filled('allowed_domains')) {
