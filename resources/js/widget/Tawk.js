@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueChatScroll from "vue-chat-scroll";
 import cj from "clientjs";
 import axios from 'axios';
+import { computeCssFilters } from "./css-color-filter-generator";
 
 // Options used for converting date/time to string using .toLocaleTimeString()
 const localeTimeFormat = {
@@ -161,7 +162,7 @@ export class Tawk {
                 font-family: 'Raleway', sans-serif;
             }
             .icon {
-                filter: invert(47%) sepia(88%) saturate(2944%) hue-rotate(348deg) brightness(101%) contrast(96%);
+                filter: ${computeCssFilters(this.color).result.filterRaw};
                 cursor: pointer;
                 width: 70%;
                 position: absolute;
