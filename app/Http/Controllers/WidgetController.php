@@ -330,7 +330,7 @@ class WidgetController extends Controller
         $request->validate([
             'name' => 'string|required',
             'is_active' => 'boolean|required',
-            'widget-icon' => 'file',
+            // 'widget-icon' => 'file',
             // 'widget-color' => 'color', Commented because no 'color' rule exists
             
             // Availability data
