@@ -395,23 +395,6 @@ export default {
         },
 
         showNotifications(count) {
-            // const pattern = /^\(\d+\)/;
-
-            // if (count === 0 || pattern.test(document.title)) {
-            //     document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
-            // } else {
-            //     document.title = "(" + count + ") New message(s) received!";
-            // }
-            
-            // this.audio.play();
-
-            // notifInterval = setInterval(checkFocus, 100);
-            // function checkFocus() {
-            //     if (window.hasFocus()) {
-            //     this.hideNotifications();
-            //     this.notifCount = 0;
-            //     }
-            // };
 
             this.hideNotifications();
             this.notifInterval = setInterval(() => {
