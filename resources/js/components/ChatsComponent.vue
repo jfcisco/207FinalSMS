@@ -256,7 +256,7 @@
 
           <div class="d-flex justify-content-start">
             <h4>{{ chatroom.members[0].clientName }}</h4>
-                        
+
             <!-- Spinner For Room Loading -->
             <div v-if="roomIsLoading" class="pt-1">
               <div class="ms-2 spinner-border spinner-border-sm" style="color: #FA6121;" role="status">
@@ -451,7 +451,7 @@ export default {
       origTitle: document.title,
       audio: new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3"),
       titleNotificationInterval: undefined,
-      
+
       roomIsLoading: false, // States if a GET room API call is running
     };
   },
@@ -462,10 +462,10 @@ export default {
     }else{
       this.activeRoom = this.crm;
     };
-    console.log("adrian",this.crm);
+    // console.log("adrian",this.crm);
 
     window.addEventListener("focus", () => {
-      // console.log("document is in focus");
+      // console.log("window is in focus");
 
       // if (this.activeRoom) {
       //   console.log("1=>", this.chatroomsUnreadNotif[this.activeRoom])
@@ -492,14 +492,14 @@ export default {
     socket.connect();
 
     socket.on("rooms", ({ rooms }) => {
-      console.log("running socket.on rooms1")
-      console.log("rooms full data=> ", rooms);
+      // console.log("running socket.on rooms1")
+      // console.log("rooms full data=> ", rooms);
       this.chatrooms = _.unionBy(
         rooms,
         this.chatrooms,
         (room) => room._id,
       );
-      console.log("this.chatrooms=>", this.chatrooms);
+      // console.log("this.chatrooms=>", this.chatrooms);
 
       // initialize chatroomsUnreadNotif and chatroomsAPIData
       rooms.map(room => {
@@ -512,16 +512,14 @@ export default {
       //     conversations: []
       //   };
       // });
-      // console.log("chatroomsUnreadNotif", this.chatroomsUnreadNotif)
-      // console.log("test", this.chatroomsUnreadNotif["46c3823aaa58ac14"])
-      // console.log("test", this.chatroomsAPIData["c939991f5a528485"])
+      // console.log("chatroomsUnreadNotif", this.chatroomsUnreadNotif);
     });
 
     // get all rooms from mongodb
     // this.generateChatroomsList();
 
     socket.on("message", (message) => {
-      console.log("message received", message);
+      // console.log("message received", message);
 
       // clear visitor's typing event element and hide from display
       const visitorTypingContainerEl = document.getElementById(`visitor-typing${message.roomId}`);
@@ -563,7 +561,7 @@ export default {
 
     socket.on("typing", (data) => {
       // Leaving this log for debugging:
-      console.log("typing data => ", JSON.parse(JSON.stringify(data)));
+      // console.log("typing data => ", JSON.parse(JSON.stringify(data)));
 
       const { clientId, conversationId, roomId, content } = data;
 
@@ -593,51 +591,18 @@ export default {
     });
 
     socket.on("end_chat", conversationId => {
-      console.log("visitor ended conversation", conversationId);
+      // console.log("visitor ended conversation", conversationId);
       this.chatrooms.forEach(chatroom => {
         if (chatroom.conversationId === conversationId) {
-          console.log("found the conversation");
           chatroom.conversationId = undefined;
         }
-        console.log(this.chatrooms)
         return;
       });
     });
 
-    // add test data for incoming room | only 1 member of room w/ clientType: visitor
-    // this.chatrooms.push({
-    //   _id: "54321",
-    //   members: [
-    //     {clientId: "1234", clientName: "test-incoming-visitor", clientType: "visitor"}
-    //   ],
-    //   messages: [
-    //     {_id: "123", clientId: "1234", clientType: "visitor", content: "test-msg", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-    //     {_id: "1234", clientId: "1234", clientType: "visitor", content: "test-msg2", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-    //     {_id: "12345", clientId: "1234", clientType: "visitor", content: "test-msg3", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-    //     {_id: "123456", clientId: "1234", clientType: "visitor", content: "test-msg4", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-    //     {_id: "1234567", clientId: "1234", clientType: "visitor", content: "test-msg5", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-    //     {_id: "12345678", clientId: "1234", clientType: "visitor", content: "test-msg6", created_at: "2022-05-24T13:38:34.584Z", isWhisper: false, roomdId: "54321"},
-    //   ],
-    // })
-
-    // console.log("chatRooms => ", this.chatrooms.map(room => ({ 'chatroom._id': room._id, 'chatroom.members.length': room.members.length, 'chatroom.messages': room.messages })));
-    // console.log("currentUser", this.currentUser)
   },
 
   methods: {
-    // API CALLS TO MONGODB
-    // async getAllRooms() {
-    //   try {
-    //     const response = await axios.get("/api/rooms");
-    //     // console.log("response GET api/rooms", response.data.data.map(
-    //     //   item => ({ "roomId": item.id, "members": item.members.map(i => `${i.name} clientId(${i.id})`), "messages": item.messages })));
-    //     // console.log("look here", response.data.data)
-    //     return response.data.data;
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // },
-
     async getRoom(roomId) {
       console.log("executing getRoom")
       try {
@@ -648,27 +613,6 @@ export default {
         console.error(err);
       }
     },
-
-    // UTILITY FUNCTIONS
-    // async generateChatroomsList() {
-    //   try {
-    //     console.log("running generateChatroomsList");
-    //     const results = await this.getAllRooms();
-    //     console.log("api call response", results);
-
-    //     console.log("this.chatrooms before api call", this.chatrooms)
-
-    //     this.chatrooms = _.unionBy(
-    //       this.convertSchemaOfAPIRoomsResponse(results),
-    //       this.chatrooms,
-    //       (room) => room._id,
-    //     );
-    //     console.log("this.chatrooms after api call", this.chatrooms)
-
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // },
 
     convertConvoMsgSchema(roomId, conversation) {
       // will convert conversation's messages schema of response from getRoom to match data from socket.on("rooms")
@@ -690,7 +634,6 @@ export default {
     getLastMsgAndSender(chatroom) {
       // ensure chatroom.messages is not undefined and is not an empty array
       if (chatroom.messages && chatroom.messages.length > 0) {
-        // console.log("chatroom", chatroom.messages.length);
         const lastMsg = chatroom.messages[chatroom.messages.length - 1];
         const msgSender = this.getMsgSender(lastMsg, chatroom)
         const msg = lastMsg.content;
@@ -720,8 +663,6 @@ export default {
       // console.log("chatWindows", chatWindows);
       chatWindows.forEach((window) => {
           window.scrollTop = window.scrollHeight;
-          // console.log("scrollTop", window.scrollTop);
-          // console.log("scrollHeight", window.scrollHeight);
       });
     },
 
@@ -734,10 +675,7 @@ export default {
         conversationId: this.activeConversation,
       };
 
-      // console.log("newMessage1=> ", {...newMessage});
-
       // if message is whisper
-      // console.log("event=> ", event.target.parentElement.id);
       if (event.target.parentElement.id === "whisper") {
         // console.log("this is a whisper")
         newMessage['isWhisper'] = true;
@@ -746,24 +684,17 @@ export default {
         socket.emit("message", newMessage);
         console.log("message", newMessage)
       }
-      // console.log("newMessage2=> ", newMessage);
 
       // Add message to UI
       let found = this.getTargetRoomIndex(this.activeRoom);
-      // console.log("this.chatrooms=> ", this.chatrooms[found].messages)
       this.chatrooms[found].messages.push({
         ...newMessage,
         clientId: this.currentUser._id,
         _id: "",
       });
-      // console.log("this.chatrooms2=> ", this.chatrooms[found].messages)
 
       this.message = "";
     },
-
-    // sendTypingEvent() {
-    //     Echo.join("chat").whisper("typing", this.user);
-    // },
 
     selectRoom: function(roomId, conversationId) {
       console.log("running selectRoom");
@@ -779,38 +710,18 @@ export default {
 
       // adjust title notification
       this.hideTitleNotifications();
-
-      // try {
-      //   const results = [];
-      //   results.push(await this.getRoom(roomId));
-      //   console.log("start here", results)
-        // this.chatroomsAPIData[`${roomId}`] = results;
-        // console.log(this.chatroomsAPIData[`${roomId}`])
-        // this.chatroomsAPIData = _.unionBy(
-        //   this.chatroomsAPIData,
-        //   results,
-        //   (room) => room.id,
-        // );
-        // console.log("check", this.chatroomsAPIData);
-        // document.getElementById("historyModalBtn").style.display = "";
-
-      // } catch (err) {
-      //   console.error(err);
-      // }
     },
 
     selectIncomingRoom: function (roomId, conversationId) {
-      console.log("running selectIncomingRoom");
-      // console.log("incoming block div of chatroom ", document.getElementById(`${roomId}`).parentElement)
+      // console.log("running selectIncomingRoom");
       event.preventDefault();
       this.selectRoom(roomId, conversationId);
 
-      // join the selected room
       this.joinRoom(roomId, conversationId)
     },
 
-    selectClosedRoom: async function(roomId) {
-      console.log("running selectClosedRoom");
+    selectClosedRoom: function(roomId) {
+      // console.log("running selectClosedRoom");
       try {
         this.roomIsLoading = true;
 
@@ -819,15 +730,15 @@ export default {
           const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
           const lastConversation = results.conversations[results.conversations.length - 1]
           foundRoom.messages = this.convertConvoMsgSchema(roomId, lastConversation);
-          
+
           this.roomIsLoading = false;
         });
 
         this.selectRoom(roomId, undefined);
-      } catch (err) {
+        this.toggleMessageMainEl("hide");
+      } catch(err) {
         console.error(err);
       }
-      this.toggleMessageMainEl("hide");
     },
 
     joinRoom: function(roomId, conversationId) {
@@ -837,20 +748,17 @@ export default {
       if (confirmAction) {
 
         let foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
-        // console.log("found chatroom before joining", ({"_id": foundRoom["_id"], "members": foundRoom["members"], "messages": foundRoom["messages"]}))
 
         // check if currentUser is already a member of foundRoom
         if (foundRoom.members.filter(member => member.clientId === this.currentUser._id).length > 0 ) {
-          console.log("currently a member");
+          // console.log("currently a member");
           return;
         }
-        console.log("currently not a member");
+        // console.log("currently not a member");
 
         foundRoom.members.push(
             {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
         )
-        console.log("found chatroom after joining", foundRoom);
-        console.log("conversationId", conversationId)
 
         socket.emit("join", { roomId: roomId, conversationId: conversationId, name: this.currentUser.name });
 
@@ -863,46 +771,41 @@ export default {
     toggleMsgHistoryListBtn(roomId, conversationId) {
       if (conversationId) {
         const msgHistoryListBtnEl = document.getElementById(`msg-list-btn${roomId}`);
-        console.log(msgHistoryListBtnEl)
         msgHistoryListBtnEl.disabled = false;
       } else {
         const msgHistoryListBtnEl = document.getElementById(`msg-list-btn${roomId}`);
-        console.log(msgHistoryListBtnEl);
         msgHistoryListBtnEl.disabled = true;
       }
     },
 
     populateMessageHistoryList: async function(chatroom) {
-      console.log("running populateMessageHistoryList");
-      console.log(chatroom)
+      // console.log("running populateMessageHistoryList");
       try {
         const results = [];
         if (chatroom.conversationId) {
           // if it is an active or incoming chat, get request to "api/room/{roomId}"
-          console.log("chatroom.conversationId is truthy");
+          // console.log("chatroom.conversationId is truthy");
           results.push(await this.getRoom(chatroom._id));
         } else {
           // closed chat since no conversationId
           // if it is a closed chat, we already have result from get request to "api/room/{roomId}"
           //    passed as param when selectClosedRoom executes
-          console.log("chatroom.conversationId is falsy", chatroom.conversationId);
+          // console.log("chatroom.conversationId is falsy", chatroom.conversationId);
           results.push(chatroom);
-
         }
-        console.log("start here", results)
+        // console.log("check 1: results=>", results)
         this.chatroomsAPIData = _.unionBy(
           this.chatroomsAPIData,
           results,
           (room) => room.id,
         );
-        console.log("check", this.chatroomsAPIData);
+        // console.log("check 2: chatroomsAPIData=>", this.chatroomsAPIData);
       } catch(err) {
         console.error(err);
       }
     },
 
     toggleMessageMainEl(action) {
-      console.log("running toggleMessageMainEl")
       const msgMainEl= document.getElementById("message_main");
       if (action === "show") {
         msgMainEl.style.display = "flex";
@@ -922,7 +825,7 @@ export default {
     },
 
     handleAttachmentUpload(attachmentUrl) {
-      console.log("running handleAttachmentUpload")
+      // console.log("running handleAttachmentUpload")
 
       const newMessage = {
         content: attachmentUrl,
@@ -967,7 +870,7 @@ export default {
         }
       }, 1500);
 
-      this.audio.play().catch(err => console.log(err));
+      this.audio.play().catch(err => console.error(err));
 
       // setInterval(() => {
       //   if (document.hasFocus()) {
