@@ -247,22 +247,28 @@ class ReportsController extends Controller
     public function liveVisitorSessions()
     {
         $liveVisitorSessions = Session::where('endAt', null)->where('clientType', "visitor")->get();
+        $output = array();
         foreach($liveVisitorSessions as $vSession){
             $visitors = Visitor::where("_id", $vSession->clientId)->get();
             //echo $vSession->startAt->toDateTime()->format('U.u')."<br>";
             foreach($visitors as $visitor){
-                $rooms = Room::where('members.clientId',$vSession->clientId)->first();
-                $output[]=array(
-                    "socketId" => $vSession->socketId,
-                    "ipAddress" => $visitor->ipAddress,
-                    "browser" => $visitor->browser,
-                    "roomId" => $rooms->_id,
-                    "fromURL" => $visitor->webpage_source,
-                    "startAt" => $vSession->startAt->toDateTime()->format(DATE_ISO8601),
-                    "time" => "",
-                    "pageTitle" => $vSession->pageTitle,
-                    "fullUrl" => $vSession->fullUrl,
-                );
+                $room = Room::where('members.clientId',$vSession->clientId)->first();
+                $conversation = Conversation:: where('roomId',$room->_id)->where('endAt', null)->get();
+                if($conversation->isNotEmpty()){
+                    $output[]=array(
+                        "socketId" => $vSession->socketId,
+                        "ipAddress" => $visitor->ipAddress,
+                        "browser" => $visitor->browser,
+                        "roomId" => $room->_id,
+                        "fromURL" => $visitor->webpage_source,
+                        "startAt" => $vSession->startAt->toDateTime()->format(DATE_ISO8601),
+                        "time" => "",
+                        "pageTitle" => $vSession->pageTitle,
+                        "fullUrl" => $vSession->fullUrl,
+                    );
+                }else{
+                    //$vSession->endAt = new Date();
+                }
             }
         }
         return response(['data' => $output], 200);

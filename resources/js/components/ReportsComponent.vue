@@ -308,18 +308,18 @@ export default {
 
         socket.on("report", ({ report }) => {
             this.socketReports.push(report);
-            console.log("socket", report);
+            //console.log("socket", report);
         });
         socket.on("report-disconnect", ({ discon }) => {
             //console.log(discon);
             this.socketReports = this.socketReports.filter(reports => reports.socketId != discon);
         });
         socket.on("report-answered", ({ answered }) => {
-            console.log(answered);
+            //console.log(answered);
             this.answeredChats++;
         });     
         socket.on("report-missed", ({ missed }) => {
-            console.log(missed);
+            //console.log(missed);
             this.missedChats++;
         });             
 
@@ -381,7 +381,7 @@ export default {
         async getMissedChats(){
              try {
                 const response = await axios.get('/api/reports/chats/missed');
-                console.log("missed", response.data.data)
+                //console.log("missed", response.data.data)
                 return response.data.data;
             } catch (err) {
                 console.error(err);
@@ -390,7 +390,7 @@ export default {
         async getAnsweredChats(){
              try {
                 const response = await axios.get('/api/reports/chats/answered');
-                console.log("answered", response.data.data)
+                //console.log("answered", response.data.data)
                 return response.data.data;
             } catch (err) {
                 console.error(err);
@@ -407,9 +407,9 @@ export default {
         },
         async generateSessionList() {
             try {
-                console.log("running generateSessionList");
+                //console.log("running generateSessionList");
                 const results = await this.getliveVisitors();
-                // console.log("api call response", results);
+                 //console.log("getliveVisitors response", results);
                 // console.log("convertedResults", convertedResults);
 
                 this.socketReports = _.unionBy(
