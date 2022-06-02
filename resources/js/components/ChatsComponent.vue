@@ -147,7 +147,7 @@
         :key="chatroom._id">
         <div
           class="details"
-          v-on:click="selectClosedRoom(chatroom._id)"
+          v-on:click.prevent="selectClosedRoom(chatroom._id)"
           v-bind:id="chatroom._id">
 
           <!--room id/username section-->
@@ -254,8 +254,15 @@
         class="card-body chatmessages roomMessages"
         v-bind:id="'messages_room' + chatroom._id">
 
-          <div>
+          <div class="d-flex justify-content-start">
             <h4>{{ chatroom.members[0].clientName }}</h4>
+                        
+            <!-- Spinner For Room Loading -->
+            <div v-if="roomIsLoading" class="pt-1">
+              <div class="ms-2 spinner-border spinner-border-sm" style="color: #FA6121;" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
           </div>
 
           <div class="mb-3">
@@ -263,6 +270,7 @@
               {{ chatroom.conversationId ? "Assigned" : "Previously Assigned" }}: {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </h5>
             <h6 class="lastconversation">{{ chatroom.conversationId ? "" : "Last Conversation" }}</h6>
+
           </div>
 
           <!--CHATBOX START-->
@@ -354,12 +362,19 @@
                     v-bind:id="'msg-list-btn'+chatroom._id"
                   >
                     Chat History
+
                   </button>
+
+                  <!-- Spinner For Room Loading -->
+                  <div class="ms-2 d-inline-block">
+                    <div v-if="roomIsLoading" class="spinner-border spinner-border-sm" role="status"  style="color: #FA6121;">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
 
                   <!--HISTORY LIST START-->
                   <div class="chathistorylist" style="overflow-y: scroll" >
                     <!--HISTORY BLOCK START-->
-                    <!-- <MessageHistoryComponent></MessageHistoryComponent> -->
                     <div
                       v-for="conversation in chatroomsAPIData.find(room => room.id === chatroom._id) ?
                         chatroomsAPIData.find(room => room.id === chatroom._id).conversations :
@@ -436,6 +451,8 @@ export default {
       origTitle: document.title,
       audio: new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3"),
       titleNotificationInterval: undefined,
+      
+      roomIsLoading: false, // States if a GET room API call is running
     };
   },
 
@@ -448,7 +465,7 @@ export default {
     console.log("adrian",this.crm);
 
     window.addEventListener("focus", () => {
-      console.log("document is in focus");
+      // console.log("document is in focus");
 
       // if (this.activeRoom) {
       //   console.log("1=>", this.chatroomsUnreadNotif[this.activeRoom])
@@ -794,24 +811,19 @@ export default {
 
     selectClosedRoom: async function(roomId) {
       console.log("running selectClosedRoom");
-      event.preventDefault();
       try {
-        const results = await this.getRoom(roomId);
+        this.roomIsLoading = true;
 
-        this.populateMessageHistoryList(results);
+        this.getRoom(roomId).then(results => {
+          this.populateMessageHistoryList(results);
+          const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
+          const lastConversation = results.conversations[results.conversations.length - 1]
+          foundRoom.messages = this.convertConvoMsgSchema(roomId, lastConversation);
+          
+          this.roomIsLoading = false;
+        });
 
         this.selectRoom(roomId, undefined);
-
-        // console.log("results", results);
-        // console.log("this.chatrooms before=>", this.chatrooms);
-        const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
-        const lastConversation = results.conversations[results.conversations.length - 1]
-
-        foundRoom.messages = this.convertConvoMsgSchema(roomId, lastConversation);
-        // console.log("this.chatrooms after=>", this.chatrooms);
-
-
-
       } catch (err) {
         console.error(err);
       }
