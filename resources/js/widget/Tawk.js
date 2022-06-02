@@ -161,6 +161,15 @@ export class Tawk {
             .message-container * {
                 font-family: 'Raleway', sans-serif;
             }
+
+            .button-container {
+                background-color: none;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                font-color: ${this.color};
+            }
+
             .icon {
                 filter: ${computeCssFilters(this.color).result.filterRaw};
                 cursor: pointer;
@@ -169,16 +178,15 @@ export class Tawk {
                 top: 9px;
                 left: 9px;
                 transition: transform .3s ease;
+                fill: ${this.color};
+                stroke: ${this.color};
+                font-color: ${this.color};
             }
+
             .hidden {
                 transform: scale(0);
             }
-            .button-container {
-                background-color: none;
-                width: 60px;
-                height: 60px;
-                border-radius: 50%;
-            }
+            
             .message-container {
                 box-shadow: 0 0 18px 8px rgba(0, 0, 0, 0.1), 0 0 32px 32px rgba(0, 0, 0, 0.08);
                 background-color: #E9EDEE;
@@ -190,9 +198,11 @@ export class Tawk {
                 transition: max-height .2s ease;
                 border-radius: 5px;
             }
+
             .message-container.hidden {
                 max-height: 0px;
             }
+
             .message-container h2 {
                 margin: 0;
                 padding: 20px 20px;
@@ -207,37 +217,23 @@ export class Tawk {
                 margin: 0;
                 padding: 0;
             }
+
             h2 ul li{
                 display: inline;
             }
+
             h2 ul li button{
                 background-color: ${this.color};
                 border: none;
                 color: white;
             }
+
             h2 ul li button:hover{
                 background-color: lightgray;
                 cursor: pointer;
-                color:#FA6121;
+                color: ${this.color};
             }
-            h2 ul li button .tooltiptext{
-                visibility: hidden;
-                width: 65px;
-                background-color: lightgrey;
-                color: black;
-                text-align: center;
-                border-radius: 2px;
-                padding: 5px 0;
 
-            /* Position the tooltip */
-                position: absolute;
-                z-index: 1;
-                top: 10%;
-                left: 80%;
-            }
-            h2 ul li button:hover .tooltiptext{
-                visibility: visible;
-            }
             .message-container .content {
                 margin: 20px 10px ;
                 padding: 10px;
@@ -246,9 +242,11 @@ export class Tawk {
                 background-color: #E9EDEE;
                 flex-direction: column;
             }
+
             .message-container .content .welcome {
                 vertical-align: middle;
             }
+
             .message-container .content .messages {
                 overflow-y: scroll;
                 height: 330px;
@@ -256,6 +254,7 @@ export class Tawk {
                 background-color: #ffffff;
                 font-family: 'Raleway', sans-serif;
             }
+
             .content .messages .form {
                 margin: 5px 0;
                 font-family: 'Raleway', sans-serif;
@@ -263,39 +262,48 @@ export class Tawk {
                 border-color: #627894;
                 border: 2px;
             }
+
             .content .messages .form input {
                 padding: 10px;
                 border-color: #627894;
                 border: 2px;
             }
+
             .content .messages .message {
                 display: flex;
                 padding: 10px;
             }
+
             .content .messages .message > div {
                 max-width: 70%;
                 background: #ffffff;
                 box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.05);
                 padding: 10px;
             }
+
             .content .messages .message.sent-message {
                 justify-content: flex-end;
             }
+
             .content .messages .message.received-message {
                 justify-content: flex-start;
             }
+
             .content .messages .message .name {
                 font-size: 12px;
                 color: #FA6121;
             }
+
             .content .messages .message .text {
                 word-wrap: break-word;
             }
+
             .content .messages .update {
                 text-align: center;
                 padding: 10px;
                 font-style: italic;
             }
+
             .message-container form * {
                 margin: 5px 0;
                 font-family: 'Raleway', sans-serif;
@@ -303,12 +311,14 @@ export class Tawk {
                 border-color: #627894;
                 border: 2px;
             }
+
             .message-container form input {
                 padding: 10px;
                 border-color: #627894;
                 border: 2px;
                 width: 95%;
             }
+
             .message-container form button {
                 font-family: 'Raleway', sans-serif;
                 font-weight: bold;
@@ -321,9 +331,11 @@ export class Tawk {
                 position: relative;
                 opacity: 0.8;
             }
+
             .message-container form button:hover {
                 opacity: 1.0;
             }
+
             .content .messages {
                 overflow-y: scroll;
                 max-height: 320px;
@@ -331,53 +343,208 @@ export class Tawk {
                 background-color: #ffffff;
                 font-family: "Raleway", sans-serif;
             }
+
             .content .messages .message {
                 display: flex;
                 padding: 10px;
             }
+
             .content .messages .message > div {
                 max-width: 70%;
                 background: #ffffff;
                 box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.05);
                 padding: 10px;
             }
+
             .content .messages .message.sent-message {
                 justify-content: flex-end;
             }
+
             .content .messages .message.received-message {
                 justify-content: flex-start;
             }
+            
             .content .messages .message .name {
                 font-size: 10px;
                 padding-bottom: 5px;
                 color: ${this.color};
                 font-weight: bold;
             }
+
             .content .messages .message .text {
                 word-wrap: break-word;
                 font-size: 14px;
                 color: black;
                 font-weight: normal;
             }
+
             .content .messages .update {
                 text-align: center;
                 padding: 10px;
                 font-style: italic;
             }
+
             .inputs {
                 display: flex;
                 margin-bottom: 5px;
                 align-content: space-around;
             }
+            
             .inputs > .message-input {
                 flex: 1 0 90%;
             }
+
             .inputs > .file-sharing {
                 flex: 1 0 10%;
             }
+
             .end-chat {
                 text-align: center;
             }
+
+            .UploadButton {
+                max-height: min-content;
+                padding: 10px;
+                color: ${this.color};
+                background: none;
+                border: none;
+                justify-content: center;
+                align-items: center;
+                float: right;
+            }
+        
+            .UploadButton:hover {
+                cursor: pointer;
+            }
+        
+            .closeModalBtn {
+                background-color:  ${this.color};
+                border: none;
+                color: white;
+            }
+        
+            .spinnerButton {
+                transition: all 0.2s;
+            }
+        
+            .closeModalBtn:hover {
+                font-weight: bold;
+                cursor: pointer;
+            }
+        
+            .UploadField {
+                padding: 0.375rem 0.75rem;
+                margin: 0;
+            }
+        
+            .UploadAndSendBtn {
+                width: 40%;
+            }
+        
+            .UploadAndSendBtn--loading::after {
+                content: "";
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                margin: auto;
+                border: 4px solid transparent;
+                border-top-color: #ffffff;
+                border-radius: 50%;
+                animation: button-loading-spinner 1s ease infinite;
+            }
+        
+            @keyframes button-loading-spinner {
+                from {
+                    transform: rotate(0turn);
+                }
+        
+                to {
+                    transform: rotate(1turn);
+                }
+            }
+        
+            .FileUploadModal-actions {
+                display: flex;
+                flex-flow: row nowrap;
+                justify-content: space-evenly;
+                margin-top: 0.75rem;
+            }
+        
+            .FileUploadModal-actions > .btn {
+               flex: 1; 
+            }
+        
+            /* MODAL */
+        
+            .modal-backdrop {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.3);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        
+            .modal {
+                background: #FFFFFF;
+                box-shadow: 2px 2px 20px 1px;
+                overflow-x: auto;
+                display: flex;
+                flex-direction: column;
+                border-radius: 5px;
+            }
+        
+            .modal-header,
+            .modal-footer {
+                padding: 15px;
+                display: flex;
+            }
+        
+            .modal-header {
+                position: relative;
+                border-bottom: 1px solid #eeeeee;
+                color: white;
+                background-color:  ${this.color};
+                justify-content: space-between;
+            }
+        
+            .modal-footer {
+                border-top: 1px solid #eeeeee;
+                flex-direction: column;
+            }
+        
+            .modal-body {
+                position: relative;
+                padding: 20px 10px;
+            }
+        
+            .modal-fade-enter,
+            .modal-fade-leave-to {
+                opacity: 0;
+            }
+        
+            .modal-fade-enter-active,
+            .modal-fade-leave-active {
+                transition: opacity .5s ease;
+            }
+
+            .modal .cancelButton {
+                background-color: lightgrey;
+                width: 40%;
+            }
+
+            .modal .cancelButton:hover {
+                background-color: grey;
+            }
+        
+            
 
 
         `.replace(/^\s+|\n/gm, '');

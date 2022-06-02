@@ -7,7 +7,7 @@
                 <!-- END CHAT BUTTON -->
                 <!-- TO DO: Edit behavior of the button to End Chat -->
                 <li style="float:right" v-if="!chatEnded">
-                    <button id=exit-chat @click="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i><span class="tooltiptext">End chat</span></button>
+                    <button id=exit-chat title="End Conversation" @click="endConversation()"><i class="material-icons" style="font-size:20px;">logout</i></button>
                 </li>
             </ul>
         </h2>
