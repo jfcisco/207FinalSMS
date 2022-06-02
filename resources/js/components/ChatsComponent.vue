@@ -447,7 +447,7 @@ export default {
     };
     console.log("adrian",this.crm);
 
-    document.addEventListener("focus", () => {
+    window.addEventListener("focus", () => {
       console.log("document is in focus");
 
       // if (this.activeRoom) {
