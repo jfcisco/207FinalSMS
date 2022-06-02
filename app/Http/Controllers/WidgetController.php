@@ -331,7 +331,7 @@ class WidgetController extends Controller
             'name' => 'string|required',
             'is_active' => 'boolean|required',
             'widget-icon' => 'file',
-            'color' => 'regex:/[#]{0-9a-zA-Z]{6},
+            'color' => 'regex:/^[#]{0-9a-zA-Z]{6}$/',
             
             // Availability data
             'availability_timezone' => 'timezone',
