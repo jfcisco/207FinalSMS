@@ -196,9 +196,46 @@ export class Tawk {
                 margin: 0;
                 padding: 20px 20px;
                 color: #fff;
-                background-color: #466289;
+                background-color: ${this.color};
                 border-top-right-radius: 5px;
                 border-top-left-radius: 5px;
+            }
+            
+            h2 ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            h2 ul li{
+                display: inline;
+            }
+            h2 ul li button{
+                background-color: ${this.color};
+                border: none;
+                color: white;
+            }
+            h2 ul li button:hover{
+                background-color: lightgray;
+                cursor: pointer;
+                color:#FA6121;
+            }
+            h2 ul li button .tooltiptext{
+                visibility: hidden;
+                width: 65px;
+                background-color: lightgrey;
+                color: black;
+                text-align: center;
+                border-radius: 2px;
+                padding: 5px 0;
+
+            /* Position the tooltip */
+                position: absolute;
+                z-index: 1;
+                top: 10%;
+                left: 80%;
+            }
+            h2 ul li button:hover .tooltiptext{
+                visibility: visible;
             }
             .message-container .content {
                 margin: 20px 10px ;
@@ -275,16 +312,73 @@ export class Tawk {
                 font-family: 'Raleway', sans-serif;
                 font-weight: bold;
                 cursor: pointer;
-                background-color: #FA6121;
+                background-color: ${this.color};
                 color: #fff;
                 border: 0;
                 border-radius: 4px;
                 padding: 10px;
                 position: relative;
+                opacity: 0.8;
             }
             .message-container form button:hover {
-                background-color: #FFB739;
+                opacity: 1.0;
             }
+            .content .messages {
+                overflow-y: scroll;
+                max-height: 320px;
+                margin-bottom: 5px;
+                background-color: #ffffff;
+                font-family: "Raleway", sans-serif;
+            }
+            .content .messages .message {
+                display: flex;
+                padding: 10px;
+            }
+            .content .messages .message > div {
+                max-width: 70%;
+                background: #ffffff;
+                box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.05);
+                padding: 10px;
+            }
+            .content .messages .message.sent-message {
+                justify-content: flex-end;
+            }
+            .content .messages .message.received-message {
+                justify-content: flex-start;
+            }
+            .content .messages .message .name {
+                font-size: 10px;
+                padding-bottom: 5px;
+                color: ${this.color};
+                font-weight: bold;
+            }
+            .content .messages .message .text {
+                word-wrap: break-word;
+                font-size: 14px;
+                color: black;
+                font-weight: normal;
+            }
+            .content .messages .update {
+                text-align: center;
+                padding: 10px;
+                font-style: italic;
+            }
+            .inputs {
+                display: flex;
+                margin-bottom: 5px;
+                align-content: space-around;
+            }
+            .inputs > .message-input {
+                flex: 1 0 90%;
+            }
+            .inputs > .file-sharing {
+                flex: 1 0 10%;
+            }
+            .end-chat {
+                text-align: center;
+            }
+
+
         `.replace(/^\s+|\n/gm, '');
         document.head.appendChild(styleTag);
     }
