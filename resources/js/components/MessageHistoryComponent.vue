@@ -14,11 +14,10 @@
 
                 <!-- Modal content-->
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header chatmodalheader">
 
-                        <!-- <h5 class="modal-title">{{ chatroom.hasOwnProperty("members") ? chatroom.members[0].name : [] }}</h5> -->
-                        <!-- <h5 class="modal-title">{{ conversation.hasOwnProperty("members") ? conversation.members.map(member => member.name): "" }}</h5> -->
-                        <h5 class="modal-title">Visitor: {{chatroomMembers[0] ? chatroomMembers[0].name : ""}} | Assigned User: {{ chatroomMembers.length === 1 ? "None" : chatroomMembers.slice(1, chatroomMembers.length).reduce((result, member) => result + `${member.name}, `,"").slice(0, -2) }}</h5>
+                        
+                        <h5 class="modal-title chatmodaltitle">Visitor: {{chatroomMembers[0] ? chatroomMembers[0].name : ""}} | Assigned User: {{ chatroomMembers.length === 1 ? "None" : chatroomMembers.slice(1, chatroomMembers.length).reduce((result, member) => result + `${member.name}, `,"").slice(0, -2) }}</h5>
 
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
@@ -26,58 +25,26 @@
 
 
                     <div class="modal-body">
-
-                        <!-- CONVERSATION DETAILS START -->
-                        <!-- <div class="historydetails">
-                            <p>ID:&nbsp;conversationId&nbsp;|&nbsp;</p>
-                            <p>Start At:&nbsp;conversationStartAt&nbsp;|&nbsp;</p>
-                            <p>End At:&nbsp;conversationEndAt</p>
-                        </div> -->
-                        <!-- CONVERSATION DETAILS END-->
-
-                        <!-- <ul
-                            v-for="conversation in chatroom.conversations"
-                            :conversation="conversation"
-                            :key="conversation.id">
-
-                            <li> -->
-                                <p>conversation ID: {{ conversation.id }}</p>
-                                <p>Started At: {{ conversation.startAt }}</p>
-                                <p>Ended At: {{ conversation.endAt }}</p>
-                                <ul
-                                    class="list-unstyled"
-                                    v-for="message in conversation.messages"
+                        <div class="historymodaldetails">
+                            <span>Conversation: {{ conversation.id }}</span>
+                            <p>started: {{ conversation.startAt }}</p>
+                            <p>ended: {{ conversation.endAt }} </p>
+                        </div>
+                        
+                            <ul
+                                class="list-unstyled"
+                                v-for="message in conversation.messages"
                                     :message="message"
                                     :key="message.id">
                                     <li>
                                         <!-- api call returns null for all message.client_name -->
                                         <!-- <p>{{ message.client_type === "user" ? "user" : "visitor" }} <i>{{ message.is_whisper ? "(whisper)" : "" }}</i>: {{ message.content }}</p> -->
-                                        <p>{{ chatroomMembers.find(member => member.id === message.client_id).name }} <i>{{ message.is_whisper ? "(whisper)" : "" }}</i>: {{ message.content }}</p>
+
+                                        <p class="messageline">{{ chatroomMembers.find(member => member.id === message.client_id).name }} <i>{{ message.is_whisper ? "(whisper)" : "" }}</i>: {{ message.content }}</p>
 
                                     </li>
                                 </ul>
-                            <!-- </li>
-
-                        </ul> -->
-
-
-                        <!-- <div class="transcriptheight" style="overflow-y: scroll"> -->
-                            <!-- TRANSCRIPT START -->
-                            <!-- <ul class="list-unstyled" style="margin-bottom:0"> -->
-
-                                <!-- CHAT MESSAGE LINE START -->
-                                <!-- <li>
-                                    <div class="messageline">
-                                        <b> insert message-sender-name: </b>
-                                        <p>&nbsp; message.content </p>
-                                    </div>
-                                </li> -->
-                                <!-- CHAT MESSAGE LINE END -->
-
-                            <!-- </ul> -->
-                            <!-- TRANSCRIPT START -->
-
-                        <!-- </div> -->
+                    
                     </div>
 
                 </div>
@@ -99,3 +66,71 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+
+
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  border: 1px solid white;
+  padding: 2px 0;
+  background-color: white;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  
+  background-color: #fa6121;
+  
+}
+
+
+.chatmodalheader{
+  background: #627894;
+
+}
+
+
+.chatmodaltitle{
+  color: white;
+  font-weight:600;
+  font-size: 1em;
+  }
+
+.historymodaldetails p{
+    color:#627894;
+    margin-bottom:0px;
+    font-size:0.9em;
+}
+  
+.historymodaldetails span{
+    font-weight:600;
+    color:#466289;
+    font-size:0.9em;
+  }
+
+.list-unstyled{
+    margin-top:20px;
+}
+
+.messageline{
+  font-size: .9em;
+  color: #3D3E3E;
+  margin:0;
+  padding: 0;
+}
+
+
+</style>
