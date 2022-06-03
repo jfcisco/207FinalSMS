@@ -15,8 +15,8 @@ const tawk = new Tawk({
     widgetId: "<?php echo $widgetId; ?>",
     
     // Scheduler configuration variables
-    hasScheduledAvailability: ("<?php echo $hasScheduledAvailability; ?>" === "true"),
-    schedulerEnabledForToday: ("<?php echo $enabledForToday; ?>" === "true"),
+    hasScheduledAvailability: JSON.parse("<?php echo $hasScheduledAvailability; ?>"),
+    schedulerEnabledForToday: JSON.parse("<?php echo $enabledForToday; ?>"),
     availabilityStartTime: new Date("<?php echo $availabilityStartTime; ?>"),
     availabilityEndTime: new Date("<?php echo $availabilityEndTime; ?>"),
 
@@ -25,5 +25,5 @@ const tawk = new Tawk({
     icon: "<?php echo $icon; ?>", 
 
     // Feature variables
-    isFileSharingEnabled: ("<?php echo $isFileSharingEnabled ?>" === "true")
+    isFileSharingEnabled: JSON.parse("<?php echo $isFileSharingEnabled ?>")
 });
