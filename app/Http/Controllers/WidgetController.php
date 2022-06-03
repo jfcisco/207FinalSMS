@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatWidget;
+use App\Models\Icon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -53,7 +54,8 @@ class WidgetController extends Controller
             'template' => $this->generateTemplate($appUrl, $userId, $widget->_id),
             'currentWidget' => $widget,
             'widgets' => $widgets,
-            'timezones' => $this->generateTimezoneDropdownList()
+            'timezones' => $this->generateTimezoneDropdownList(),
+            'icons' => Icon::all()
         ]);
     }
 
