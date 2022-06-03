@@ -115,6 +115,30 @@
                                         <img class="img-fluid" src="/assets/comment-medical-solid.svg">
                                     </label>
                                 </div>
+
+                                <div class="col widget-icon-option d-flex mb-2" style="width:100px">
+                                    <input type="radio" name="widget-icon" value="/assets/chat2.svg" class="me-3 align-self-center" id="sms-icon">
+                                        
+                                    <label for="sms-icon">
+                                        <img class="img-fluid" src="/assets/chat2.svg">
+                                    </label>
+                                </div>
+
+                                <div class="col widget-icon-option d-flex mb-2" style="width:100px">
+                                    <input type="radio" name="widget-icon" value="/assets/chat3.svg" class="me-3 align-self-center" id="two-bubbles-icon">
+                                        
+                                    <label for="two-bubbles-icon">
+                                        <img class="img-fluid" src="/assets/chat3.svg">
+                                    </label>
+                                </div>
+
+                                <div class="col widget-icon-option d-flex mb-2" style="width:100px">
+                                    <input type="radio" name="widget-icon" value="/assets/chat4.svg" class="me-3 align-self-center" id="headset-icon">
+                                        
+                                    <label for="headset-icon">
+                                        <img class="img-fluid" src="/assets/chat4.svg">
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
