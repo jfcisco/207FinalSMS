@@ -97,10 +97,10 @@
                         </div>
                             
                         <div class="widget-block">
-                            <label class="chat-label" for="chat-icon">Widget Icon</label>
+                            <label class="chat-label2" for="chat-icon">Widget Icon</label>
 
-                            <div class="w-100 d-flex flex-column">
-                                <div class="widget-icon-option w-100 d-flex justify-content-start mb-2">
+                            <div class="row ">
+                                <div class="col widget-icon-option d-flex mb-2" style="width:100px">
                                     <input type="radio" name="widget-icon" value="/assets/chat.svg" class="me-3 align-self-center" id="default-icon" checked="checked">
                                         
                                     <label for="default-icon">
@@ -108,7 +108,7 @@
                                     </label>
                                 </div>
 
-                                <div class="widget-icon-option w-100 d-flex justify-content-start mb-2">
+                                <div class="col widget-icon-option d-flex justify-content-start mb-2" style="width:100px"> 
                                     <input type="radio" name="widget-icon" value="/assets/comment-medical-solid.svg" class="me-3 align-self-center" id="chat-medical-icon">
                                         
                                     <label for="chat-medical-icon">
@@ -119,7 +119,7 @@
                         </div>
 
                         <div class="widget-block">
-                            <label class="chat-label">Widget Color</label>  
+                            <label class="chat-label2">Widget Color</label>  
                             <input class="form-control form-control-color form-control-widget-full" type="color" name="widget-color" id="widget-color" value="{{ old('widget-color', $currentWidget->color) }}">
                         </div>
 
@@ -238,9 +238,10 @@
                             initial-domains-list-json="{{old('allowed_domains', json_encode($currentWidget->allowed_domains ?? array("")))}}"
                         ></widget-domains-picker>
                     </div>
+                </div>
 
                 @if (Auth::user()->role === "admin")
-                <div class="row my-4 widget-save">
+                <div class="row widget-save">
                     <div class="col-4">
                         <button type="submit" class="btn btn-light w-100 widget-save-button">Save Changes</button>
                     </div>
@@ -248,7 +249,7 @@
                 @endif
                 
             </form>
-        </div>
+        
             @endif
         </section>
     </div>
