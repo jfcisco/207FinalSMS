@@ -101,7 +101,11 @@
 
                             <div class="row ">
                                 <div class="col widget-icon-option d-flex mb-2" style="width:100px">
-                                    <input type="radio" name="widget-icon" value="/assets/chat.svg" class="me-3 align-self-center" id="default-icon" checked="checked">
+                                    <input type="radio" name="widget-icon" value="/assets/chat.svg" class="me-3 align-self-center" id="default-icon" 
+                                        @if(old('widget-icon', $currentWidget->icon) === "/assets/chat.svg")
+                                            checked="checked"
+                                        @endif
+                                    >
                                         
                                     <label for="default-icon">
                                         <img class="img-fluid" src="/assets/chat.svg">
@@ -109,7 +113,11 @@
                                 </div>
 
                                 <div class="col widget-icon-option d-flex justify-content-start mb-2" style="width:100px"> 
-                                    <input type="radio" name="widget-icon" value="/assets/comment-medical-solid.svg" class="me-3 align-self-center" id="chat-medical-icon">
+                                    <input type="radio" name="widget-icon" value="/assets/comment-medical-solid.svg" class="me-3 align-self-center" id="chat-medical-icon"
+                                        @if(old('widget-icon', $currentWidget->icon) === "/assets/comment-medical-solid.svg")
+                                            checked="checked"
+                                        @endif
+                                    >
                                         
                                     <label for="chat-medical-icon">
                                         <img class="img-fluid" src="/assets/comment-medical-solid.svg">

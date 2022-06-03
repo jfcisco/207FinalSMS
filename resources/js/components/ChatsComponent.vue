@@ -289,6 +289,9 @@
                         </b>
                         <p v-if="!message.content.startsWith('files/')">&nbsp;{{ message.content }}</p>
                         <p v-else><a :href="message.content">&nbsp;{{ message.content.slice(6, message.content.length) }}</a></p>
+                        
+                        <!-- Timestamp -->
+                        <p class="ms-auto timestamp">{{formatTimestamp(message.created_at)}}</p>
                     </div>
 
                 </li>
@@ -654,6 +657,7 @@ export default {
         content: this.message,
         roomId: this.activeRoom,
         conversationId: this.activeConversation,
+        created_at: new Date().toISOString()
       };
 
       // if message is whisper
@@ -711,7 +715,8 @@ export default {
           const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
           const lastConversation = results.conversations[results.conversations.length - 1]
           foundRoom.messages = this.convertConvoMsgSchema(roomId, lastConversation);
-
+        })
+        .finally(() => {
           this.roomIsLoading = false;
         });
 
@@ -766,6 +771,7 @@ export default {
         if (chatroom.conversationId) {
           // if it is an active or incoming chat, get request to "api/room/{roomId}"
           // console.log("chatroom.conversationId is truthy");
+          this.roomIsLoading = true;
           results.push(await this.getRoom(chatroom._id));
         } else {
           // closed chat since no conversationId
@@ -783,6 +789,8 @@ export default {
         // console.log("check 2: chatroomsAPIData=>", this.chatroomsAPIData);
       } catch(err) {
         console.error(err);
+      } finally {
+        this.roomIsLoading = false;
       }
     },
 
@@ -812,6 +820,7 @@ export default {
         content: attachmentUrl,
         roomId: this.activeRoom,
         conversationId: this.activeConversation,
+        created_at: new Date().toISOString()
       };
 
       socket.emit("message", newMessage);
@@ -859,8 +868,16 @@ export default {
       //     this.totalNotifCount = 0;
       //   }
       // }, 100);
-    }
+    },
 
+    formatTimestamp(dateIsoString) {
+      const localeOptions = {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      };
+
+      return new Date(dateIsoString).toLocaleString([], localeOptions);
+    }
   },
 };
 
