@@ -134,7 +134,6 @@ body{
 }
 
 
-
 .activesessions{
   max-height: 30vh;
 }
@@ -176,7 +175,7 @@ body{
 }
 
 .inactivesessions{
-  max-height: 20vh;
+  max-height: 30vh;
   position:relative;
   bottom:0;
 }
@@ -443,18 +442,23 @@ ion-icon {
 .historyblock{
   position: relative;
   width:  100%;
-  border-bottom: 1px solid rgba(233,237,238,0.1);
+  border-bottom: 1px solid rgb(233,237,238);
   cursor:  pointer;
   border-radius: 10px;
-  padding:5px 10px;
+  padding:15px;
   text-align:left;
   border:none;
   background:white;
+  font-size:0.9em;
   p{
     color:#627894;
     margin-bottom:0px;
   }
   
+  span{
+    font-weight:600;
+    color:#466289;
+  }
 
 }
 
@@ -464,45 +468,26 @@ ion-icon {
   p{
   color:#fa6121;
   }
+  
 }
 
+.chathistorybutton{
+  border:none;
+  font-size:1.3em;
+  margin:10px 0px 0px;
+  padding: 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  width:100%;
+}
 
 .historydetails {
   font-size: 13px;
   color:darkgrey;
   display: flex;
 }
-
-
-.messageline{
-  position:  relative;
-  display:  flex;
-  width:  100%;
-  font-size: 14px;
-  color:#627894;
-}
-
-.transcriptheight{
-  max-height:70vh;
-}
-
-.transcriptheight::-webkit-scrollbar-track {
-  border: 1px solid white;
-  padding: 2px 0;
-  background-color: white;
-}
-
-.transcriptheight::-webkit-scrollbar {
-  width: 3px;
-}
-
-.transcriptheight::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-  background-color: #fa6121;
-  
-}
-
 
 
 //FILE UPLOAD COMPONENTS
@@ -574,7 +559,6 @@ ion-icon {
 
 .chathistory{
   padding:10px;
-  margin-top:5px;
   border:lightgrey;
   background-color:white;
   color:#627894;
@@ -583,7 +567,7 @@ ion-icon {
 }
 
 .chathistorylist{
-	max-height:53vh;
+	height:65vh;
 }
 
 .chathistorylist::-webkit-scrollbar-track {
@@ -593,7 +577,7 @@ ion-icon {
 }
 
 .chathistorylist::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 
 .chathistorylist::-webkit-scrollbar-thumb {
@@ -602,8 +586,6 @@ ion-icon {
   background-color: #fa6121;
   
 }
-
-
 
 
 // ADDITIONAL MODAL FORMATTING
@@ -800,11 +782,6 @@ ion-icon {
   color:#e9edee;
 }
 
-.widget-details-form{
-  position:relative;
-  height:92vh;
-}
-
 .widget-details-container{
   position:relative;
 }
@@ -820,6 +797,7 @@ ion-icon {
   justify-content: space-between;
   align-items: center;
 }
+
 
 .widget-save-button {
     color: #FA6121;
@@ -837,12 +815,12 @@ ion-icon {
 
 .chat-subheader{
   color:#e9edee;
-  margin-top:40px;
+  margin-top:30px;
 }
 
 .chat-subheader-3{
   color:#e9edee;
-  margin-top:40px;
+  margin-top:30px;
 }
 
 .scheduler-scroll{
@@ -856,12 +834,11 @@ ion-icon {
 }
 
 .scheduler-scroll::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 
 .scheduler-scroll::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  box-shadow: inset 0 0 6px rgba(0,0,0,.3);
   background-color: #fa6121;
   
 }
@@ -875,6 +852,15 @@ ion-icon {
 .chat-label {
   display: inline-block;
   width: 200px;
+  text-align: left;
+  padding-right:10px;
+  font-size:1rem;
+  color:#e9edee;
+}
+
+.chat-label2 {
+  display: inline-block;
+  width: 150px;
   text-align: left;
   padding-right:10px;
   font-size:1rem;
@@ -911,7 +897,7 @@ ion-icon {
 }
 
 .widget-code{
-  height:200px;
+  height:230px;
   border-radius:10px;
   margin-left:10px;
 }

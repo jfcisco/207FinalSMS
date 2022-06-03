@@ -112,7 +112,7 @@
 
           <!-- assigned room users (Admin/Agent) -->
           <div class="listHead">
-            <p style="font-weight: 500; font-style: italic;">
+            <p style="font-style: italic; font-size: 0.9em;  font-weight:100;">
               Assigned: {{ getAssignedToRoom(chatroom) }}
             </p>
           </div>
@@ -164,7 +164,7 @@
 
           <!-- assigned room users (Admin/Agent) -->
           <div class="listHead">
-            <p style="font-weight: 500; font-style: italic;">
+            <p style="font-style: italic; font-size: 0.9em;  font-weight:100;">
               Previously Assigned: {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </p>
           </div>
@@ -181,7 +181,6 @@
       <!--CLOSED CHAT BLOCK END-->
     </div>
     <!--CLOSED SESSIONS END-->
-
   </div>
   <!--ROOM LISTS END-->
 
@@ -207,13 +206,7 @@
     </div>
     <!--MAIN INPUT MESSAGE BOX END-->
 
-    <!--HISTORY BLOCK START-->
-    <!-- <MessageHistoryComponent></MessageHistoryComponent> -->
-    <!-- <button id="historyModalBtn" class="historyblock" title="Check Transcript" data-bs-toggle="modal" data-bs-target="#CheckTranscript" style="display:none">
-      <div>
-        <p>CHAT HISTORY</p>
-      </div>
-    </button> -->
+    
     <!--HISTORY BLOCK START-->
     <MessageHistoryComponent
       :conversation="chatroomsAPIData.find(room => room.id === activeRoom) ?
@@ -329,34 +322,22 @@
   <!--MAIN CHAT WINDOW END-->
 
   <!--CHAT HISTORY-->
-  <div class="col-lg-2 col-sm-3">
+  <div class="col-lg-2 col-sm-3 mt-5 chathistoryfull">
     <!--CHAT HISTORY-->
     <div
-      class="mainchat2"
+      class="chathistoryfull"
       v-for="chatroom in chatrooms"
       :chatroom="chatroom"
       v-show="chatroom._id == activeRoom"
       :key="chatroom._id">
 
-            <div class="chathistoryfull">
+            <div>
 
-              <div class="row mt-5">
-                <div class="chathistory"> {{ chatroom.members[0].clientName }}</div>
-                <div class="chathistory"> visitor location/country</div>
-                <div class="chathistory"> visitor IP</div>
-                <div class="chathistory"> visitor device details</div>
-              </div>
-
-
-              <div class="row" style="text-align:center">
-                <div class="col chathistory">DUR</div>
-                <div class="col chathistory">VLV</div>
-                <div class="col chathistory">NOC</div>
-              </div>
-
+              
               <div class="row">
                 <div class="chathistory mt-2">
                   <button
+                    class="chathistorybutton"
                     style="font-weight:600; font-size:16px"
                     v-on:click="populateMessageHistoryList(chatroom)"
                     v-bind:id="'msg-list-btn'+chatroom._id"
@@ -389,8 +370,8 @@
                         data-bs-target="#CheckTranscript"
                         v-on:click="() => { activeConversationHistoryId = conversation.id }"
                       >
-                        <div>
-                            <span>Convo Id: {{ conversation.id }}</span>
+                        <div  >
+                            <span>Conversation: {{ conversation.id }}</span>
                             <p>started: {{ conversation.startAt }}</p>
                             <p>ended: {{ conversation.endAt }} </p>
                         </div>
