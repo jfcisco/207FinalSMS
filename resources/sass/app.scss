@@ -1025,3 +1025,12 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+.timestamp {
+  font-size: 0.8em;
+}
+
+.timestamp--history {
+  color: #3D3E3E;
+  padding: 0;
+}

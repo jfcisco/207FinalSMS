@@ -289,6 +289,9 @@
                         </b>
                         <p v-if="!message.content.startsWith('files/')">&nbsp;{{ message.content }}</p>
                         <p v-else><a :href="message.content">&nbsp;{{ message.content.slice(6, message.content.length) }}</a></p>
+                        
+                        <!-- Timestamp -->
+                        <p class="ms-auto timestamp">{{formatTimestamp(message.created_at)}}</p>
                     </div>
 
                 </li>
@@ -654,6 +657,7 @@ export default {
         content: this.message,
         roomId: this.activeRoom,
         conversationId: this.activeConversation,
+        created_at: new Date().toISOString()
       };
 
       // if message is whisper
@@ -816,6 +820,7 @@ export default {
         content: attachmentUrl,
         roomId: this.activeRoom,
         conversationId: this.activeConversation,
+        created_at: new Date().toISOString()
       };
 
       socket.emit("message", newMessage);
@@ -863,8 +868,16 @@ export default {
       //     this.totalNotifCount = 0;
       //   }
       // }, 100);
-    }
+    },
 
+    formatTimestamp(dateIsoString) {
+      const localeOptions = {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      };
+
+      return new Date(dateIsoString).toLocaleString([], localeOptions);
+    }
   },
 };
 

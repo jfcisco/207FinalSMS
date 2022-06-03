@@ -36,11 +36,14 @@
                                 v-for="message in conversation.messages"
                                     :message="message"
                                     :key="message.id">
-                                    <li>
+                                    <li class="d-flex">
                                         <!-- api call returns null for all message.client_name -->
                                         <!-- <p>{{ message.client_type === "user" ? "user" : "visitor" }} <i>{{ message.is_whisper ? "(whisper)" : "" }}</i>: {{ message.content }}</p> -->
 
                                         <p class="messageline">{{ chatroomMembers.find(member => member.id === message.client_id).name }} <i>{{ message.is_whisper ? "(whisper)" : "" }}</i>: {{ message.content }}</p>
+
+                                        <!-- Timestamp -->
+                                        <p class="ms-auto timestamp timestamp--history">{{formatTimestamp(message.created_at)}}</p>
 
                                     </li>
                                 </ul>
@@ -63,6 +66,16 @@ export default {
     //         room: this.chatroom,
     //     };
     // },
+    methods: {
+        formatTimestamp(dateIsoString) {
+            const localeOptions = {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            };
+
+            return new Date(dateIsoString).toLocaleString([], localeOptions);
+        }
+    }
 }
 
 </script>
