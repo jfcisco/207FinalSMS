@@ -711,7 +711,8 @@ export default {
           const foundRoom = this.chatrooms[this.getTargetRoomIndex(roomId)];
           const lastConversation = results.conversations[results.conversations.length - 1]
           foundRoom.messages = this.convertConvoMsgSchema(roomId, lastConversation);
-
+        })
+        .finally(() => {
           this.roomIsLoading = false;
         });
 
@@ -766,6 +767,7 @@ export default {
         if (chatroom.conversationId) {
           // if it is an active or incoming chat, get request to "api/room/{roomId}"
           // console.log("chatroom.conversationId is truthy");
+          this.roomIsLoading = true;
           results.push(await this.getRoom(chatroom._id));
         } else {
           // closed chat since no conversationId
@@ -783,6 +785,8 @@ export default {
         // console.log("check 2: chatroomsAPIData=>", this.chatroomsAPIData);
       } catch(err) {
         console.error(err);
+      } finally {
+        this.roomIsLoading = false;
       }
     },
 
