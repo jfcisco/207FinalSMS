@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueChatScroll from "vue-chat-scroll";
 import cj from "clientjs";
 import axios from 'axios';
+import { socket } from './socket';
 import { computeCssFilters } from "./css-color-filter-generator";
 
 // Options used for converting date/time to string using .toLocaleTimeString()
@@ -45,6 +46,8 @@ export class Tawk {
         /* this.isFileSharingEnabled (boolean): true, if file sharing is enabled for the widget 
             and false otherwise */
         this.isFileSharingEnabled = isFileSharingEnabled; 
+
+        this.room = null;
 
         this.initialise();
         this.createStyles();
@@ -90,6 +93,103 @@ export class Tawk {
         container.appendChild(this.messageContainer);
         container.appendChild(buttonContainer);
 
+        // Setup focus listener
+        window.addEventListener("focus", () => {
+            // console.log("document is in focus");
+            this.notifCount = 0;
+            this.hideNotifications();
+        });
+
+        this.audio = new Audio("https://soundjax.com/reddo/88877%5EDingLing.mp3");
+        this.origTitle = document.title;
+
+        this.initialiseSocket();
+    }
+
+    initialiseSocket() {
+        // Setup client.js for device fingerprinting
+        const client = new cj.ClientJS();
+        const visitorId = `${this.client.getFingerprint()}`
+        const visitorName = window.localStorage.getItem(visitorId);
+        
+        // Setup auth for connection
+        socket.auth = {
+            clientId: `${client.getFingerprint()}`,
+            clientType: "visitor",
+            clientName: visitorName,
+            widgetId: this.widgetId,
+            currentPage: {
+                title: document.title,
+                url: window.location.href, 
+            }
+        };
+
+        socket.connect();
+
+        // Get rooms data
+        socket.on("rooms", ({ rooms }) => {
+            // Get the room and its accompanying information
+            let room = rooms[0];
+
+            // Process the room's messages, attaching additional properties we need
+            room.messages = room.messages
+                .filter(msg => !msg.isWhisper)
+                .map(message => ({
+                    ...message,
+                    senderName: room.members.find(member => message.clientId === member.clientId).clientName,
+                    isUpdate: false,
+                    fromSelf: message.clientId === socket.auth.clientId,
+                }));
+
+            this.room = room;
+            // console.log("Got room ", this.room);
+        });
+
+        // Received notification that an admin/agent has joined the room
+        socket.on("join", (notification) => {
+            const update = {
+                isUpdate: true,
+                content: notification,
+            };
+            this.room.messages.push(update);
+        });
+
+        // Received information about user that joined
+        socket.on("user_joined", (user) => {
+            if (user.roomId === this.room._id) {
+                this.room.members.push(user);
+            }
+        });
+
+        // Listen to any sent messages
+        let previousChatMessage = "";
+        socket.on("message", (message) => {
+            const chatMessage = {
+                ...message,
+                senderName: this.room.members.find(member => message.clientId === member.clientId).clientName,
+                isUpdate: false,
+                fromSelf: message.clientId === socket.auth.clientId,
+            };
+
+            this.room.messages.push(chatMessage);
+            
+            if (!this.open) {
+                this.toggleOpen();
+            }
+
+            if (!this.conversationStarted) {
+                this.startConversation();
+            }
+
+            // Show notifications in the document's title tag
+            if (!document.hasFocus()) {
+                if (chatMessage != previousChatMessage) {
+                    this.notifCount++;
+                    this.showNotifications(this.notifCount);
+                }
+            }
+            previousChatMessage = chatMessage;
+        });
     }
 
     createMessageContainerContent() {
@@ -626,12 +726,10 @@ export class Tawk {
         window.localStorage.setItem(`${this.client.getFingerprint()}`, formSubmission.name);
 
         this.sessionStarted = true;
-        this.startConversation(formSubmission);
-
-        console.log(formSubmission);
+        this.startConversation();
     }
 
-    startConversation(formSubmission) {
+    startConversation() {
         // Dependency to add the End Chat button
         const gIconsHeader = document.createElement('link');
         gIconsHeader.innerHTML = '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">'
@@ -640,24 +738,27 @@ export class Tawk {
         // Set up Vue component
         this.messageContainer.innerHTML = `
             <chat-widget
-                visitor-name="${formSubmission.name}"
-                widget-id="${this.widgetId}"
-                :is-file-sharing-enabled="${this.isFileSharingEnabled}"
+                widget-id="widgetId"
+                :room="room"
                 ></chat-widget>`;
 
         Vue.use(VueChatScroll);
+
         this.vue = new Vue({
             components: {
                 'chat-widget': require('./ChatWidget.vue').default
             },
-            propsData: {
-                visitorName: formSubmission.name
+            data: {
+                widgetId: this.widgetId.toString(),
+                room: this.room
             }
         });
 
         // Mount it to message-container
         this.vue.$mount(this.messageContainer);
         this.messageContainer = this.vue.$el;
+
+        this.conversationStarted = true;
     }
 
     checkTime() {
@@ -684,5 +785,28 @@ export class Tawk {
                 this.createMessageContainerContentUnavailableAllDay();
             }
         }
+    }
+
+    showNotifications(count) {
+        this.hideNotifications();
+        this.notifInterval = setInterval(() => {
+            const pattern = /^\(\d+\)/;
+            if (document.title === this.origTitle) {
+            if (count === 0 || pattern.test(document.title)) {
+                document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
+            } else {
+                document.title = "(" + count + ") New message(s) received!";
+            }
+            } else {
+            document.title = this.origTitle;
+            }
+        }, 1500);
+
+        this.audio.play().catch(err => console.log(err));
+    }
+    
+    hideNotifications() {
+        clearInterval(this.notifInterval);
+        document.title = this.origTitle;
     }
 }

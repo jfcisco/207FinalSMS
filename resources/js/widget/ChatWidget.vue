@@ -83,26 +83,14 @@
 </style>
 
 <script>
-import io from "socket.io-client";
-import cj from "clientjs";
 import FileUploadWidget from "./FileUploadWidget.vue";
-
-// Setup client.js for device fingerprinting
-const client = new cj.ClientJS();
-
-
-
-// Setup Socket.IO connection
-const socket = io(process.env.MIX_SOCKET_SERVER, {
-    secure: true,
-    autoConnect: false,
-});
+import { socket } from "./socket";
 
 export default {
     props: {
         visitorName: String,
         widgetId: String,
-        isFileSharingEnabled: Boolean,
+        room: Object,
     },
 
     components: {
@@ -113,94 +101,32 @@ export default {
         return {
             chatEnded: false,
             message: "",
-            room: {
-                // Room default values
-                _id: null,
-                messages: [],
-                members: []
-            },
             notifCount: 0,
             origTitle: document.title,
-            audio: new Audio("https://soundjax.com/reddo/88877%5EDingLing.mp3")
+            audio: new Audio("https://soundjax.com/reddo/88877%5EDingLing.mp3"),
+            isFileSharingEnabled: false,
         };
     },
 
     created() {
-        // Setup auth for connection
-        socket.auth = {
-            clientId: `${client.getFingerprint()}`,
-            clientType: "visitor",
-            clientName: this.visitorName,
-            widgetId: this.widgetId,
-            currentPage: {
-                title: document.title,
-                url: window.location.href, 
+        // Start the conversation
+        socket.emit("start_convo", {
+            conversationId: this.room.conversationId
+        }, (error, startedConvo) => { 
+            if (!error) {
+                this.room.conversation = startedConvo;
             }
-        };
-
-        window.addEventListener("focus", () => {
-            console.log("document is in focus");
-            this.notifCount = 0;
-            this.hideNotifications();
-        });
-
-        socket.connect();
-
-        socket.on("rooms", ({ rooms }) => {
-            console.log("socket.on rooms")
-            console.log("rooms=>", rooms)
-            if (!this.room._id) {
-                // Get the room and its accompanying information
-                let room = rooms[0];
-
-                // Process the room's messages, attaching additional properties we need
-                room.messages = room.messages
-                    .filter(msg => !msg.isWhisper)
-                    .map((msg) =>
-                        this.attachMessageProperties(room, msg)
-                    );
-
-                this.room = room;
-
-                this.focusOnMessageInput();
-                console.log("room messages", room.messages);
+            else {
+               console.error(error);
             }
         });
-
-        // Listen to any sent messages
-        socket.on("message", (message) => {
-            var previousChatMessage;
-            const chatMessage = this.attachMessageProperties(this.room, message);
-            this.room.messages.push(chatMessage);
-            
-            // Show notifications in the document's title tag
-            if (!document.hasFocus()) {
-                if (chatMessage != previousChatMessage) {
-                    this.notifCount++;
-                    this.showNotifications(this.notifCount);
-                }
-            }
-            previousChatMessage = chatMessage;
-            
-        });
-
-        // Received notification that an admin/agent has joined the room
-        socket.on("join", (notification) => {
-            const update = this.attachUpdateProperties(notification);
-            this.room.messages.push(update);
-        });
-
-        // Received information about user that joined
-        socket.on("user_joined", (user) => {
-            if (user.roomId === this.room._id) {
-                this.room.members.push(user);
-            }
-        });
-
+        
         // Log any connect_errors
         socket.on("connect_error", (err) => {
             console.error(err);
         });
+
+        this.focusOnMessageInput();
     },
 
     methods: {
@@ -213,7 +139,7 @@ export default {
                 roomId: this.room._id,
                 conversationId: this.room.conversationId,
             };
-            console.log("room._id=> ", this.room._id);
+            // console.log("room._id=> ", this.room._id);
 
             socket.emit("message", newMessage);
 
@@ -226,34 +152,6 @@ export default {
 
             // Clear message input
             this.message = "";
-        },
-
-        // Helper method to attach properties to a `message` instance so that we can display it properly
-        attachMessageProperties(room, message) {
-            return {
-                ...message,
-                senderName: this.findMemberNameByClientId(room, message.clientId),
-                isUpdate: false,
-                fromSelf: message.clientId === socket.auth.clientId,
-            };
-        },
-
-        // Helper method to attach properties to an `update` notification so that we can display it properly
-        attachUpdateProperties(notification) {
-            return {
-                isUpdate: true,
-                content: notification,
-            };
-        },
-
-        findMemberNameByClientId(room, clientId) {
-            for (let member of room.members) {
-                if (member.clientId === clientId) {
-                    return member.clientName;
-                }
-            }
-
-            return "Unknown";
         },
 
         focusOnMessageInput() {
@@ -278,7 +176,7 @@ export default {
                 roomId: this.room._id,
                 conversationId: this.room.conversationId,
             };
-            console.log("room._id=> ", this.room._id);
+            // console.log("room._id=> ", this.room._id);
 
             socket.emit("message", newMessage);
 
@@ -299,34 +197,9 @@ export default {
                 roomId: this.room._id,
                 conversationId: this.room.conversationId,
             }
-            console.log("Send typing data: ", typingData);
+            // console.log("Send typing data: ", typingData);
             socket.emit("typing", typingData);
         },
-
-        showNotifications(count) {
-
-            this.hideNotifications();
-            this.notifInterval = setInterval(() => {
-                const pattern = /^\(\d+\)/;
-                if (document.title === this.origTitle) {
-                if (count === 0 || pattern.test(document.title)) {
-                    document.title = document.title.replace(pattern, count === 0 ? "" : "(" + count + ") ");
-                } else {
-                    document.title = "(" + count + ") New message(s) received!";
-                }
-                } else {
-                document.title = this.origTitle;
-                }
-            }, 1500);
-
-            this.audio.play().catch(err => console.log(err));
-        },
-        
-        hideNotifications() {
-            clearInterval(this.notifInterval);
-            document.title = this.origTitle;
-        }
-
     },
 };
 </script>
