@@ -433,7 +433,7 @@ export default {
       chatroomsUnreadNotif: {},
       totalNotifCount: 0,
       origTitle: document.title,
-      audio: new Audio("http://soundjax.com/reddo/88877%5EDingLing.mp3"),
+      audio: new Audio("https://soundjax.com/reddo/88877%5EDingLing.mp3"),
       titleNotificationInterval: undefined,
 
       roomIsLoading: false, // States if a GET room API call is running
