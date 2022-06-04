@@ -23,6 +23,18 @@ class IconSeeder extends Seeder
                 'name' => 'Medical Chat Icon',
                 'path' => '/assets/comment-medical-solid.svg',
             ],
+            [
+                'name' => 'SMS Icon',
+                'path' => '/assets/chat2.svg',
+            ],
+            [
+                'name' => 'Two Chat Bubbles Icon',
+                'path' => '/assets/chat3.svg',
+            ],
+            [
+                'name' => 'Headset Icon',
+                'path' => '/assets/chat4.svg',
+            ],
         ]);
     }
 }
