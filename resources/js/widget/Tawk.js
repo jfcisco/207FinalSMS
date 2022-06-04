@@ -161,6 +161,16 @@ export class Tawk {
             }
         });
 
+        socket.on("convo_started", (conversation) => {
+            if (!this.open) {
+                this.toggleOpen();
+            }
+
+            if (!this.conversationStarted) {
+                this.startConversation();
+            }
+        })
+
         // Listen to any sent messages
         let previousChatMessage = "";
         socket.on("message", (message) => {
@@ -172,14 +182,6 @@ export class Tawk {
             };
 
             this.room.messages.push(chatMessage);
-            
-            if (!this.open) {
-                this.toggleOpen();
-            }
-
-            if (!this.conversationStarted) {
-                this.startConversation();
-            }
 
             // Show notifications in the document's title tag
             if (!document.hasFocus()) {
