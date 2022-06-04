@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conversation;
+use App\Models\Room;
 use Illuminate\Http\Request;
 
 class ConversationController extends Controller
@@ -80,5 +82,23 @@ class ConversationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function joinConversation($conversationId)
+    {
+        $conversation = Conversation::find($conversationId);
+        $room = Room::find($conversation->roomId);
+
+        $user = [
+            'clientId' => auth()->user()->id,
+            'clientType' => 'user'
+        ];
+
+        $members = $room->members;
+        $members[] = $user;
+        $room->members = $members;
+        $room->save();
+
+        return response(['data' => $room], 200);
     }
 }

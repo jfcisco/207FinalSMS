@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatWidgetController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReportsController;
@@ -52,6 +53,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('messages', MessageController::class);
         Route::resource('sessions', SessionController::class);
         Route::resource('rooms', RoomController::class);
+        Route::put('join-conversation/{conversationId}', [ConversationController::class, 'joinConversation']);
 
         Route::prefix('reports')->group(function () {
             Route::prefix('chats')->group(function () {
@@ -75,6 +77,7 @@ Route::middleware('auth')->group(function () {
     });
     //endregion
 });
+
 
 
 
