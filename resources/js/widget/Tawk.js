@@ -728,10 +728,10 @@ export class Tawk {
         window.localStorage.setItem(`${this.client.getFingerprint()}`, formSubmission.name);
 
         this.sessionStarted = true;
-        this.startConversation();
+        this.startConversation(formSubmission);
     }
 
-    startConversation() {
+    startConversation(formSubmission) {
         // Dependency to add the End Chat button
         const gIconsHeader = document.createElement('link');
         gIconsHeader.innerHTML = '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">'
@@ -740,7 +740,7 @@ export class Tawk {
         // Set up Vue component
         this.messageContainer.innerHTML = `
             <chat-widget
-                widget-id="widgetId"
+                :visitor-name="visitorName"
                 :room="room"
                 ></chat-widget>`;
 
@@ -751,7 +751,7 @@ export class Tawk {
                 'chat-widget': require('./ChatWidget.vue').default
             },
             data: {
-                widgetId: this.widgetId.toString(),
+                visitorName: formSubmission ? formSubmission.name : null,
                 room: this.room
             }
         });

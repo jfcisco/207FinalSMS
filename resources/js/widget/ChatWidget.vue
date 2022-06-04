@@ -89,7 +89,6 @@ import { socket } from "./socket";
 export default {
     props: {
         visitorName: String,
-        widgetId: String,
         room: Object,
     },
 
@@ -101,9 +100,6 @@ export default {
         return {
             chatEnded: false,
             message: "",
-            notifCount: 0,
-            origTitle: document.title,
-            audio: new Audio("https://soundjax.com/reddo/88877%5EDingLing.mp3"),
             isFileSharingEnabled: false,
         };
     },
