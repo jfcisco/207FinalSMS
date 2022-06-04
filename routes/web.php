@@ -69,10 +69,13 @@ Route::middleware('auth')->group(function () {
                 Route::get('todays-live', [ReportsController::class, 'todaysLiveSessions']);
                 Route::get('live-visitors', [ReportsController::class, 'liveVisitorSessions']);
             });
+
+            Route::post('past-conversations', [ReportsController::class, 'pastConversations']);
         });
     });
     //endregion
 });
+
 
 
 

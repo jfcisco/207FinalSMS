@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ConversationResource;
 use App\Models\Message;
 use App\Models\Room;
 use App\Models\Session;
@@ -160,12 +161,12 @@ class ReportsController extends Controller
             $hours->put($date->format('h A'), 0);
         }
 
-        $sessions = Session::where('startAt', '>=', Carbon::today())
+        $conversations = Conversation::where('startAt', '>=', Carbon::today())
             ->orderBy('startAt')->get()->groupBy(function ($item) {
             return $this->parseTime($item->startAt);
         });
 
-        foreach ($sessions as $key => $message) {
+        foreach ($conversations as $key => $message) {
             $day = $key;
             $totalCount = $message->count();
             $hours = $hours->merge([
@@ -184,13 +185,13 @@ class ReportsController extends Controller
 
         $dates = $this->generateDates($startDate, $endDate);
 
-        $sessions = Session::where('startAt', '>=', $startDate)
+        $conversations = Conversation::where('startAt', '>=', $startDate)
             ->where('startAt', '<', $endDate->addDay())
-        ->orderBy('startAt', 'DESC')->get()->groupBy(function ($item) {
-            return $this->parseDate($item->startAt);
-        });
+            ->orderBy('startAt', 'DESC')->get()->groupBy(function ($item) {
+                return $this->parseDate($item->startAt);
+            });
 
-        foreach ($sessions as $key => $message) {
+        foreach ($conversations as $key => $message) {
             $day = $key;
             $totalCount = $message->count();
             $dates = $dates->merge([
@@ -273,7 +274,22 @@ class ReportsController extends Controller
             }
         }
         return response(['data' => $output], 200);
-    }    
+    }
+
+    public function pastConversations(Request  $request)
+    {
+        $dayOfWeek = Carbon::now()->dayOfWeek;
+        $startDate = $request->start_date == null ? Carbon::today()->subDays($dayOfWeek) : Carbon::parse($request->start_date);
+        $endDate = $request->end_date == null ? Carbon::today() : Carbon::parse($request->end_date);
+
+        $conversations = Conversation::where('endAt', '!=', null)
+        ->where('startAt', '>=', $startDate)
+            ->where('startAt', '<', $endDate->addDay())
+            ->orderBy('startAt', 'DESC')->get();
+
+
+        return response(['data' => ConversationResource::collection($conversations)], 200);
+    }
 }
 
 
