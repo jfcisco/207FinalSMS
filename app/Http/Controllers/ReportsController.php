@@ -250,27 +250,57 @@ class ReportsController extends Controller
         $liveVisitorSessions = Session::where('endAt', null)->where('clientType', "visitor")->get();
         $output = array();
         foreach($liveVisitorSessions as $vSession){
+            $exclude = false;
             $visitors = Visitor::where("_id", $vSession->clientId)->get();
             //echo $vSession->startAt->toDateTime()->format('U.u')."<br>";
             foreach($visitors as $visitor){
                 $room = Room::where('members.clientId',$vSession->clientId)->first();
-                $conversation = Conversation:: where('roomId',$room->_id)->where('endAt', null)->get();
-                if($conversation->isNotEmpty()){
+                $browsingConvo = Conversation:: where('roomId',$room->_id)->whereNull('endAt')->whereNull('startAt')->get();
+                $noEndConvo = Conversation:: where('roomId',$room->_id)->whereNull('endAt')->whereNotNull('startAt')->get();
+                date_default_timezone_set('UTC');
+                $maxTime = date_create($vSession->startAt->toDateTime()->format(DATE_ATOM));
+                date_add($maxTime, date_interval_create_from_date_string('30 mins'));
+
+                if($noEndConvo->isNotEmpty()){
+                    //start and end is null == browsing or offline
+                    $activeConvo = true;
+
+                }elseif($browsingConvo->isNotEmpty()){
+                    //start is not null and end is null == active chat
+                    $activeConvo = false;
+                    if(now() >= $maxTime){
+                        //end session in db if more than 30 mins already
+                        //do not include in output
+                        $exclude = true;
+                        $vSession->endAt = now()->format(DATE_ATOM);
+                        $vSession->save();
+                    }                 
+                }elseif($browsingConvo->isEmpty() && $noEndConvo->isEmpty()){
+                    //offline or done with chat and hasn't started browsing again
+                    $activeConvo = false;
+                    if(now() >= $maxTime){
+                        //end session in db if more than 30 mins already;
+                        //do not include in output
+                        $exclude = true;                        
+                        $vSession->endAt = now()->format(DATE_ATOM);
+                        $vSession->save();
+                    }                    
+                }
+                if(!$exclude){
                     $output[]=array(
                         "socketId" => $vSession->socketId,
                         "ipAddress" => $visitor->ipAddress,
                         "browser" => $visitor->browser,
                         "roomId" => $room->_id,
                         "fromURL" => $visitor->webpage_source,
-                        "startAt" => $vSession->startAt->toDateTime()->format(DATE_ISO8601),
+                        "startAt" => $vSession->startAt->toDateTime()->format(DATE_ATOM),
                         "time" => "",
                         "pageTitle" => $vSession->pageTitle,
                         "fullUrl" => $vSession->fullUrl,
+                        "activeConvo" => $activeConvo
                     );
-                }else{
-                    $vSession->endAt = now();
-                    $vSession->save();
                 }
+
             }
         }
         return response(['data' => $output], 200);
@@ -290,6 +320,17 @@ class ReportsController extends Controller
 
         return response(['data' => ConversationResource::collection($conversations)], 200);
     }
+
+    public function test(){
+
+
+        echo '<pre>';
+        //var_dump($conversation);
+        //var_dump($roomMsgs);
+        echo '</pre>';
+        
+    }
+
 }
 
 

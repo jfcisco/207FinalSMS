@@ -93,7 +93,7 @@
                         <div class="card" id="livesessions">
                             <div  class="card-body">
                                 <div>
-                                    <h5 class="card-title">Live Sessions  </h5>
+                                    <h5 class="card-title">Live Chat Sessions  </h5>
                                 </div>
                                 <table class="table table-striped" style="border: 1px solid;">
                                     <tr>
@@ -123,6 +123,41 @@
                     </div>
                 </div>
 
+                <div class="row reportsection livesession" style="overflow-y: scroll; overflow-x: hidden;">
+
+                    <div class="col-sm-12">
+                        <div class="card" id="livesessions">
+                            <div  class="card-body">
+                                <div>
+                                    <h5 class="card-title">Live Browsing Sessions  </h5>
+                                </div>
+                                <table class="table table-striped" style="border: 1px solid;">
+                                    <tr>
+                                        <th>Socket ID</th>
+                                        <th>IP Address</th>
+                                        <th>Browser</th>
+                                        <th>Website</th>
+                                        <th>Page Title</th>
+                                        <th>Chatroom</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                    <tr
+                                    v-for="socketReport in siteBrowsers"
+                                    :key="socketReport.socketId">
+                                        <td>{{ socketReport.socketId }}</td>
+                                        <td>{{ socketReport.ipAddress.split(":")[3] || "127.0.0.1" }}</td>
+                                        <td>{{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</td>
+                                        <td>{{ socketReport.fullUrl }}</td>
+                                        <td>{{ socketReport.pageTitle }}</td>
+                                        <td><a v-bind:href="'home/?crm=' + socketReport.roomId">{{ socketReport.roomId }}</a></td>
+                                        <td>{{ socketReport.time }}</td>
+
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- VISITORS AND CHATS -->
 
@@ -140,7 +175,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <h5 class="card-title">Live</h5>
-                                                <p class="card-text">{{ socketReports.length }}</p>
+                                                <p class="card-text">{{ socketReports.length + siteBrowsers.length}}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -286,6 +321,7 @@ export default {
         return {
             currentUser: this.user,
             socketReports: [],
+            siteBrowsers:[],
             answeredChats: 0,
             missedChats: 0,
         };
@@ -307,12 +343,17 @@ export default {
         socket.connect();
 
         socket.on("report", ({ report }) => {
-            this.socketReports.push(report);
-            //console.log("socket", report);
+            if(report.activeConvo){
+                this.socketReports.push(report);
+            }else{
+                this.siteBrowsers.push(report);
+            }
+            //console.log("live report", report.activeConvo);
         });
         socket.on("report-disconnect", ({ discon }) => {
             //console.log(discon);
             this.socketReports = this.socketReports.filter(reports => reports.socketId != discon);
+            this.siteBrowsers = this.siteBrowsers.filter(reports => reports.socketId != discon);
         });
         socket.on("report-answered", ({ answered }) => {
             //console.log(answered);
@@ -321,7 +362,19 @@ export default {
         socket.on("report-missed", ({ missed }) => {
             //console.log(missed);
             this.missedChats++;
-        });             
+        });
+        socket.on("report-chatting", ({ chatting }) => {
+            //console.log(chatting);
+            //let arr = [];
+            for(let brow of this.siteBrowsers){
+                if(brow.roomId == chatting){
+                    this.socketReports.push(brow);
+                }
+            }
+
+            this.siteBrowsers = this.siteBrowsers.filter(browse => browse.roomId != chatting);
+            //this.socketReports.push(arr);
+        });                     
 
         setInterval(()=>{
             this.timeUpdate();
@@ -339,7 +392,11 @@ export default {
                 var diff = new Date(new Date() - new Date(report.startAt));
                 report.time = diff.toISOString().substr(11, 8);
             });
-        },
+            this.siteBrowsers.forEach(function(report){
+                var diff = new Date(new Date() - new Date(report.startAt));
+                report.time = diff.toISOString().substr(11, 8);
+            });            
+        },       
         async getChatVolume(start, end) {
             let post = await fetch("/api/reports/chats/daily", {
                 method: "POST",
@@ -411,12 +468,26 @@ export default {
                 const results = await this.getliveVisitors();
                  //console.log("getliveVisitors response", results);
                 // console.log("convertedResults", convertedResults);
+                let active = [];
+                let inactive = [];
+                results.forEach(function(result){
+                    if(result.activeConvo){
+                        active.push(result);
+                    }else{
+                        inactive.push(result)
+                    }
+                });
 
                 this.socketReports = _.unionBy(
                     this.socketReports,
-                    this.convertLiveVisitors(results),
+                    this.convertLiveVisitors(active),
                     (socketReport) => socketReport.socketId,
                 );
+                this.siteBrowsers = _.unionBy(
+                    this.siteBrowsers,
+                    this.convertLiveVisitors(inactive),
+                    (siteBrowser) => siteBrowser.socketId,
+                );                
                 //console.log("this.socketReports after api call", this.socketReports)
             } catch (err) {
                 console.error(err);
@@ -434,6 +505,7 @@ export default {
                     time: visitor.time,
                     pageTitle: visitor.pageTitle,
                     fullUrl: visitor.fullUrl,
+                    activeConvo: visitor.activeConvo
                 }
             });
 
