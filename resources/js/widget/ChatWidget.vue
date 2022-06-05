@@ -5,7 +5,6 @@
             <ul>
                 <li>Conversation</li>
                 <!-- END CHAT BUTTON -->
-                <!-- TO DO: Edit behavior of the button to End Chat -->
                 <li style="float:right" v-if="!chatEnded">
                     <div class="dropdown">
                         <button @click="toggleDropdown()"><i class="material-icons">menu</i></button>
@@ -73,7 +72,7 @@
                         />
                     </form>
                 </div>
-                <div v-if="isFileSharingEnabled" class="file-sharing">
+                <div v-if="room.enable_file_sharing" class="file-sharing">
                     <FileUploadWidget
                     v-on:upload-success="handleAttachmentUpload"
                     ></FileUploadWidget>
@@ -125,6 +124,11 @@ export default {
             else {
                console.error(error);
             }
+        });
+
+        // Listen for file-sharing events
+        socket.on("file_sharing", ({ allowed }) =>  {
+            this.room.enable_file_sharing = allowed;
         });
         
         // Log any connect_errors

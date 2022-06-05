@@ -216,7 +216,9 @@
         <!--FILE SHARING TOGGLE-->
         <div class="file-sharing-toggle">
           <label class="switch">
-            <input type="checkbox" name="enable_file_sharing" >
+            <input type="checkbox" name="enable_file_sharing"
+              v-model="chatroom.enable_file_sharing"
+              @change="toggleFileSharing(chatroom, $event)">
               <span class="slider-file-sharing round"></span>
           </label>
           <div>
@@ -605,6 +607,14 @@ export default {
       }
     });
 
+    socket.on("file_sharing", payload => {
+      // console.log("file_sharing event fired");
+      // console.log(payload);
+      const { roomId, allowed } = payload;
+      // `file_sharing` event fires whenever file sharing is enabled/disabled for a room
+      this.chatrooms.find(room => room._id === roomId).enable_file_sharing = allowed;
+    });
+
     socket.on("end_chat", conversationId => {
       // console.log("visitor ended conversation", conversationId);
       this.chatrooms.forEach(chatroom => {
@@ -927,6 +937,20 @@ export default {
       };
 
       return new Date(dateIsoString).toLocaleString([], localeOptions);
+    },
+
+    toggleFileSharing(chatroom, event) {
+      if (!chatroom) return;
+      // console.log('toggleFileSharing invoked');
+      const allowed = event.target.checked;
+
+      socket.emit('file_sharing_command', {
+        roomId: chatroom._id,
+        conversationId: chatroom.conversationId,
+        allowOrDeny: allowed ? "allow" : "deny"
+      });
+
+      chatroom.enable_file_sharing = allowed;
     }
   },
 };
