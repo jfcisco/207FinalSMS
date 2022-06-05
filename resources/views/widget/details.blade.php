@@ -136,6 +136,17 @@
                                 <span class="slider round"></span>
                             </label> 
                         </div>
+
+                        <div class="widget-block">
+                            <label class="chat-label" for="inactivity-timeout">Inactivity Timeout in Minutes</label>
+                            <input class="form-control form-control-widget-full"
+                                name="inactivity-timeout" 
+                                type="number" 
+                                @if (Auth::user()->role !== 'admin')    
+                                    readonly 
+                                @endif
+                                value="{{ old('', 30) }}">
+                        </div>
                     </div>
     
                     <div class="col-lg-6">
