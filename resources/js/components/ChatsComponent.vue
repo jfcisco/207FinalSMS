@@ -789,12 +789,13 @@ export default {
     },
 
     toggleMsgHistoryListBtn(roomId, conversationId) {
-      if (conversationId) {
-        const msgHistoryListBtnEl = document.getElementById(`msg-list-btn${roomId}`);
+      const msgHistoryListBtnEl = document.getElementById(`msg-list-btn${roomId}`);
+      if (msgHistoryListBtnEl) {
+        if (conversationId) {
         msgHistoryListBtnEl.disabled = false;
-      } else {
-        const msgHistoryListBtnEl = document.getElementById(`msg-list-btn${roomId}`);
-        msgHistoryListBtnEl.disabled = true;
+        } else {
+          msgHistoryListBtnEl.disabled = true;
+        }
       }
     },
 
@@ -839,10 +840,12 @@ export default {
 
     toggleSidepanel(action) {
       const sidepanel= document.getElementById("sidepanelbutton");
-      if (action === "show") {
+      if (sidepanel) {
+        if (action === "show") {
         sidepanel.style.display = "flex";
       } else if (action === "hide") {
         sidepanel.style.display = "none";
+      }
       }
     },
 
