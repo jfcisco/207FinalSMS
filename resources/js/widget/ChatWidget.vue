@@ -108,7 +108,6 @@ export default {
         return {
             chatEnded: false,
             message: "",
-            isFileSharingEnabled: false,
             dropdownShown: false
         };
     },

@@ -33,7 +33,7 @@
 
             <div class="widget-block flex-wrap">
                 <label class="chat-label" for="after-hours-message">After Hours Message</label>
-                <textarea class="form-control" name="after-hours-message" id="after-hours-message" style="height: 5rem;" placeholder="We aren't available to answer you right now, but you can reach out to customer@sms-chat.ml for any urgent inquiries."></textarea>
+                <textarea class="form-control" name="after-hours-message" id="after-hours-message" style="height: 5rem;" placeholder="We aren't available to answer you right now, but you can reach out to customer@sms-chat.ml for any urgent inquiries." v-model="afterHoursMessage"></textarea>
                 
                 <div class="w-100"></div>
                 <small>Write a note you want your customers to see when they visit outside scheduled hours.</small>
@@ -215,6 +215,7 @@ export default {
     props: [
         'timezones',
         'initialSelectedTimezone',
+        'initialAfterHoursMessage',
         'editable',
         'initialEnabled',
         'mondayEnabled',
@@ -246,6 +247,7 @@ export default {
             startTime: this.initialStartTime,
             endTime: this.initialEndTime,
             selectedTimezone: this.initialSelectedTimezone,
+            afterHoursMessage: this.initialAfterHoursMessage,
 
             weekdays: {
                 monday: {

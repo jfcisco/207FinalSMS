@@ -122,30 +122,14 @@
                         </div>
 
                         <div class="widget-block">
-                            <span class="chat-label">File Sharing Enabled</span>
-                            <label class="switch">
-                                <input type="checkbox" name="enable_file_sharing" 
-                                    @if (old('enable_file_sharing', $currentWidget->enable_file_sharing) === true)
-                                        checked="checked"
-                                    @endif
-
-                                    @if (Auth::user()->role !== 'admin')
-                                        disabled
-                                    @endif
-                                >
-                                <span class="slider round"></span>
-                            </label> 
-                        </div>
-
-                        <div class="widget-block">
-                            <label class="chat-label" for="inactivity-timeout">Inactivity Timeout in Minutes</label>
-                            <input class="form-control form-control-widget-full"
-                                name="inactivity-timeout" 
+                            <label class="chat-label" for="inactivity-timeout-minutes">Inactivity Timeout in Minutes</label>
+                            <input id="inactivity-timeout-minutes" class="form-control form-control-widget-full"
+                                name="inactivity-timeout-minutes" 
                                 type="number" 
                                 @if (Auth::user()->role !== 'admin')    
                                     readonly 
                                 @endif
-                                value="{{ old('', 30) }}">
+                                value="{{ old('inactivity-timeout-minutes', $currentWidget->inactivity_timeout_minutes) }}">
                         </div>
                     </div>
     
@@ -187,6 +171,8 @@
                             editable="{{ Auth::user()->role === 'admin' }}"
 
                             initial-enabled="{{ old('sched_enabled', $currentWidget->sched_enabled) }}"
+
+                            initial-after-hours-message="{{ old('after-hours-message', $currentWidget->after_hours_message) }}"
 
                             :timezones="{{json_encode($timezones)}}"
 

@@ -166,9 +166,6 @@ class WidgetController extends Controller
             // Widget appearance settings
             'color' => $widget->color,
             'icon' => $widget->icon,
-
-            // Determines whether file sharing is enabled or not
-            'isFileSharingEnabled' => json_encode($widget->enable_file_sharing),
         ])->withHeaders([
             // Make browsers interpret this as JavaScript
             'Content-Type' => 'application/javascript',
@@ -389,7 +386,7 @@ class WidgetController extends Controller
         $widgetToUpdate->is_active = $request->boolean('is_active');
         $widgetToUpdate->color = $request->input('widget-color');
         $widgetToUpdate->icon = $request->input('widget-icon');
-        $widgetToUpdate->enable_file_sharing = $request->boolean('enable_file_sharing');
+        $widgetToUpdate->inactivity_timeout_minutes = $request->input('inactivity-timeout-minutes');
         
         // Update Allowed Domains
         if ($request->filled('allowed_domains')) {
@@ -405,6 +402,8 @@ class WidgetController extends Controller
             $widgetToUpdate->sched_enabled = true;
 
             $widgetToUpdate->availability_timezone = $request->input('availability_timezone');
+
+            $widgetToUpdate->after_hours_message = $request->input('after-hours-message');
 
             $widgetToUpdate->sched_monday_enabled = $request->boolean('sched_monday_enabled');
 
@@ -487,6 +486,7 @@ class WidgetController extends Controller
             $widgetToUpdate->sched_enabled = false;
 
             $widgetToUpdate->unset('availability_timezone');
+            $widgetToUpdate->unset('after_hours_message');
 
             $widgetToUpdate->unset('sched_monday_enabled');
             $widgetToUpdate->unset('sched_monday_avail_start');

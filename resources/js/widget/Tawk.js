@@ -21,7 +21,6 @@ export class Tawk {
         schedulerEnabledForToday,
         color,
         icon,
-        isFileSharingEnabled
     } = {}
     ) {
         this.baseUrl = baseUrl;
@@ -43,10 +42,6 @@ export class Tawk {
         // this.icon(string): URL to the chosen icon (e.g., "/assets/new-icon.svg")
         this.icon = icon;
         
-        /* this.isFileSharingEnabled (boolean): true, if file sharing is enabled for the widget 
-            and false otherwise */
-        this.isFileSharingEnabled = isFileSharingEnabled; 
-
         this.room = null;
 
         this.initialise();

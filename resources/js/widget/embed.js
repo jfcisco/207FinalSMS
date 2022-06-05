@@ -23,7 +23,4 @@ const tawk = new Tawk({
     // Widget appearance variables
     color: "<?php echo $color; ?>",
     icon: "<?php echo $icon; ?>", 
-
-    // Feature variables
-    isFileSharingEnabled: JSON.parse("<?php echo $isFileSharingEnabled ?>")
 });
