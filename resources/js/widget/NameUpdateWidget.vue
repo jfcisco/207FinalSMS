@@ -99,6 +99,7 @@ export default {
                 name: this.visitorName
             })
                 .then(response => {
+                    window.localStorage.setItem(this.visitorId, this.visitorName);
                 })
                 .catch((err) => {
                     console.error(err);
