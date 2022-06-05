@@ -325,9 +325,11 @@ export class Tawk {
             }
 
             h2 ul li button{
-                background-color: ${this.color};
+                background-color: none;
+                font-size: 12px;
                 border: none;
                 color: white;
+                padding: none;
             }
 
             h2 ul li button:hover{
@@ -351,10 +353,11 @@ export class Tawk {
 
             .message-container .content .messages {
                 overflow-y: scroll;
-                height: 330px;
+                height: 340px;
                 margin-bottom: 5px;
                 background-color: #ffffff;
                 font-family: 'Raleway', sans-serif;
+                border-radius: 5px;
             }
 
             .content .messages .form {
@@ -421,7 +424,7 @@ export class Tawk {
                 width: 95%;
             }
 
-            .message-container form button {
+            .message-container button {
                 font-family: 'Raleway', sans-serif;
                 font-weight: bold;
                 cursor: pointer;
@@ -434,7 +437,11 @@ export class Tawk {
                 opacity: 0.8;
             }
 
-            .message-container form button:hover {
+            .message-container .dropdown button {
+                padding: 5px;
+            }
+
+            .message-container button:hover {
                 opacity: 1.0;
             }
 
@@ -595,7 +602,7 @@ export class Tawk {
             }
         
             .modal {
-                background: #FFFFFF;
+                background: #E9EDEE;
                 box-shadow: 2px 2px 20px 1px;
                 overflow-x: auto;
                 display: flex;
@@ -626,7 +633,11 @@ export class Tawk {
                 position: relative;
                 padding: 20px 10px;
             }
-        
+            
+            .modal-body form {
+                width: 95%;
+            }
+      
             .modal-fade-enter,
             .modal-fade-leave-to {
                 opacity: 0;
@@ -645,10 +656,35 @@ export class Tawk {
             .modal .cancelButton:hover {
                 background-color: grey;
             }
-        
             
+            /* Dropdown Content for Change Name and End Conversation */
+            .dropdown-content {
+                right: 0;
+                position: absolute;
+                background-color: #f1f1f1;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+                border-radius: 5px;
+            }
 
+            /* Links inside the dropdown */
+            .dropdown-content a {
+                color: black;
+                padding: 10px 10px;
+                margin: 5px;
+                font-size: 12px;
+                text-decoration: none;
+                display: block;
+                border-radius: 5px;
+            }
 
+            /* Change color of dropdown links on hover */
+            .dropdown-content a:hover {
+                background-color: #ddd;
+                color: ${this.color};
+                cursor: pointer;
+            }
         `.replace(/^\s+|\n/gm, '');
         document.head.appendChild(styleTag);
     }
