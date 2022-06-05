@@ -143,7 +143,7 @@
         }"
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
-        v-show="!chatroom.conversation"
+        v-show="!chatroom.conversation || (chatroom.conversation ? !chatroom.conversation.startAt : false ) "
         :key="chatroom._id">
         <div
           class="details"
@@ -342,7 +342,7 @@
             class="joinbutton"
             id="join-btn"
             style="display: flex"
-            v-if="chatroom.conversation && chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
+            v-if="chatroom.conversation && chatroom.members.filter(member => member.clientId === currentUser._id).length === 0 && chatroom.conversation.startAt"
             v-on:click="joinRoom(chatroom._id, chatroom.conversation)">
             <span class="joinroom">Click to join room</span>
           </button>
@@ -512,16 +512,16 @@ export default {
     });
 
     socket.on("convo_started", (conversation) => {
-      console.log("visitor started a convo", conversation);
+      // console.log("visitor started a convo", conversation);
       if (this.chatrooms.length === 0) {
         // chatrooms is an empty array so keep checking until it is populated
         let searchChatroomInterval = setInterval(() => {
-          console.log("running set interval")
+          // console.log("running set interval")
           let foundRoom = this.chatrooms[this.getTargetRoomIndex(conversation.roomId)];
           if (foundRoom) {
             foundRoom.conversation = conversation;
             clearInterval(searchChatroomInterval);
-            console.log("running clear interval")
+            // console.log("running clear interval")
           }
         }, 500);
       } else {
@@ -607,9 +607,9 @@ export default {
       this.chatrooms.forEach(chatroom => {
         if (chatroom.conversation._id === conversationId) {
           chatroom.conversation = undefined;
+          this.unselectRoom(chatroom._id);
           return;
         }
-        return;
       });
     });
 
@@ -617,10 +617,10 @@ export default {
 
   methods: {
     async getRoom(roomId) {
-      console.log("executing getRoom")
+      // console.log("executing getRoom")
       try {
         const response = await axios.get(`/api/rooms/${roomId}`);
-        console.log("getRoom", response.data.data);
+        // console.log("getRoom", response.data.data);
         return response.data.data;
       } catch (err) {
         console.error(err);
@@ -700,7 +700,7 @@ export default {
         socket.emit("whisper", newMessage);
       } else {
         socket.emit("message", newMessage);
-        console.log("message", newMessage)
+        // console.log("message", newMessage)
       }
 
       // Add message to UI
@@ -715,7 +715,7 @@ export default {
     },
 
     selectRoom: function(roomId, conversation) {
-      console.log("running selectRoom");
+      // console.log("running selectRoom");
       this.activeRoom = roomId;
       // console.log("conversation._id", conversation._id)
       if (conversation) {
@@ -764,6 +764,13 @@ export default {
         this.toggleSidepanel("hide");
       } catch(err) {
         console.error(err);
+      }
+    },
+
+    unselectRoom(roomId) {
+      if (this.activeRoom === roomId) {
+        this.toggleMessageMainEl("hide");
+        this.activeRoom = "";
       }
     },
 
