@@ -210,7 +210,7 @@
       v-for="chatroom in chatrooms"
       :chatroom="chatroom"
       v-show="chatroom._id == activeRoom"
-      :key="chatroom._id">
+      :key="'chat-buttons-'+chatroom._id">
 
       <div class="d-flex justify-content-between">
         <!--FILE SHARING TOGGLE-->
@@ -219,15 +219,15 @@
             <input type="checkbox" name="enable_file_sharing" >
               <span class="slider-file-sharing round"></span>
           </label>
-          <div> 
+          <div>
           <span class="file-sharing-label">Enable File Sharing</span>
-          </div> 
+          </div>
         </div>
         <!--FILE SHARING TOGGLE-->
 
-      
+
         <!--CHAT HISTORY SLIDER BUTTON-->
-        <button 
+        <button
           class="openbtn"
           onclick="openNav()"
           v-on:click="populateMessageHistoryList(chatroom)">
@@ -238,7 +238,7 @@
     </div>
     <!--MAIN CHAT BUTTONS END-->
 
-    
+
     <!--HISTORY BLOCK START-->
     <MessageHistoryComponent
       :conversation="chatroomsAPIData.find(room => room.id === activeRoom) ?
@@ -320,7 +320,7 @@
                         </b>
                         <p v-if="!message.content.startsWith('files/')">&nbsp;{{ message.content }}</p>
                         <p v-else><a :href="message.content">&nbsp;{{ message.content.slice(6, message.content.length) }}</a></p>
-                        
+
                         <!-- Timestamp -->
                         <p class="ms-auto timestamp">{{formatTimestamp(message.created_at)}}</p>
                     </div>
@@ -372,7 +372,7 @@
                     style="font-weight:600; font-size:16px"
                     v-on:click="populateMessageHistoryList(chatroom)"
                     v-bind:id="'msg-list-btn'+chatroom._id">
-                    
+
                     Chat History
                   </button>-->
 
