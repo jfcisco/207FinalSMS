@@ -660,7 +660,11 @@ export default {
     getMsgSender(msg, chatroom) {
       return msg.clientId === this.currentUser._id ?
         "You" :
-        chatroom.members.filter(member => member.clientId === msg.clientId)[0].clientName;
+        (
+          chatroom.members.filter(member => member.clientId === msg.clientId).length > 0 ?
+          chatroom.members.filter(member => member.clientId === msg.clientId)[0].clientName :
+          "Error"
+        );
     },
 
     getAssignedToRoom(chatroom) {
