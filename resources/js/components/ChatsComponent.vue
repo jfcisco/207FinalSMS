@@ -482,23 +482,11 @@ export default {
 
     window.addEventListener("focus", () => {
       // console.log("window is in focus");
-
-      // if (this.activeRoom) {
-      //   console.log("1=>", this.chatroomsUnreadNotif[this.activeRoom])
-      //   this.chatroomsUnreadNotif[this.activeRoom] = 0
-      //   console.log("2=>", this.chatroomsUnreadNotif[this.activeRoom])
-      // }
       this.totalNotifCount = 0;
       this.hideTitleNotifications();
     });
 
     socket.auth = {
-      // // For visitors
-      // clientId: client.getFingerprint(),
-      // clientType: "visitor",
-      // clientName: "bisita",
-      // widgetId: "widget1",
-
       // For admin/agent
       clientId: this.currentUser._id,
       clientName: `${this.currentUser.name}`,
@@ -517,33 +505,30 @@ export default {
       );
       // console.log("this.chatrooms=>", this.chatrooms);
 
-      // initialize chatroomsUnreadNotif and chatroomsAPIData
+      // initialize chatroomsUnreadNotif
       rooms.map(room => {
         this.chatroomsUnreadNotif[`${room._id}`] = 0;
       });
-      // rooms.map(room => {
-      //   this.chatroomsAPIData[`${room._id}`] = {
-      //     id: room._id,
-      //     members: [],
-      //     conversations: []
-      //   };
-      // });
-      // console.log("chatroomsUnreadNotif", this.chatroomsUnreadNotif);
     });
 
-    // get all rooms from mongodb
-    // this.generateChatroomsList();
-
     socket.on("convo_started", (conversation) => {
-      console.log("visitor started convo", conversation);
-      this.chatrooms.forEach(chatroom => {
-        if (chatroom.conversation._id === conversation._id) {
-          chatroom.conversation = conversation;
-          console.log("found room", chatroom);
-          return;
-        }
-      });
-
+      console.log("visitor started a convo", conversation);
+      if (this.chatrooms.length === 0) {
+        // chatrooms is an empty array so keep checking until it is populated
+        let searchChatroomInterval = setInterval(() => {
+          console.log("running set interval")
+          let foundRoom = this.chatrooms[this.getTargetRoomIndex(conversation.roomId)];
+          if (foundRoom) {
+            foundRoom.conversation = conversation;
+            clearInterval(searchChatroomInterval);
+            console.log("running clear interval")
+          }
+        }, 500);
+      } else {
+        // chatrooms is not an empty array so a match will definitely be found
+        let foundRoom = this.chatrooms[this.getTargetRoomIndex(conversation.roomId)];
+        foundRoom.conversation = conversation;
+      }
     });
 
     socket.on("message", (message) => {
@@ -573,15 +558,6 @@ export default {
 
       // increment totalNotifCount everytime a messages is received and dashboard is not in focus
       if (!document.hasFocus()) {
-        // let total = 0;
-        // for (let key in this.chatroomsUnreadNotif) {
-        //   if (this.chatroomsUnreadNotif.hasOwnProperty(key)){
-        //     total += this.chatroomsUnreadNotif[key];
-        //     console.log("here", total)
-        //   }
-        // }
-        // console.log("totalNotifCount", total);
-        // this.showTitleNotifications(total);
         this.showTitleNotifications(++this.totalNotifCount);
 
       }
