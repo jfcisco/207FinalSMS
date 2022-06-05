@@ -47,78 +47,69 @@
 
 <script>
 import axios from 'axios';
+import cj from "clientjs";
 
 export default {
     
-    Name: 'Modal',
     emits: ['update-success'],
 
     data() {
         return {
             errors: [],
             visitorName: '',
+            visitorId: '',
             isModalVisible: false,
         }
     },
-    // created() {
-    //     // Retrieve the current user's details so we can show the current values on the form
-    //     axios.get('<?php echo $baseUrl; ?>/api/visitors', {
-    //         params: {conversationId: this.room.conversationId}
-    //     })
-    //         .then(response => {                    
-    //             this.visitorName = response.data.visitorId;
-    //         });
-    // },
+    created() {
+        // Retrieve the current user's details so we can show the current values on the form
+        const client = new cj.ClientJS();
+        this.visitorId = `${client.getFingerprint()}`
+
+        axios.get("<?php echo $baseUrl; ?>/api/visitors/" + this.visitorId)
+            .then(response => {                    
+                this.visitorName = response.data.data.name;
+                console.log("Visitor name is " + this.visitorName +" and Visitor ID is " + this.visitorId);
+        });
+
+    },
 
     methods: {
-        validateInput() {
-            let errors = [];
+        validate() {
+            this.errors = [];
 
             if (this.visitorName.length === 0) {
                 this.errors.push('Please enter a name.');
-            }
-
-            return errors;
+            };
         },
         
         // Send file to server
         onSubmit() {
-            this.errors = this.validateInput();
+            this.validate();
 
             // Don't send if there are errors
             if (this.errors.length > 0) {
                 return;
             }
 
-            // Prepare to send the file to the server
-            let formData = new FormData();
-            formData.append('text', this.visitorName);
             this.isUpdating = true;
  
             // Send request to upload file to server
-            axios({
-                method: 'patch',
-                url: "<?php echo $baseUrl; ?>/api/visitors/{visitorId}",
-                data: {
-                    name: this.visitorName
-                }
-            });
-            // patch("<?php echo $baseUrl; ?>/api/visitors/{visitorId}", formData)
-            //     .then(response => {
-
-            //         this.$emit('update-success', fileUrl);
-
-            //         this.closeModal();
-            //     })
-            //     .catch((err) => {
-            //         console.error(err);
-            //         this.errors.push('Unable to update name. Please try again later.');
-            //     })
-            //     .finally(() => {
-            //         this.isUpdating = false;
-            //     });
-            //     window.location.reload();
-
+            axios.patch("<?php echo $baseUrl; ?>/api/visitors/" + this.visitorId, {
+                name: this.visitorName
+            })
+                .then(response => {
+                })
+                .catch((err) => {
+                    console.error(err);
+                    this.errors.push('Unable to update name. Please try again later.');
+                })
+                .finally(() => {
+                    this.isUpdating = false;
+                })
+            
+            alert("Name change successful");
+            this.closeModal();
         },
         close() {
             this.$emit('close');

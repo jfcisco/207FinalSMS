@@ -10,7 +10,7 @@
                     <div class="dropdown">
                         <button @click="toggleDropdown()"><i class="material-icons">menu</i></button>
                         <div id="dropdown-menu" class="dropdown-content hidden">
-                            <NameUpdateWidget v-on:update-success="handleNameUpdate"></NameUpdateWidget>
+                            <NameUpdateWidget></NameUpdateWidget>
                             <a id=exit-chat @click="endConversation()">End Conversation</a>
                         </div>
                     </div>
@@ -175,29 +175,6 @@ export default {
 
         // Gets code when we successfully upload a file
         handleAttachmentUpload(attachmentUrl) {
-
-            // axios post to laravel app - to upload the file (in the file upload widget)
-            const newMessage = {
-                content: attachmentUrl,
-                roomId: this.room._id,
-                conversationId: this.room.conversationId,
-            };
-            // console.log("room._id=> ", this.room._id);
-
-            socket.emit("message", newMessage);
-
-            // Attach some properties we need later
-            this.room.messages.push({
-                ...newMessage,
-                isUpdate: false,
-                fromSelf: true,
-            });
-
-            // Clear message input
-            this.message = "";
-        },
-
-        handleNameUpdate(attachmentUrl) {
 
             // axios post to laravel app - to upload the file (in the file upload widget)
             const newMessage = {

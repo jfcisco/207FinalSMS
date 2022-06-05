@@ -657,6 +657,11 @@ export class Tawk {
                 background-color: grey;
             }
             
+            .text-danger {
+                color: red;
+                font-size: 12px;
+            }
+
             /* Dropdown Content for Change Name and End Conversation */
             .dropdown-content {
                 right: 0;
