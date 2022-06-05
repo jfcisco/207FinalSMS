@@ -115,8 +115,8 @@ export default {
     created() {
         // Start the conversation
         socket.emit("start_convo", {
-            conversationId: this.room.conversationId
-        }, (error, startedConvo) => { 
+            conversationId: this.room.conversation._id
+        }, (error, startedConvo) => {
             if (!error) {
                 this.room.conversation = startedConvo;
             }
@@ -129,7 +129,7 @@ export default {
         socket.on("file_sharing", ({ allowed }) =>  {
             this.room.enable_file_sharing = allowed;
         });
-        
+
         // Log any connect_errors
         socket.on("connect_error", (err) => {
             console.error(err);
@@ -146,7 +146,7 @@ export default {
             const newMessage = {
                 content: this.message,
                 roomId: this.room._id,
-                conversationId: this.room.conversationId,
+                conversationId: this.room.conversation._id,
             };
             // console.log("room._id=> ", this.room._id);
 
@@ -171,7 +171,7 @@ export default {
         },
 
         endConversation() {
-            socket.emit("end_chat", this.room.conversationId);
+            socket.emit("end_chat", this.room.conversation._id);
             socket.disconnect();
             this.chatEnded = true;
         },
@@ -183,7 +183,7 @@ export default {
             const newMessage = {
                 content: attachmentUrl,
                 roomId: this.room._id,
-                conversationId: this.room.conversationId,
+                conversationId: this.room.conversation._id,
             };
             // console.log("room._id=> ", this.room._id);
 
@@ -204,7 +204,7 @@ export default {
                 const typingData = {
                 content: this.message,
                 roomId: this.room._id,
-                conversationId: this.room.conversationId,
+                conversationId: this.room.conversation._id,
             }
             // console.log("Send typing data: ", typingData);
             socket.emit("typing", typingData);
@@ -212,7 +212,7 @@ export default {
 
         toggleDropdown() {
             this.dropdownShown = !this.dropdownShown;
-            
+
             if (!this.dropdownShown) {
                 document.getElementById("dropdown-menu").classList.add("hidden");
             } else {

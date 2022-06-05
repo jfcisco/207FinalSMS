@@ -28,6 +28,7 @@
     <div class="row py-0 mt-0 incomingsessions" style="overflow-y: scroll">
 
       <!--INCOMING CHAT BLOCK START-->
+      <!-- Display incoming chats, wherein a chatroom has a conversation property (with a startAt property for that chatroom's conversation) -->
       <div
         class="block incoming"
         :class="{
@@ -37,12 +38,12 @@
         }"
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
-        v-show="chatroom.members.length === 1 && chatroom.conversationId"
+        v-show="chatroom.members.length === 1 && (chatroom.conversation ? chatroom.conversation.startAt : false)"
         :key="chatroom._id">
 
         <div
           class="details"
-          v-on:click="selectIncomingRoom(chatroom._id, chatroom.conversationId)"
+          v-on:click="selectIncomingRoom(chatroom._id, chatroom.conversation)"
           v-bind:id="chatroom._id">
 
           <!--room id/username section-->
@@ -53,7 +54,7 @@
 
           <!-- HIDE BEFORE COMMIT -->
           <!-- show chatroom ids in incoming -->
-          <!-- <div class="listHead"> <p>room._id: {{ chatroom._id }}</p> </div> -->
+          <div class="listHead"><p>room._id: {{ chatroom._id }}</p></div>
           <!-- HIDE BEFORE COMMIT -->
 
           <!--room id/username section-->
@@ -75,7 +76,7 @@
     <div class="row activesessions" style="overflow-y: scroll">
 
       <!--ACTIVE CHAT BLOCK START-->
-      <!-- Display open conversations, which have a conversationId (no endAt property for that conversation) -->
+      <!-- Display open chats, wherein each chatroom has a conversation property (with a startAt property for that conversation) -->
       <div
         :class="{
           block: true,
@@ -83,12 +84,12 @@
         }"
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
-        v-show="chatroom.members.length > 1 && chatroom.conversationId"
+        v-show="chatroom.members.length > 1 && (chatroom.conversation ? chatroom.conversation._id : false)"
         :key="chatroom._id">
 
         <div
           class="details"
-          v-on:click="selectRoom(chatroom._id, chatroom.conversationId)"
+          v-on:click="selectRoom(chatroom._id, chatroom.conversation)"
           v-bind:id="chatroom._id">
 
           <!--room id/username section-->
@@ -106,7 +107,7 @@
 
           <!-- HIDE BEFORE COMMIT -->
           <!-- show chatroom ids in active sessions -->
-          <!-- <div class="listHead"> <p>room._id: {{ chatroom._id }}</p> </div> -->
+          <div class="listHead"><p>room._id: {{ chatroom._id }}</p></div>
           <!-- HIDE BEFORE COMMIT -->
 
           <!-- assigned room users (Admin/Agent) -->
@@ -134,7 +135,7 @@
     <div class="row inactivesessions" style="overflow-y: scroll">
 
       <!--CLOSED CHAT BLOCK START-->
-      <!-- display ended conversations, which have no conversationId (with an endAt property for that conversation) -->
+      <!-- Display ended chats, wherein the room has an undefined or no conversation property (with an endAt property for the last conversation of that room) -->
       <div
         :class="{
           block: true,
@@ -142,7 +143,7 @@
         }"
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
-        v-show="!chatroom.conversationId"
+        v-show="!chatroom.conversation"
         :key="chatroom._id">
         <div
           class="details"
@@ -156,9 +157,7 @@
 
           <!-- HIDE BEFORE COMMIT -->
           <!-- show chatroom ids in active sessions -->
-          <!-- <div class="listHead">
-            <p>room._id: {{ chatroom._id }}</p>
-          </div> -->
+          <div class="listHead"><p>room._id: {{ chatroom._id }}</p></div>
           <!-- HIDE BEFORE COMMIT -->
 
           <!-- assigned room users (Admin/Agent) -->
@@ -294,9 +293,9 @@
 
           <div class="mb-3">
             <h5 class="assignedmembers">
-              {{ chatroom.conversationId ? "Assigned" : "Previously Assigned" }}: {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
+              {{ chatroom.conversation ? "Assigned" : "Previously Assigned" }}: {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </h5>
-            <h6 class="lastconversation">{{ chatroom.conversationId ? "" : "Last Conversation" }}</h6>
+            <h6 class="lastconversation">{{ chatroom.conversation ? "" : "Last Conversation" }}</h6>
           </div>
 
           <!--CHATBOX START-->
@@ -343,8 +342,8 @@
             class="joinbutton"
             id="join-btn"
             style="display: flex"
-            v-if="chatroom.conversationId && chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
-            v-on:click="joinRoom(chatroom._id, chatroom.conversationId)">
+            v-if="chatroom.conversation && chatroom.members.filter(member => member.clientId === currentUser._id).length === 0"
+            v-on:click="joinRoom(chatroom._id, chatroom.conversation)">
             <span class="joinroom">Click to join room</span>
           </button>
 
@@ -535,6 +534,18 @@ export default {
     // get all rooms from mongodb
     // this.generateChatroomsList();
 
+    socket.on("convo_started", (conversation) => {
+      console.log("visitor started convo", conversation);
+      this.chatrooms.forEach(chatroom => {
+        if (chatroom.conversation._id === conversation._id) {
+          chatroom.conversation = conversation;
+          console.log("found room", chatroom);
+          return;
+        }
+      });
+
+    });
+
     socket.on("message", (message) => {
       // console.log("message received", message);
 
@@ -618,8 +629,9 @@ export default {
     socket.on("end_chat", conversationId => {
       // console.log("visitor ended conversation", conversationId);
       this.chatrooms.forEach(chatroom => {
-        if (chatroom.conversationId === conversationId) {
-          chatroom.conversationId = undefined;
+        if (chatroom.conversation._id === conversationId) {
+          chatroom.conversation = undefined;
+          return;
         }
         return;
       });
@@ -726,15 +738,20 @@ export default {
       this.message = "";
     },
 
-    selectRoom: function(roomId, conversationId) {
+    selectRoom: function(roomId, conversation) {
       console.log("running selectRoom");
       this.activeRoom = roomId;
-      this.activeConversation = conversationId;
-      console.log("conversationId", conversationId)
+      // console.log("conversation._id", conversation._id)
+      if (conversation) {
+        this.activeConversation = conversation._id;
+        this.toggleMsgHistoryListBtn(roomId, conversation._id);
+      } else {
+        this.activeConversation = undefined;
+        this.toggleMsgHistoryListBtn(roomId, undefined);
+      }
       this.scrollToChatBottom();
       this.toggleMessageMainEl("show");
       this.toggleSidepanel("show");
-      this.toggleMsgHistoryListBtn(roomId, conversationId);
 
       // clear selected room's notification count
       this.chatroomsUnreadNotif[roomId] = 0;
@@ -743,12 +760,12 @@ export default {
       this.hideTitleNotifications();
     },
 
-    selectIncomingRoom: function (roomId, conversationId) {
+    selectIncomingRoom: function (roomId, conversation) {
       // console.log("running selectIncomingRoom");
       event.preventDefault();
-      this.selectRoom(roomId, conversationId);
+      this.selectRoom(roomId, conversation);
 
-      this.joinRoom(roomId, conversationId)
+      this.joinRoom(roomId, conversation)
     },
 
     selectClosedRoom: function(roomId) {
@@ -774,7 +791,7 @@ export default {
       }
     },
 
-    joinRoom: function(roomId, conversationId) {
+    joinRoom: function(roomId, conversation) {
 
       let confirmAction = confirm("Are you sure you want to join this room?");
 
@@ -793,7 +810,7 @@ export default {
             {clientId: this.currentUser._id, clientName: this.currentUser.name, clientType: "user"}
         )
 
-        socket.emit("join", { roomId: roomId, conversationId: conversationId, name: this.currentUser.name });
+        socket.emit("join", { roomId: roomId, conversationId: conversation._id, name: this.currentUser.name });
 
         alert("Successfully joined this room");
 
@@ -817,16 +834,16 @@ export default {
       // console.log("running populateMessageHistoryList");
       try {
         const results = [];
-        if (chatroom.conversationId) {
+        if (chatroom.conversation) {
           // if it is an active or incoming chat, get request to "api/room/{roomId}"
-          // console.log("chatroom.conversationId is truthy");
+          // console.log("chatroom.conversation is truthy");
           this.roomIsLoading = true;
           results.push(await this.getRoom(chatroom._id));
         } else {
-          // closed chat since no conversationId
+          // closed chat since no conversation
           // if it is a closed chat, we already have result from get request to "api/room/{roomId}"
           //    passed as param when selectClosedRoom executes
-          // console.log("chatroom.conversationId is falsy", chatroom.conversationId);
+          // console.log("chatroom.conversation is falsy", chatroom.conversation);
           results.push(chatroom);
         }
         // console.log("check 1: results=>", results)
