@@ -321,7 +321,7 @@
                           {{ getMsgSender(message, chatroom) }}:
                         </b>
                         <p v-if="!message.content.startsWith('files/')">&nbsp;{{ message.content }}</p>
-                        <p v-else><a :href="message.content">&nbsp;{{ message.content.slice(6, message.content.length) }}</a></p>
+                        <p v-else><a :href="message.content" target="_blank">&nbsp;{{ message.content.slice(6, message.content.length) }}</a></p>
 
                         <!-- Timestamp -->
                         <p class="ms-auto timestamp">{{formatTimestamp(message.created_at)}}</p>
