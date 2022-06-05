@@ -436,6 +436,75 @@ ion-icon {
   cursor: pointer;
 }
 
+//SIDEPANEL
+.sidepanel  {
+  width: 0;
+  padding:0;
+  position: fixed;
+  z-index: 1;
+  height: 100%;
+  top: 0;
+  right: 0;
+  background-color: white;
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+
+.sidepanel .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+}
+
+.closebtn{
+  color:#627894;
+  padding:10px;
+
+}
+
+.closebtn:hover{
+  color:white;
+  background-color:#fa6121;
+}
+
+.openbtndiv{
+  float:right;
+
+}
+.openbtn {
+  position: relative;
+  top: 20px;
+  right:30px;
+  margin:0;
+  font-size: 30px;
+  cursor: pointer;
+  background-color: #627894;
+  color: white;
+  padding: 10px 10px 0px;
+  border: none; 
+  border-radius:10px;
+}
+
+.file-sharing-toggle {
+  position: relative;
+  top: 20px;
+  right:30px;
+  width:150px;
+  margin:0;
+  padding: 10px 10px 0px;
+  border: none; 
+  border-radius:10px;
+  text-align:center;
+}
+
+
+.openbtn:hover {
+  background-color:#fa6121;
+}
+
+
 
 //MESSAGE HISTORY MODAL COMPONENTS
 
@@ -465,7 +534,7 @@ ion-icon {
 .historyblock:hover{
   background:#E9EDEE;
   transition: 0.18s linear;
-  p{
+  span{
   color:#fa6121;
   }
   
@@ -474,19 +543,19 @@ ion-icon {
 .chathistorybutton{
   border:none;
   font-size:1.3em;
-  margin:10px 0px 0px;
-  padding: 15px;
-  text-align: center;
+  margin:20px 10px 0px;
+  text-align: left;
   text-decoration: none;
   display: inline-block;
-  cursor: pointer;
+//cursor: pointer;
+  color: #fa6121;
   width:100%;
 }
 
-.chathistorybutton:hover{
-  background:#fa6121;
-  color:#e9edee;
-}
+//.chathistorybutton:hover{
+//  background:#fa6121;
+//  color:#e9edee;
+//}
 
 .historydetails {
   font-size: 13px;
@@ -557,8 +626,7 @@ ion-icon {
   background-color: #e9edee;
   margin: 0;
   padding: 0;
-  padding-right:20px;
-  padding-left:10px;
+  
 
 }
 
@@ -572,20 +640,22 @@ ion-icon {
 }
 
 .chathistorylist{
-	height:65vh;
+	max-height:100vh;
+  margin-top:10px;
+  margin-bottom:20px;
 }
 
-.chathistorylist::-webkit-scrollbar-track {
+.sidepanel::-webkit-scrollbar-track {
   border: 1px solid white;
   padding: 2px 0;
   background-color: white;
 }
 
-.chathistorylist::-webkit-scrollbar {
+.sidepanel::-webkit-scrollbar {
   width: 3px;
 }
 
-.chathistorylist::-webkit-scrollbar-thumb {
+.sidepanel::-webkit-scrollbar-thumb {
   border-radius: 10px;
   box-shadow: inset 0 0 6px rgba(0,0,0,.3);
   background-color: #fa6121;
@@ -863,6 +933,17 @@ ion-icon {
   color:#e9edee;
 }
 
+.file-sharing-label {
+//display: inline-block;
+  width: 200px;
+  text-align: center;
+  padding-right:10px;
+  font-size:0.7rem;
+  font-weight:bold;
+  color:#627894;
+}
+
+
 .chat-label2 {
   display: inline-block;
   width: 150px;
@@ -991,6 +1072,7 @@ ion-icon {
   transition: .4s;
 }
 
+
 .slider:before {
   position: absolute;
   content: "";
@@ -1033,4 +1115,53 @@ input:checked + .slider:before {
 .timestamp--history {
   color: #3D3E3E;
   padding: 0;
+}
+
+
+.slider-file-sharing {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #627894;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider-file-sharing:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 15px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+
+input:checked + .slider-file-sharing {
+  background-color: #FA6121;
+}
+
+input:focus + .slider-file-sharing {
+  box-shadow: 0 0 0px #e9edee;
+}
+
+input:checked + .slider-file-sharing:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.slider-file-sharing.round {
+  border-radius: 34px;
+}
+
+.slider-file-sharing.round:before {
+  border-radius: 50%;
 }

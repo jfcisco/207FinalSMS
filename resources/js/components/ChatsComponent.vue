@@ -64,7 +64,6 @@
             </p>
           </div>
           <!-- The message last sent to the room -->
-
         </div>
       </div>
       <!--INCOMING CHAT BLOCK END-->
@@ -185,7 +184,7 @@
   <!--ROOM LISTS END-->
 
   <!--MAIN CHAT WINDOW START-->
-  <div class="col-lg-7 col-sm-5 mainchat">
+  <div class="col-lg-9 col-sm-8 mainchat">
 
     <!--MAIN INPUT MESSAGE BOX START-->
 
@@ -206,6 +205,39 @@
     </div>
     <!--MAIN INPUT MESSAGE BOX END-->
 
+    <!--MAIN CHAT BUTTONS START-->
+    <div class="openbtndiv"
+      v-for="chatroom in chatrooms"
+      :chatroom="chatroom"
+      v-show="chatroom._id == activeRoom"
+      :key="chatroom._id">
+
+      <div class="d-flex justify-content-between">
+        <!--FILE SHARING TOGGLE-->
+        <div class="file-sharing-toggle">
+          <label class="switch">
+            <input type="checkbox" name="enable_file_sharing" >
+              <span class="slider-file-sharing round"></span>
+          </label>
+          <div> 
+          <span class="file-sharing-label">Enable File Sharing</span>
+          </div> 
+        </div>
+        <!--FILE SHARING TOGGLE-->
+
+      
+        <!--CHAT HISTORY SLIDER BUTTON-->
+        <button 
+          class="openbtn"
+          onclick="openNav()"
+          v-on:click="populateMessageHistoryList(chatroom)">
+          <ion-icon name="information-circle-outline"></ion-icon>
+        </button>
+        <!--CHAT HISTORY SLIDER BUTTON-->
+      </div>
+    </div>
+    <!--MAIN CHAT BUTTONS END-->
+
     
     <!--HISTORY BLOCK START-->
     <MessageHistoryComponent
@@ -217,8 +249,8 @@
         {}"
       :chatroomMembers="chatroomsAPIData.find(room => room.id === activeRoom) ?
         chatroomsAPIData.find(room => room.id === activeRoom).members :
-        []"
-    ></MessageHistoryComponent>
+        []">
+    </MessageHistoryComponent>
 
     <!--WHISPER INPUT MESSAGE BOX START-->
     <div class="chatbox_input" id="whisper" style="display:none">
@@ -263,7 +295,6 @@
               {{ chatroom.conversationId ? "Assigned" : "Previously Assigned" }}: {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </h5>
             <h6 class="lastconversation">{{ chatroom.conversationId ? "" : "Last Conversation" }}</h6>
-
           </div>
 
           <!--CHATBOX START-->
@@ -302,12 +333,8 @@
             <ul class="list-unstyled" v-bind:id="'visitor-typing' + chatroom._id" style="display:none">
               <li><div class="receivedmessage"></div></li>
             </ul>
-
-
           </div>
           <!--CHATBOX END-->
-
-
 
           <!-- JOIN FEATURE AVAILABLE ONLY IF CONVERSATION IS OPEN AND CURRENT USER IS NOT ALREADY ASSIGNED -->
           <button
@@ -325,29 +352,33 @@
   <!--MAIN CHAT WINDOW END-->
 
   <!--CHAT HISTORY-->
-  <div class="col-lg-2 col-sm-3 mt-5 chathistoryfull">
+  <!--<div class="col-lg-2 col-sm-3 mt-5 chathistoryfull">-->
+  <div id="mySidepanel" class="sidepanel" style="overflow-y: scroll" >
+
     <!--CHAT HISTORY-->
     <div
-      class="chathistoryfull"
       v-for="chatroom in chatrooms"
       :chatroom="chatroom"
       v-show="chatroom._id == activeRoom"
       :key="chatroom._id">
 
             <div>
-
-              
               <div class="row">
-                <div class="chathistory mt-2">
-                  <button
+                <div class="mt-2">
+
+                  <!--<button
+
                     class="chathistorybutton"
                     style="font-weight:600; font-size:16px"
                     v-on:click="populateMessageHistoryList(chatroom)"
-                    v-bind:id="'msg-list-btn'+chatroom._id"
-                  >
+                    v-bind:id="'msg-list-btn'+chatroom._id">
+                    
                     Chat History
+                  </button>-->
 
-                  </button>
+                  <div class="chathistorybutton">
+                    Chat History
+                  </div>
 
                   <!-- Spinner For Room Loading -->
                   <div class="ms-2 d-inline-block">
@@ -357,23 +388,23 @@
                   </div>
 
                   <!--HISTORY LIST START-->
-                  <div class="chathistorylist" style="overflow-y: scroll" >
+                  <div class="chathistorylist">
                     <!--HISTORY BLOCK START-->
                     <div
                       v-for="conversation in chatroomsAPIData.find(room => room.id === chatroom._id) ?
                         chatroomsAPIData.find(room => room.id === chatroom._id).conversations :
                         []"
                       :key="conversation.id"
-                      :conversation="conversation"
-                    >
+                      :conversation="conversation">
+
+                      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
                       <button
                         class="historyblock"
                         title="Check Transcript"
                         data-bs-toggle="modal"
                         data-bs-target="#CheckTranscript"
-                        v-on:click="() => { activeConversationHistoryId = conversation.id }"
-                      >
-                        <div  >
+                        v-on:click="() => { activeConversationHistoryId = conversation.id }">
+                        <div>
                             <span>Conversation: {{ conversation.id }}</span>
                             <p>started: {{ conversation.startAt }}</p>
                             <p>ended: {{ conversation.endAt }} </p>
@@ -688,6 +719,7 @@ export default {
       console.log("conversationId", conversationId)
       this.scrollToChatBottom();
       this.toggleMessageMainEl("show");
+      this.toggleSidepanel("show");
       this.toggleMsgHistoryListBtn(roomId, conversationId);
 
       // clear selected room's notification count
@@ -722,6 +754,7 @@ export default {
 
         this.selectRoom(roomId, undefined);
         this.toggleMessageMainEl("hide");
+        this.toggleSidepanel("hide");
       } catch(err) {
         console.error(err);
       }
@@ -751,6 +784,7 @@ export default {
         alert("Successfully joined this room");
 
         this.toggleMessageMainEl("show");
+        this.toggleSidepanel("show");
       }
     },
 
@@ -800,6 +834,15 @@ export default {
         msgMainEl.style.display = "flex";
       } else if (action === "hide") {
         msgMainEl.style.display = "none";
+      }
+    },
+
+    toggleSidepanel(action) {
+      const sidepanel= document.getElementById("sidepanelbutton");
+      if (action === "show") {
+        sidepanel.style.display = "flex";
+      } else if (action === "hide") {
+        sidepanel.style.display = "none";
       }
     },
 
