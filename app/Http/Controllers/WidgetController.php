@@ -386,7 +386,7 @@ class WidgetController extends Controller
         $widgetToUpdate->is_active = $request->boolean('is_active');
         $widgetToUpdate->color = $request->input('widget-color');
         $widgetToUpdate->icon = $request->input('widget-icon');
-        $widgetToUpdate->inactivity_timeout_minutes = $request->input('inactivity-timeout-minutes');
+        $widgetToUpdate->inactivity_timeout_minutes = (int)($request->input('inactivity-timeout-minutes'));
         
         // Update Allowed Domains
         if ($request->filled('allowed_domains')) {

@@ -73,6 +73,8 @@ class ChatWidget extends Model
         'sched_sunday_avail_end' => 'datetime',
         
         'is_active' =>'boolean',
+
+        'inactivity_timeout_minutes' => 'integer',
     ];
 
     public function created_by(): BelongsTo
