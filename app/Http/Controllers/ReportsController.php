@@ -8,6 +8,7 @@ use App\Models\Room;
 use App\Models\Session;
 use App\Models\Visitor;
 use App\Models\Conversation;
+use App\Models\ChatWidget;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -249,6 +250,7 @@ class ReportsController extends Controller
     {
         $liveVisitorSessions = Session::where('endAt', null)->where('clientType', "visitor")->get();
         $output = array();
+        $timeout = $this->getTimeoutSetting().' mins';
         foreach($liveVisitorSessions as $vSession){
             $exclude = false;
             $visitors = Visitor::where("_id", $vSession->clientId)->get();
@@ -259,7 +261,7 @@ class ReportsController extends Controller
                 $noEndConvo = Conversation:: where('roomId',$room->_id)->whereNull('endAt')->whereNotNull('startAt')->get();
                 date_default_timezone_set('UTC');
                 $maxTime = date_create($vSession->startAt->toDateTime()->format(DATE_ATOM));
-                date_add($maxTime, date_interval_create_from_date_string('30 mins'));
+                date_add($maxTime, date_interval_create_from_date_string($timeout));
 
                 if($noEndConvo->isNotEmpty()){
                     //start and end is null == browsing or offline
@@ -321,12 +323,18 @@ class ReportsController extends Controller
         return response(['data' => ConversationResource::collection($conversations)], 200);
     }
 
+    public function getTimeoutSetting(){
+        $widget = ChatWidget::first();
+        return $widget->inactivity_timeout_minutes;
+    }
+
+
+
     public function test(){
 
 
         echo '<pre>';
-        //var_dump($conversation);
-        //var_dump($roomMsgs);
+        echo $this->getTimeoutSetting().' mins';
         echo '</pre>';
         
     }
