@@ -19,8 +19,11 @@ const tawk = new Tawk({
     schedulerEnabledForToday: JSON.parse("<?php echo $enabledForToday; ?>"),
     availabilityStartTime: new Date("<?php echo $availabilityStartTime; ?>"),
     availabilityEndTime: new Date("<?php echo $availabilityEndTime; ?>"),
+    afterHoursMessage: "<?php echo $afterHoursMessage; ?>",
 
     // Widget appearance variables
     color: "<?php echo $color; ?>",
     icon: "<?php echo $icon; ?>", 
 });
+
+console.log(tawk);

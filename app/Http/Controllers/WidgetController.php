@@ -162,6 +162,7 @@ class WidgetController extends Controller
             'availabilityEndTime' => ($widgetAvailabilitySchedule['availEnd']
                 ? $widgetAvailabilitySchedule['availEnd']->toIso8601String()
                 : ""),
+            'afterHoursMessage' => $widget->after_hours_message,
 
             // Widget appearance settings
             'color' => $widget->color,

@@ -19,6 +19,7 @@ export class Tawk {
         availabilityStartTime,
         availabilityEndTime,
         schedulerEnabledForToday,
+        afterHoursMessage,
         color,
         icon,
     } = {}
@@ -35,6 +36,9 @@ export class Tawk {
         this.availabilityStartTime = availabilityStartTime;
         this.availabilityEndTime = availabilityEndTime;
         this.schedulerEnabledForToday = schedulerEnabledForToday;
+        this.afterHoursMessage = afterHoursMessage
+            ? afterHoursMessage.trim()
+            : "";
 
         // this.color (string): 7-character hexadecimal color code (e.g., "#fdee3f")
         this.color = color; 
@@ -231,9 +235,13 @@ export class Tawk {
         afterhoursmessage.classList.add('content');
         afterhoursmessage.textContent = `Our agents are available from ${this.availabilityStartTime.toLocaleTimeString([], localeTimeFormat)} to ${this.availabilityEndTime.toLocaleTimeString([], localeTimeFormat)}.  Let's chat again during those hours!`;
 
+        const customMessage = document.createElement('div');
+        customMessage.classList.add('content');
+        customMessage.textContent = this.afterHoursMessage;
+
         this.messageContainer.appendChild(title);
         this.messageContainer.appendChild(afterhoursmessage);
-
+        this.messageContainer.appendChild(customMessage);
     }
 
     createMessageContainerContentUnavailableAllDay() {
@@ -245,9 +253,13 @@ export class Tawk {
         afterhoursmessage.classList.add('content');
         afterhoursmessage.textContent = `Our agents are unavailable today. Let's chat on another day!`;
 
+        const customMessage = document.createElement('div');
+        customMessage.classList.add('content');
+        customMessage.textContent = this.afterHoursMessage;
+
         this.messageContainer.appendChild(title);
         this.messageContainer.appendChild(afterhoursmessage);
-
+        this.messageContainer.appendChild(customMessage);
     }
 
     createStyles() {
