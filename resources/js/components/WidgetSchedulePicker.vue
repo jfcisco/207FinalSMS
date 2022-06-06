@@ -53,12 +53,12 @@
             <template v-if="weekdays.monday.enabled">
                 <div class="widget-block ms-4">
                     <label class="chat-label" for="sched_monday_avail_start">Start Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_monday_avail_start" id="sched_monday_avail_start" v-model="weekdays.monday.startTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_monday_avail_start" id="sched_monday_avail_start" v-model="weekdays.monday.startTime" required :disabled="!editable" :class="weekdaysValidity.monday">
                 </div>
 
                 <div class="widget-block ms-4 mb-5">
                     <label class="chat-label" for="sched_monday_avail_end">End Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_monday_avail_end" id="sched_monday_avail_end" v-model="weekdays.monday.endTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_monday_avail_end" id="sched_monday_avail_end" v-model="weekdays.monday.endTime" required :disabled="!editable"  :class="weekdaysValidity.monday">
                 </div>
             </template>
             <!-- End: Monday Availability -->
@@ -77,12 +77,12 @@
             <template v-if="weekdays.tuesday.enabled">
                 <div class="widget-block">
                     <label class="chat-label" for="sched_tuesday_avail_start">Start Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_tuesday_avail_start" id="sched_tuesday_avail_start" v-model="weekdays.tuesday.startTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_tuesday_avail_start" id="sched_tuesday_avail_start" v-model="weekdays.tuesday.startTime" required :disabled="!editable"  :class="weekdaysValidity.tuesday">
                 </div>
 
                 <div class="widget-block mb-5">
                     <label class="chat-label" for="sched_tuesday_avail_end">End Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_tuesday_avail_end" id="sched_tuesday_avail_end" v-model="weekdays.tuesday.endTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_tuesday_avail_end" id="sched_tuesday_avail_end" v-model="weekdays.tuesday.endTime" required :disabled="!editable" :class="weekdaysValidity.tuesday">
                 </div>
             </template>
             <!-- End: Tuesday Availability -->
@@ -101,12 +101,12 @@
             <template v-if="weekdays.wednesday.enabled">
                 <div class="widget-block">
                     <label class="chat-label" for="sched_wednesday_avail_start">Start Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_wednesday_avail_start" id="sched_wednesday_avail_start" v-model="weekdays.wednesday.startTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_wednesday_avail_start" id="sched_wednesday_avail_start" v-model="weekdays.wednesday.startTime" required :disabled="!editable" :class="weekdaysValidity.wednesday">
                 </div>
 
                 <div class="widget-block mb-5">
                     <label class="chat-label" for="sched_wednesday_avail_end">End Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_wednesday_avail_end" id="sched_wednesday_avail_end" v-model="weekdays.wednesday.endTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_wednesday_avail_end" id="sched_wednesday_avail_end" v-model="weekdays.wednesday.endTime" required :disabled="!editable" :class="weekdaysValidity.wednesday">
                 </div>
             </template>
             <!-- End: Wednesday Availability -->
@@ -125,12 +125,12 @@
             <template v-if="weekdays.thursday.enabled">
                 <div class="widget-block">
                     <label class="chat-label" for="sched_thursday_avail_start">Start Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_thursday_avail_start" id="sched_thursday_avail_start" v-model="weekdays.thursday.startTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_thursday_avail_start" id="sched_thursday_avail_start" v-model="weekdays.thursday.startTime" required :disabled="!editable" :class="weekdaysValidity.thursday">
                 </div>
 
                 <div class="widget-block mb-5">
                     <label class="chat-label" for="sched_thursday_avail_end">End Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_thursday_avail_end" id="sched_thursday_avail_end" v-model="weekdays.thursday.endTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_thursday_avail_end" id="sched_thursday_avail_end" v-model="weekdays.thursday.endTime" required :disabled="!editable" :class="weekdaysValidity.thursday">
                 </div>
             </template>
             <!-- End: Thursday Availability -->
@@ -149,12 +149,12 @@
             <template v-if="weekdays.friday.enabled">
                 <div class="widget-block">
                     <label class="chat-label" for="sched_friday_avail_start">Start Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_friday_avail_start" id="sched_friday_avail_start" v-model="weekdays.friday.startTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_friday_avail_start" id="sched_friday_avail_start" v-model="weekdays.friday.startTime" required :disabled="!editable" :class="weekdaysValidity.friday">
                 </div>
 
                 <div class="widget-block mb-5">
                     <label class="chat-label" for="sched_friday_avail_end">End Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_friday_avail_end" id="sched_friday_avail_end" v-model="weekdays.friday.endTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_friday_avail_end" id="sched_friday_avail_end" v-model="weekdays.friday.endTime" required :disabled="!editable" :class="weekdaysValidity.friday">
                 </div>
             </template>
             <!-- End: Friday Availability -->
@@ -173,12 +173,12 @@
             <template v-if="weekdays.saturday.enabled">
                 <div class="widget-block">
                     <label class="chat-label" for="sched_saturday_avail_start">Start Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_saturday_avail_start" id="sched_saturday_avail_start" v-model="weekdays.saturday.startTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_saturday_avail_start" id="sched_saturday_avail_start" v-model="weekdays.saturday.startTime" required :disabled="!editable" :class="weekdaysValidity.saturday">
                 </div>
 
                 <div class="widget-block mb-5">
                     <label class="chat-label" for="sched_saturday_avail_end">End Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_saturday_avail_end" id="sched_saturday_avail_end" v-model="weekdays.saturday.endTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_saturday_avail_end" id="sched_saturday_avail_end" v-model="weekdays.saturday.endTime" required :disabled="!editable" :class="weekdaysValidity.saturday">
                 </div>
             </template>
             <!-- End: Saturday Availability -->
@@ -197,12 +197,12 @@
             <template v-if="weekdays.sunday.enabled">
                 <div class="widget-block">
                     <label class="chat-label" for="sched_sunday_avail_start">Start Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_sunday_avail_start" id="sched_sunday_avail_start" v-model="weekdays.sunday.startTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_sunday_avail_start" id="sched_sunday_avail_start" v-model="weekdays.sunday.startTime" required :disabled="!editable" :class="weekdaysValidity.sunday">
                 </div>
 
                 <div class="widget-block mb-5">
                     <label class="chat-label" for="sched_sunday_avail_end">End Time</label>
-                    <input class="form-control form-control-widget-full" type="time" name="sched_sunday_avail_end" id="sched_sunday_avail_end" v-model="weekdays.sunday.endTime" required :disabled="!editable">
+                    <input class="form-control form-control-widget-full" type="time" name="sched_sunday_avail_end" id="sched_sunday_avail_end" v-model="weekdays.sunday.endTime" required :disabled="!editable" :class="weekdaysValidity.sunday">
                 </div>
             </template>
             <!-- End: Sunday Availability -->
@@ -286,6 +286,23 @@ export default {
                     endTime: this.sundayAvailEnd
                 }
             }
+        }
+    },
+
+    computed: {
+        weekdaysValidity: function() {
+            const validityClasses = {};
+            
+            for (let weekday in this.weekdays) {
+                const weekdayObject = this.weekdays[weekday];
+
+                validityClasses[weekday] = {
+                    'is-valid': weekdayObject.startTime < weekdayObject.endTime,
+                    'is-invalid': weekdayObject.startTime >= weekdayObject.endTime
+                }
+            }
+
+            return validityClasses;
         }
     }
 };
