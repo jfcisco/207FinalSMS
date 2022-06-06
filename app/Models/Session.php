@@ -31,8 +31,8 @@ class Session extends Model
      * @var array
      */
     protected $casts = [
-        'startedAt' =>'datetime',
-        'endedAt' =>'datetime',
+        'startAt' =>'datetime',
+        'endAt' =>'datetime',
     ];
 
     public function chat_widget(): BelongsTo
