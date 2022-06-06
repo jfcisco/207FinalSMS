@@ -28,6 +28,10 @@ class ChatWidgetSeeder extends Seeder
         $chatWidget->hide_when_on_mobile = false;
         $chatWidget->enable_emojis = false;
         $chatWidget->is_active = true;
+        $chatWidget->color = "#ff8000";
+        $chatWidget->icon = "/assets/chat.svg";
+        $chatWidget->inactivity_timeout_minutes = 30;
+        $chatWidget->sched_enabled = false;
         $chatWidget->save();
 
         $user->chat_widgets()->attach($chatWidget->_id);
