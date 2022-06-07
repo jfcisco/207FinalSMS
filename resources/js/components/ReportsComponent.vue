@@ -149,7 +149,7 @@
                                         <td>{{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</td>
                                         <td>{{ socketReport.fullUrl }}</td>
                                         <td>{{ socketReport.pageTitle }}</td>
-                                        <td v-on:click="joinRoom(socketReport.roomId)"><a v-bind:href="'#'">{{ socketReport.roomId }}</a></td>
+                                        <td v-on:click="joinRoom(socketReport.roomId, socketReport.convoId)"><a v-bind:href="'#'">{{ socketReport.roomId }}</a></td>
                                         <td>{{ socketReport.time }}</td>
 
                                     </tr>
@@ -397,16 +397,17 @@ export default {
                 report.time = diff.toISOString().substr(11, 8);
             });            
         },  
-        joinRoom(roomId) {
+        joinRoom(roomId, convoId) {
             //taken from chatscomponent
         let confirmAction = confirm("Are you sure you want to chat?");
 
         if (confirmAction) {
 
             socket.emit("join", { roomId: roomId, name: this.currentUser.name });
+            socket.emit("start_convo",{conversationId: convoId});            
 
             //alert("Successfully joined this room");
-            window.location.href = 'home/?strt=true&crm='+roomId;
+            window.location.href = 'home/?cnv='+convoId+'&crm='+roomId;
 
         }
         },             
@@ -518,7 +519,8 @@ export default {
                     time: visitor.time,
                     pageTitle: visitor.pageTitle,
                     fullUrl: visitor.fullUrl,
-                    activeConvo: visitor.activeConvo
+                    activeConvo: visitor.activeConvo,
+                    convoId: visitor.convoId
                 }
             });
 

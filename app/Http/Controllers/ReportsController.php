@@ -257,31 +257,34 @@ class ReportsController extends Controller
             //echo $vSession->startAt->toDateTime()->format('U.u')."<br>";
             foreach($visitors as $visitor){
                 $room = Room::where('members.clientId',$vSession->clientId)->first();
-                $browsingConvo = Conversation:: where('roomId',$room->_id)->whereNull('endAt')->whereNull('startAt')->get();
-                $noEndConvo = Conversation:: where('roomId',$room->_id)->whereNull('endAt')->whereNotNull('startAt')->get();
+                $browsingConvo = Conversation:: where('roomId',$room->_id)->whereNull('endAt')->whereNull('startAt')->first();
+                $noEndConvo = Conversation:: where('roomId',$room->_id)->whereNull('endAt')->whereNotNull('startAt')->first();
                 date_default_timezone_set('UTC');
                 $maxTime = date_create($vSession->startAt->toDateTime()->format(DATE_ATOM));
                 date_add($maxTime, date_interval_create_from_date_string($timeout));
+                $convoId = "";
 
-                if($noEndConvo->isNotEmpty()){
-                    //start and end is null == browsing or offline
-                    $activeConvo = true;
-
-                }elseif($browsingConvo->isNotEmpty()){
+                if($noEndConvo != null){
                     //start is not null and end is null == active chat
+                    $activeConvo = true;
+                    $convoId = $noEndConvo->_id;
+                }elseif($browsingConvo != null){
+                    //start and end is null == browsing or offline
                     $activeConvo = false;
+                    $convoId = $browsingConvo->_id;
                     if(now() >= $maxTime){
-                        //end session in db if more than 30 mins already
+                        //end session in db if more than getTimeoutSetting already
                         //do not include in output
                         $exclude = true;
                         $vSession->endAt = now()->format(DATE_ATOM);
                         $vSession->save();
                     }                 
-                }elseif($browsingConvo->isEmpty() && $noEndConvo->isEmpty()){
+                }elseif($browsingConvo==null && $noEndConvo==null){
                     //offline or done with chat and hasn't started browsing again
                     $activeConvo = false;
+                    $convoId = false;
                     if(now() >= $maxTime){
-                        //end session in db if more than 30 mins already;
+                        //end session in db if more than getTimeoutSetting already;
                         //do not include in output
                         $exclude = true;                        
                         $vSession->endAt = now()->format(DATE_ATOM);
@@ -299,9 +302,11 @@ class ReportsController extends Controller
                         "time" => "",
                         "pageTitle" => $vSession->pageTitle,
                         "fullUrl" => $vSession->fullUrl,
-                        "activeConvo" => $activeConvo
+                        "activeConvo" => $activeConvo,
+                        "convoId" => $convoId
                     );
                 }
+
 
             }
         }
@@ -332,11 +337,9 @@ class ReportsController extends Controller
 
     public function test(){
 
-
         echo '<pre>';
-        echo $this->getTimeoutSetting().' mins';
-        echo '</pre>';
-        
+        //echo var_dump($output);
+        echo '</pre>';     
     }
 
 }

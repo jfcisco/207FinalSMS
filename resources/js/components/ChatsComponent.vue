@@ -443,7 +443,7 @@ const socket = io(process.env.MIX_SOCKET_SERVER, {
 });
 
 export default {
-  props: ["user", "crm", "strt"],
+  props: ["user", "crm", "cnv"],
 
   components: {
     FileUploadComponent,
@@ -614,15 +614,12 @@ export default {
 
       this.activeRoom = this.crm;
   
-      if(this.strt===""){
+      if(this.cnv===""){
         
       }else{
-        
-        //i can't get the conversation id because this.chatrooms is undefined at this point in the code
+        //getting an error
+        //this.selectRoom(this.crm, this.cnv);
 
-        //let convo = this.chatrooms[this.getTargetRoomIndex(roomId)].conversation._id;
-        //this.selectIncomingRoom(this.crm, convo);
-        //this.selectRoom(this.crm, convo);
 
       }
     };

@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
     //endregion
 });
 
-
+//Route::get('/test', [ReportsController::class, 'test']);
 
 
 
