@@ -149,7 +149,7 @@
                                         <td>{{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</td>
                                         <td>{{ socketReport.fullUrl }}</td>
                                         <td>{{ socketReport.pageTitle }}</td>
-                                        <td><a v-bind:href="'home/?crm=' + socketReport.roomId">{{ socketReport.roomId }}</a></td>
+                                        <td><a v-bind:href="'home/?strt=true&crm=' + socketReport.roomId">{{ socketReport.roomId }}</a></td>
                                         <td>{{ socketReport.time }}</td>
 
                                     </tr>
@@ -396,7 +396,20 @@ export default {
                 var diff = new Date(new Date() - new Date(report.startAt));
                 report.time = diff.toISOString().substr(11, 8);
             });            
-        },       
+        },  
+        joinRoom(roomId) {
+            //taken from chatscomponent
+        let confirmAction = confirm("Are you sure you want to chat?");
+
+        if (confirmAction) {
+
+            socket.emit("join", { roomId: roomId, name: this.currentUser.name });
+
+            //alert("Successfully joined this room");
+            window.location.href = 'home/?strt=true&crm='+roomId;
+
+        }
+        },             
         async getChatVolume(start, end) {
             let post = await fetch("/api/reports/chats/daily", {
                 method: "POST",

@@ -443,7 +443,7 @@ const socket = io(process.env.MIX_SOCKET_SERVER, {
 });
 
 export default {
-  props: ["user", "crm"],
+  props: ["user", "crm", "strt"],
 
   components: {
     FileUploadComponent,
@@ -459,7 +459,6 @@ export default {
       chatrooms: [],
       chatroomsAPIData: [],
       activeRoom: "",
-      chtRoom: this.crm,
       activeConversation: "",
       activeConversationHistoryId: "",
       chatroomsUnreadNotif: {},
@@ -473,12 +472,6 @@ export default {
   },
 
   created() {
-    if(this.crm===null){
-
-    }else{
-      this.activeRoom = this.crm;
-    };
-    // console.log("adrian",this.crm);
 
     window.addEventListener("focus", () => {
       // console.log("window is in focus");
@@ -613,6 +606,25 @@ export default {
       });
     });
 
+    //try to join a room and start a conversation
+    //using this.crm and this.strt is from $_GET variables from the url
+    if(this.crm===""){
+        
+    }else{
+
+      this.activeRoom = this.crm;
+  
+      if(this.strt===""){
+        
+      }else{
+        
+        //i can't get the conversation id because this.chatrooms is undefined at this point in the code
+
+        //let convo = this.chatrooms[this.getTargetRoomIndex(roomId)].conversation._id;
+        //this.selectIncomingRoom(this.crm, convo);
+
+      }
+    };
   },
 
   methods: {
