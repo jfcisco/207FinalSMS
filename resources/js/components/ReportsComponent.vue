@@ -355,17 +355,17 @@ export default {
             this.socketReports = this.socketReports.filter(reports => reports.socketId != discon);
             this.siteBrowsers = this.siteBrowsers.filter(reports => reports.socketId != discon);
         });
-        socket.on("report-answered", ({ answered, missVar }) => {
+        socket.on("report-answered", ({ answered }) => {
             //console.log(answered);
             if(answered){
                 this.answeredChats++;
             }
-            console.log(missVar);
+            
         });     
-        socket.on("report-missed", ({ missed, missVar }) => {
+        socket.on("report-missed", ({ missed }) => {
             //console.log(missed);
             if(missed){this.missedChats++;}
-            console.log("missed missVar", missVar);
+            
         });
         socket.on("report-chatting", ({ chatting }) => {
             //console.log(chatting);
