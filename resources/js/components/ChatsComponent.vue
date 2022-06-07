@@ -502,6 +502,12 @@ export default {
       rooms.map(room => {
         this.chatroomsUnreadNotif[`${room._id}`] = 0;
       });
+
+      if(this.cnv !="" && this.crm !=""){
+        this.$nextTick(()=>{
+          this.selectRoom(this.crm, {_id: this.cnv});
+        });
+      }
     });
 
     socket.on("convo_started", (conversation) => {
@@ -608,20 +614,8 @@ export default {
 
     //try to join a room and start a conversation
     //using this.crm and this.strt is from $_GET variables from the url
-    if(this.crm===""){
-        
-    }else{
-
-      this.activeRoom = this.crm;
-  
-      if(this.cnv===""){
-        
-      }else{
-        //getting an error
-        //this.selectRoom(this.crm, this.cnv);
-
-
-      }
+    if(this.crm !=""){
+        this.activeRoom = this.crm;
     };
   },
 

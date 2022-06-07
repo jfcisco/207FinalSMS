@@ -96,14 +96,20 @@ class ReportsController extends Controller
 
     public function answeredChatsCount()
     {
-        $rooms = Room::all();
+        $conversations = Conversation::all();
 
         $answeredChatCount = 0;
-        foreach ($rooms as $room) {
-            $count = count($room->members);
-            if ($count > 1) {
-                $answeredChatCount++;
-            }
+        foreach ($conversations as $convo) {
+
+                $messages = Message::where("conversationId", $convo->_id)->get();
+                $clientTypes = array();
+                foreach($messages as $message){
+                    $clientTypes[] = $message->clientType;
+                }
+                if(in_array("user", $clientTypes)){
+                    $answeredChatCount++;
+                }
+        
         }
 
         return response(['data' => $answeredChatCount], 200);
@@ -111,20 +117,17 @@ class ReportsController extends Controller
 
     public function missedChatsCount()
     {
-        $rooms = Room::all();
-        $emptyRooms = array();
-        foreach($rooms as $room){
-            $count = count($room->members);
-            if($count <= 1){
-                $emptyRooms[] =  $room->_id;
-            }
-        }
         $conversations = Conversation::all();
 
         $missed = 0;
         foreach ($conversations as $convo) {
             if($convo->endAt == !null){
-                if(in_array($convo->roomId, $emptyRooms)){
+                $messages = Message::where("conversationId", $convo->_id)->get();
+                $clientTypes = array();
+                foreach($messages as $message){
+                    $clientTypes[] = $message->clientType;
+                }
+                if(!in_array("user", $clientTypes)){
                     $missed++;
                 }
             }

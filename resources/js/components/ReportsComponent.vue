@@ -355,13 +355,17 @@ export default {
             this.socketReports = this.socketReports.filter(reports => reports.socketId != discon);
             this.siteBrowsers = this.siteBrowsers.filter(reports => reports.socketId != discon);
         });
-        socket.on("report-answered", ({ answered }) => {
+        socket.on("report-answered", ({ answered, missVar }) => {
             //console.log(answered);
-            this.answeredChats++;
+            if(answered){
+                this.answeredChats++;
+            }
+            console.log(missVar);
         });     
-        socket.on("report-missed", ({ missed }) => {
+        socket.on("report-missed", ({ missed, missVar }) => {
             //console.log(missed);
-            this.missedChats++;
+            if(missed){this.missedChats++;}
+            console.log("missed missVar", missVar);
         });
         socket.on("report-chatting", ({ chatting }) => {
             //console.log(chatting);
@@ -399,21 +403,25 @@ export default {
         },  
         joinRoom(roomId, convoId) {
             //taken from chatscomponent
-        let confirmAction = confirm("Are you sure you want to chat?");
 
-        if (confirmAction) {
+  
+            let confirmAction = confirm("Are you sure you want to chat?");
 
-            socket.emit("join", { roomId: roomId, name: this.currentUser.name });
-            socket.emit("start_convo", {conversationId: convoId}, (error) => {
-                if (error) {
-                    console.error(error);
-                }
-                else {
-                    //alert("Successfully joined this room");
-                    window.location.href = 'home/?cnv='+convoId+'&crm='+roomId;
-                }
-            });
-        }
+            if (confirmAction) {
+
+                socket.emit("join", { roomId: roomId, name: this.currentUser.name });
+                socket.emit("start_convo", {conversationId: convoId}, (error) => {
+                    if (error) {
+                        console.error(error);
+                    }
+                    else {
+                        //alert("Successfully joined this room");
+                        window.location.href = 'home/?cnv='+convoId+'&crm='+roomId;
+                    }
+                });
+                
+            }
+            
         },             
         async getChatVolume(start, end) {
             let post = await fetch("/api/reports/chats/daily", {
