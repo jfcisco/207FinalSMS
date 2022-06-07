@@ -622,6 +622,7 @@ export default {
 
         //let convo = this.chatrooms[this.getTargetRoomIndex(roomId)].conversation._id;
         //this.selectIncomingRoom(this.crm, convo);
+        //this.selectRoom(this.crm, convo);
 
       }
     };

@@ -149,7 +149,7 @@
                                         <td>{{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</td>
                                         <td>{{ socketReport.fullUrl }}</td>
                                         <td>{{ socketReport.pageTitle }}</td>
-                                        <td><a v-bind:href="'home/?strt=true&crm=' + socketReport.roomId">{{ socketReport.roomId }}</a></td>
+                                        <td v-on:click="joinRoom(socketReport.roomId)"><a v-bind:href="'#'">{{ socketReport.roomId }}</a></td>
                                         <td>{{ socketReport.time }}</td>
 
                                     </tr>
