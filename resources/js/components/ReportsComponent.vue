@@ -149,7 +149,7 @@
                                         <td>{{ socketReport.browser.slice(socketReport.browser.lastIndexOf(" ")) }}</td>
                                         <td>{{ socketReport.fullUrl }}</td>
                                         <td>{{ socketReport.pageTitle }}</td>
-                                        <td v-on:click="joinRoom(socketReport.roomId, socketReport.convoId)"><a v-bind:href="'#'">{{ socketReport.roomId }}</a></td>
+                                        <td><a href="#" v-on:click.prevent="joinRoom(socketReport.roomId, socketReport.convoId)">{{ socketReport.roomId }}</a></td>
                                         <td>{{ socketReport.time }}</td>
 
                                     </tr>
@@ -404,11 +404,15 @@ export default {
         if (confirmAction) {
 
             socket.emit("join", { roomId: roomId, name: this.currentUser.name });
-            socket.emit("start_convo",{conversationId: convoId});            
-
-            //alert("Successfully joined this room");
-            window.location.href = 'home/?cnv='+convoId+'&crm='+roomId;
-
+            socket.emit("start_convo", {conversationId: convoId}, (error) => {
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    //alert("Successfully joined this room");
+                    window.location.href = 'home/?cnv='+convoId+'&crm='+roomId;
+                }
+            });
         }
         },             
         async getChatVolume(start, end) {
