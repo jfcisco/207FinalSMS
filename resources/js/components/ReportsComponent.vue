@@ -336,7 +336,7 @@ export default {
         socket.auth = {
             // For admin/agent
             clientId: this.user._id,
-            clientName: "agentako",
+            clientName: this.user.name.toString(),
             clientType: "user",
         };
 
