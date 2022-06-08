@@ -62,6 +62,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="reportblock">
+                    <div class="details">
+                        <div class="listHead">
+                            <p><a href="#chathistory">Chat History</a></p>
+                        </div>
+                    </div>
+                </div>
                 <!--<div class="reportblock">
                     <div class="details">
                         <div class="listHead">
@@ -86,14 +93,14 @@
             <div class="chat-container">
 
                 <!--LIVE SESSION SECTION-->
-                <h1>Live Analytics</h1>
+                <h1 style="color:#466289">Live Analytics</h1>
                 <div class="row reportsection livesession" style="overflow-y: scroll; overflow-x: hidden;">
 
                     <div class="col-sm-12">
-                        <div class="card" id="livesessions">
+                        <div class="card my-auto shadow" id="livesessions">
                             <div  class="card-body">
                                 <div>
-                                    <h5 class="card-title">Live Chat Sessions  </h5>
+                                    <h5 class="card-title" style="color:#627894"><strong>Live Chat Sessions</strong></h5>
                                 </div>
                                 <table class="table table-striped" style="border: 1px solid;">
                                     <tr>
@@ -126,10 +133,10 @@
                 <div class="row reportsection livesession" style="overflow-y: scroll; overflow-x: hidden;">
 
                     <div class="col-sm-12">
-                        <div class="card" id="livesessions">
+                        <div class="card my-auto shadow" id="livesessions">
                             <div  class="card-body">
                                 <div>
-                                    <h5 class="card-title">Live Browsing Sessions  </h5>
+                                    <h5 class="card-title" style="color:#627894"><strong>Live Browsing Sessions</strong></h5>
                                 </div>
                                 <table class="table table-striped" style="border: 1px solid;">
                                     <tr>
@@ -164,10 +171,10 @@
                 <div class="row reportsection">
                     <!--VISITORS-->
                     <div class="col-sm-6">
-                        <div class="card" id="livevisitors">
+                        <div class="card my-auto shadow" id="livevisitors">
                             <div class="card-body">
                                 <div class="card-title">
-                                <h5>Visitors</h5>
+                                <h5 style="color:#627894"><strong>Visitors</strong></h5>
                                 </div>
 
                                 <div class="row">
@@ -188,9 +195,9 @@
 
                     <!--CHATS-->
                     <div class="col-sm-6">
-                        <div class="card" id="chats">
+                        <div class="card my-auto shadow" id="chats">
                             <div class="card-body">
-                                <div class="card-title"><h5>Chats</h5></div>
+                                <div class="card-title"><h5 style="color:#627894"><strong>Chats</strong></h5></div>
 
                                 <div class="row">
 
@@ -207,7 +214,7 @@
 
                                     <!--CHATS MISSED-->
                                     <div class="col-sm-6">
-                                        <div class="card" id="missedchats">
+                                        <div class="card my-auto shadow" id="missedchats">
                                             <div class="card-body">
                                             <h5 class="card-title">Missed</h5>
                                             <p class="card-text">{{ missedChats }}</p>
@@ -225,12 +232,12 @@
 
                 <!--VISITORS PER HOUR AND CHATS PER HOUR START-->
                 <div class="row reportsection">
-
+                    <h1 style="color:#466289">Historical Analytics</h1>
                     <!--visitors per hour -->
                     <div class="col-sm-6">
-                        <div class="card" id="perHour">
+                        <div class="card my-auto shadow" id="perHour">
                             <div class="card-body">
-                                <h5>Visitors per hour</h5>
+                                <h5 style="color:#627894"><strong>Visitors per hour</strong></h5>
 
                                 <div class="card">
                                 <div class="card-body">
@@ -245,9 +252,9 @@
 
                     <!--chats per hour -->
                     <div class="col-sm-6">
-                        <div class="card">
+                        <div class="card my-auto shadow">
                             <div class="card-body">
-                                <h5>Chats per hour</h5>
+                                <h5 style="color:#627894"><strong>Chats per hour</strong></h5>
 
                                 <div class="card">
                                     <div class="card-body">
@@ -264,31 +271,68 @@
 
                 <!--HISTORICAL ANALYSIS START-->
                 <div class="row reportsection" id="chatvolume">
+                    <div class="col-sm-12">
+                        <div class="card my-auto shadow">
+                            <div class="card-body">
+                                <div>
+                                    <h5 class="card-title" style="color:#627894"><strong>Chat Volume</strong></h5>
 
-                    <h1>Historical Analytics</h1>
-                    <p>Chat Volume</p>
+                                    <div class="col-sm-5">
+                                    <input type="date" id="start_date_input">
+                                    <input type="date" id="end_date_input">
+                                    <button @click="getDates">Submit</button>
+                                    </div>
 
-                        <div class="col-sm-5">
-                        <input type="date" id="start_date_input">
-                        <input type="date" id="end_date_input">
-                        <button @click="getDates">Submit</button>
+                                    <table id="chat-container-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Chat Volume</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="chat-container-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="col-sm-12">
-                        <table id="chat-container-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Chat Volume</th>
-                                </tr>
-                            </thead>
-                            <tbody id="chat-container-body">
-                            </tbody>
-                        </table>
-                        </div>
-
+                    </div>
                 </div>
                 <!--HISTORICAL ANALYSIS END-->
+
+                <!--CHAT HISTORY START-->
+                <div class="row reportsection" id="chathistory">
+                        <div class="col-sm-12">
+                            <div class="card my-auto shadow">
+                                <div class="card-body">
+                                    <div>
+                                        <h5 class="card-title" style="color:#627894"><strong>Chat History</strong></h5>
+
+                                        <div class="col-sm-5">
+                                            <input type="date" id="start_date_input">
+                                            <input type="date" id="end_date_input">
+                                            <button @click="filterDates">Submit</button>
+                                        </div><br/>
+
+                                        <table id="chat-container-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Socket ID</th>
+                                                    <th>Start Date</th>
+                                                    <th>End Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="chathistory-container-body">
+                                            </tbody>            
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                    </div>
+
+                </div>
+                <!--CHAT HISTORY END-->
 
             </div>
         </div>
@@ -458,6 +502,47 @@ export default {
                     <td>${data.data[key]}</td>
                 </tr>`;
             });
+
+
+        },
+        async getChatHistory(start, end) {
+            let post = await fetch("api/reports/past-conversations", {
+                method: "POST",
+                body: {
+                    "start_date": start,
+                    "end_date": end
+                }
+            });
+
+            let data = await post.json();
+
+            return data;
+        },
+
+        async filterDates(event) {
+            let tableElem = document.getElementById("chathistory-container-body");
+            tableElem.innerHTML = "";
+
+            let start_date = document.getElementById("start_date_input").value;
+            let end_date = document.getElementById("end_date_input").value;
+            let data = await this.getChatHistory(start_date, end_date);
+
+            console.log("==========================");
+            console.log("start: " + start_date);
+            console.log("end: " + end_date);
+            console.log(data.data);
+
+            let conversations = response.data.data;
+
+            /*conversations.forEach((conversation) => {
+                let reversedKeys = keys(conversation).reverse();
+                reversedKeys.forEach((if(key='messages'){continue}{
+                    tableElem.innerHTML += `<tr style="border-bottom: 1px solid;">
+                    <td>${key}</td>
+                    <td>${data.data[key]}</td>
+                </tr>`;  
+                )
+            });*/
 
 
         },
