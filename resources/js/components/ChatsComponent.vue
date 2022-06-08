@@ -131,12 +131,12 @@
     <!--ACTIVE SESSIONS END-->
 
     <!--CLOSED SESSIONS START-->
-    <p class="subtitle sidebartitle">Closed Chats</p>
-    <div class="row inactivesessions" style="overflow-y: scroll">
+    <!--<p class="subtitle sidebartitle">Closed Chats</p>-->
+    <!--<div class="row inactivesessions" style="overflow-y: scroll">-->
 
       <!--CLOSED CHAT BLOCK START-->
       <!-- Display ended chats, wherein the room has an undefined or no conversation property (with an endAt property for the last conversation of that room) -->
-      <div
+      <!--<div
         :class="{
           block: true,
           active: chatroom._id == activeRoom,
@@ -144,40 +144,40 @@
         v-for="chatroom in chatrooms"
         :chatroom="chatroom"
         v-show="!chatroom.conversation || (chatroom.conversation ? !chatroom.conversation.startAt : false ) "
-        :key="chatroom._id">
-        <div
+        :key="chatroom._id">-->
+        <!--<div
           class="details"
           v-on:click.prevent="selectClosedRoom(chatroom._id)"
-          v-bind:id="chatroom._id">
+          v-bind:id="chatroom._id">-->
 
           <!--room id/username section-->
-          <div class="listHead">
+          <!--<div class="listHead">
             <p>{{ chatroom.members[0].clientName }}</p>
-          </div>
+          </div>-->
 
           <!-- HIDE BEFORE COMMIT -->
           <!-- show chatroom ids in active sessions -->
-          <div class="listHead"><p>room._id: {{ chatroom._id }}</p></div>
+          <!--<div class="listHead"><p>room._id: {{ chatroom._id }}</p></div>-->
           <!-- HIDE BEFORE COMMIT -->
 
           <!-- assigned room users (Admin/Agent) -->
-          <div class="listHead">
+          <!--<div class="listHead">
             <p style="font-style: italic; font-size: 0.9em;  font-weight:100;">
               Previously Assigned: {{ getAssignedToRoom(chatroom) ? getAssignedToRoom(chatroom) : "None" }}
             </p>
-          </div>
+          </div>-->
           <!-- assigned room users (Admin/Agent) -->
 
           <!-- The message last sent to the room -->
-          <div class="message_p">
+          <!--<div class="message_p">
             <p>
              {{ getLastMsgAndSender(chatroom) }}
             </p>
-          </div>
-        </div>
-      </div>
+          </div>-->
+        <!--</div>-->
+      <!--</div>-->
       <!--CLOSED CHAT BLOCK END-->
-    </div>
+    <!--</div>-->
     <!--CLOSED SESSIONS END-->
   </div>
   <!--ROOM LISTS END-->
