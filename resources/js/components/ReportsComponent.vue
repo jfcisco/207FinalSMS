@@ -317,10 +317,22 @@
                                         <table id="chat-container-table">
                                             <thead>
                                                 <tr>
-                                                    <th>Socket ID</th>
+                                                    <th>Conversation ID</th>
                                                     <th>Start Date</th>
                                                     <th>End Date</th>
+                                                    <th>Missed</th>
+                                                    <th>Messages</th>
                                                 </tr>
+                                                <tr
+                                                v-for="pastConvo in pastConversations"
+                                                :key="pastConvo.id">
+                                                    <td>{{ pastConvo.id }}</td>
+                                                    <td>{{ pastConvo.startAt }}</td>
+                                                    <td>{{ pastConvo.endAt }}</td>
+                                                    <td>{{ pastConvo.missed }}</td>
+                                                    <td>{{ pastConvo.messages.length }}</td>
+
+                                                </tr>                                                
                                             </thead>
                                             <tbody id="chathistory-container-body">
                                             </tbody>            
@@ -366,6 +378,7 @@ export default {
             currentUser: this.user,
             socketReports: [],
             siteBrowsers:[],
+            pastConversations:[],
             answeredChats: 0,
             missedChats: 0,
         };
@@ -520,8 +533,8 @@ export default {
         },
 
         async filterDates(event) {
-            let tableElem = document.getElementById("chathistory-container-body");
-            tableElem.innerHTML = "";
+            //let tableElem = document.getElementById("chathistory-container-body");
+            //tableElem.innerHTML = "";
 
             let start_date = document.getElementById("start_date_input").value;
             let end_date = document.getElementById("end_date_input").value;
@@ -532,7 +545,7 @@ export default {
             console.log("end: " + end_date);
             console.log(data.data);
 
-            let conversations = response.data.data;
+            this.pastConversations = data.data;
 
             /*conversations.forEach((conversation) => {
                 let reversedKeys = keys(conversation).reverse();

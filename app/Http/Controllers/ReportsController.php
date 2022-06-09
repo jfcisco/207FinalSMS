@@ -339,6 +339,7 @@ class ReportsController extends Controller
         $conversations = Conversation::where('endAt', '!=', null)
         ->where('startAt', '>=', $startDate)
             ->where('startAt', '<', $endDate->addDay())
+            ->whereNotNull("missed")
             ->orderBy('startAt', 'DESC')->get();
 
 
@@ -353,7 +354,6 @@ class ReportsController extends Controller
 
 
     public function test(){
-
         echo '<pre>';
         var_dump("");
         echo '</pre>';     

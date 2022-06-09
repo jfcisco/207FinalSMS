@@ -23,6 +23,7 @@ class ConversationResource extends JsonResource
             'messages' => MessageResource::collection($this->messages),
             'startAt' => $startAt,
             'endAt' => $endAt,
+            'missed'=> $this->missed,
         ];
     }
 
