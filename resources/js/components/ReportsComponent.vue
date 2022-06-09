@@ -407,7 +407,7 @@ export default {
             
         });     
         socket.on("report-missed", ({ missed }) => {
-            //console.log(missed);
+            //console.log("miss",missed);
             if(missed){this.missedChats++;}
             
         });
@@ -547,6 +547,7 @@ export default {
 
         },
         async getMissedChats(){
+            //no longer being used
              try {
                 const response = await axios.get('/api/reports/chats/missed');
                 //console.log("missed", response.data.data)
@@ -556,6 +557,7 @@ export default {
             }           
         },
         async getAnsweredChats(){
+            //no longer being used
              try {
                 const response = await axios.get('/api/reports/chats/answered');
                 //console.log("answered", response.data.data)
@@ -624,18 +626,18 @@ export default {
         },
 
         async getAnsweredUnanswered(){
-            const results = await this.getAnsweredChats();
-            this.answeredChats = results;
-
-            const results2 = await this.getMissedChats();
-            this.missedChats = results2;
+           
+            try {
+                const response = await axios.get('/api/reports/chats/missed-answered');
+                //console.log("miss-ans", response.data)
+                const results =  response.data;
+                this.answeredChats = results.answered;
+                this.missedChats = results.missed;
+            } catch (err) {
+                console.error(err);
+            }       
         },
 
-
-        // selectRoom: function (roomId) {
-        //     this.activeRoom = roomId;
-        //     // this.scrollToChatBottom();
-        // },
     },
 };
 </script>

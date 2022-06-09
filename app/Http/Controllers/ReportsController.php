@@ -136,6 +136,20 @@ class ReportsController extends Controller
         return response(['data' => $missed], 200);
     }
 
+    public function getMissedAnsweredConvo(){
+        $conversations = Conversation::whereNotNull("missed")->get();
+        $answeredChatCount = 0;
+        $missed = 0;
+        foreach($conversations as $convo){
+            if($convo->missed){
+                $missed++;
+            }else{
+                $answeredChatCount++;
+            }
+        }
+        return array("missed"=>$missed, "answered"=>$answeredChatCount);
+    }
+
     public function todaysMissedChatsCount()
     {
         $rooms = Room::all();
@@ -341,7 +355,7 @@ class ReportsController extends Controller
     public function test(){
 
         echo '<pre>';
-        //echo var_dump($output);
+        var_dump("");
         echo '</pre>';     
     }
 

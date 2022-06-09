@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('answered', [ReportsController::class, 'answeredChatsCount']);
                 Route::get('todays-missed', [ReportsController::class, 'todaysMissedChatsCount']);
                 Route::get('missed', [ReportsController::class, 'missedChatsCount']);
+                Route::get('missed-answered', [ReportsController::class, 'getMissedAnsweredConvo']);
             });
 
             Route::prefix('sessions')->group(function () {
