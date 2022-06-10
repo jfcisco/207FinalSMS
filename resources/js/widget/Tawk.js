@@ -325,17 +325,17 @@ export class Tawk {
                 border-top-left-radius: 5px;
             }
             
-            h2 ul {
+            .message-container h2 ul {
                 list-style-type: none;
                 margin: 0;
                 padding: 0;
             }
 
-            h2 ul li{
+            .message-container h2 ul li{
                 display: inline;
             }
 
-            h2 ul li button{
+            .message-container h2 ul li button{
                 background-color: none;
                 font-size: 12px;
                 border: none;
@@ -343,7 +343,7 @@ export class Tawk {
                 padding: none;
             }
 
-            h2 ul li button:hover{
+            .message-container h2 ul li button:hover{
                 background-color: lightgray;
                 cursor: pointer;
                 color: ${this.color};
@@ -781,6 +781,7 @@ export class Tawk {
 
         this.sessionStarted = true;
         this.startConversation(formSubmission);
+        
     }
 
     startConversation(formSubmission) {
@@ -807,6 +808,21 @@ export class Tawk {
                 room: this.room
             }
         });
+
+        const client = new cj.ClientJS();
+        this.visitorId = `${client.getFingerprint()}`
+
+        axios.patch("<?php echo $baseUrl; ?>/api/visitors/" + this.visitorId, {
+            name: formSubmission.name
+        })
+            .then(response => {
+                window.localStorage.setItem(this.visitorId, formSubmission.name);
+            })
+            .catch((err) => {
+                console.error(err);
+                console.log('Unable to update name. Please try again later.');
+            })
+
 
         // Mount it to message-container
         this.vue.$mount(this.messageContainer);
