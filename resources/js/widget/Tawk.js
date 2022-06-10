@@ -809,20 +809,22 @@ export class Tawk {
             }
         });
 
-        const client = new cj.ClientJS();
-        this.visitorId = `${client.getFingerprint()}`
-
-        axios.patch("<?php echo $baseUrl; ?>/api/visitors/" + this.visitorId, {
-            name: formSubmission.name
-        })
-            .then(response => {
-                window.localStorage.setItem(this.visitorId, formSubmission.name);
+        
+        if (formSubmission) {
+            const client = new cj.ClientJS();
+            this.visitorId = `${client.getFingerprint()}`;
+    
+            axios.patch("<?php echo $baseUrl; ?>/api/visitors/" + this.visitorId, {
+                name: formSubmission.name
             })
-            .catch((err) => {
-                console.error(err);
-                console.log('Unable to update name. Please try again later.');
-            })
-
+                .then(response => {
+                    window.localStorage.setItem(this.visitorId, formSubmission.name);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    console.log('Unable to update name. Please try again later.');
+                })   
+        }
 
         // Mount it to message-container
         this.vue.$mount(this.messageContainer);
