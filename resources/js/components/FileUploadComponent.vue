@@ -1,7 +1,7 @@
 <template>
     <div class="UploadButton-container">
         <button type="button" class="UploadButton" title="Upload Image" data-bs-toggle="modal" data-bs-target="#FileUploadModal">
-            <ion-icon name="attach-outline"></ion-icon>
+            <ion-icon name="attach-outline" class="file-upload-button"></ion-icon>
         </button>
 
         <!-- File Dialog Modal -->
@@ -44,53 +44,6 @@
     </div>
 </template>
 
-<style scoped>
-    .UploadButton {
-        /* cursor:  pointer; */
-        font-size:  2em;
-        max-height: min-content;
-        padding: 0;
-        color:  whitesmoke;
-        background: none;
-        border: none;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .UploadField {
-        padding: 0.375rem 0.75rem;
-        margin: 0;
-    }
-
-    .UploadAndSendBtn {
-        background-color: #e06822;
-        color: whitesmoke;
-        border: none;
-        padding: 5px;
-        width: 50%;
-    }
-
-    .UploadAndSendBtn:hover{
-        background-color:#1a9988;
-        color: whitesmoke;
-        border: none;
-        padding: 5px;
-        width: 50%;
-    }
-
-    .FileUploadModal-actions {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-evenly;
-        margin-top: 0.75rem;
-    }
-
-    .FileUploadModal-actions > .btn {
-       flex: 1; 
-    }
-</style>
 
 <script>
 export default {
@@ -128,7 +81,7 @@ export default {
 
             return errors;
         },
-        
+
         // Send file to server
         uploadFile() {
             this.errors = this.validateInput();
@@ -140,17 +93,16 @@ export default {
 
             // Prepare to send the file to the server
             let formData = new FormData();
-            formData.append('attachment', this.attachmentFile, this.attachmentFile.name);
-            formData.append('room_id', this.$props.activeRoom);
+            formData.append('file', this.attachmentFile);
             this.isUploading = true;
 
             // Send request to upload file to server
-            axios.post('messages', formData)
+            axios.post("api/upload-file", formData)
                 .then(response => {
-                    const imageUrl = response.data.imageUrl;
-
+                    const fileUrl = response.data.data;
+                    console.log("response=> ", fileUrl)
                     // Fire an event to the parent component
-                    this.$emit('upload-success', imageUrl);
+                    this.$emit('upload-success', fileUrl);
 
                     // Reset the form
                     this.$refs.uploadForm.reset();
@@ -159,6 +111,7 @@ export default {
                     var modalElement = document.getElementById("FileUploadModal");
                     var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
                     modal.hide();
+
                 })
                 .catch((err) => {
                     console.error(err);
@@ -167,7 +120,7 @@ export default {
                 .finally(() => {
                     this.isUploading = false;
                 });
-        }
+        },
     }
 }
 </script>

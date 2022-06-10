@@ -14,8 +14,8 @@ class Room extends Model
         'members',
     ];
 
-    public function messages(): HasMany
+    public function conversations(): HasMany
     {
-        return $this->hasMany(Message::class, 'roomId', 'id');
+        return $this->hasMany(Conversation::class, 'roomId', 'id');
     }
 }

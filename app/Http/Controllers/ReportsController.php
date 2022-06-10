@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ConversationResource;
 use App\Models\Message;
 use App\Models\Room;
 use App\Models\Session;
+use App\Models\Visitor;
+use App\Models\Conversation;
+use App\Models\ChatWidget;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -92,14 +96,20 @@ class ReportsController extends Controller
 
     public function answeredChatsCount()
     {
-        $rooms = Room::all();
+        $conversations = Conversation::all();
 
         $answeredChatCount = 0;
-        foreach ($rooms as $room) {
-            $count = count($room->members);
-            if ($count > 1) {
-                $answeredChatCount++;
-            }
+        foreach ($conversations as $convo) {
+
+                $messages = Message::where("conversationId", $convo->_id)->get();
+                $clientTypes = array();
+                foreach($messages as $message){
+                    $clientTypes[] = $message->clientType;
+                }
+                if(in_array("user", $clientTypes)){
+                    $answeredChatCount++;
+                }
+        
         }
 
         return response(['data' => $answeredChatCount], 200);
@@ -107,17 +117,37 @@ class ReportsController extends Controller
 
     public function missedChatsCount()
     {
-        $rooms = Room::all();
+        $conversations = Conversation::all();
 
-        $answeredChatCount = 0;
-        foreach ($rooms as $room) {
-            $count = count($room->members);
-            if ($count <= 1) {
-                $answeredChatCount++;
+        $missed = 0;
+        foreach ($conversations as $convo) {
+            if($convo->endAt == !null){
+                $messages = Message::where("conversationId", $convo->_id)->get();
+                $clientTypes = array();
+                foreach($messages as $message){
+                    $clientTypes[] = $message->clientType;
+                }
+                if(!in_array("user", $clientTypes)){
+                    $missed++;
+                }
             }
         }
 
-        return response(['data' => $answeredChatCount], 200);
+        return response(['data' => $missed], 200);
+    }
+
+    public function getMissedAnsweredConvo(){
+        $conversations = Conversation::whereNotNull("missed")->get();
+        $answeredChatCount = 0;
+        $missed = 0;
+        foreach($conversations as $convo){
+            if($convo->missed){
+                $missed++;
+            }else{
+                $answeredChatCount++;
+            }
+        }
+        return array("missed"=>$missed, "answered"=>$answeredChatCount);
     }
 
     public function todaysMissedChatsCount()
@@ -149,12 +179,12 @@ class ReportsController extends Controller
             $hours->put($date->format('h A'), 0);
         }
 
-        $sessions = Session::where('startAt', '>=', Carbon::today())
+        $conversations = Conversation::where('startAt', '>=', Carbon::today())
             ->orderBy('startAt')->get()->groupBy(function ($item) {
             return $this->parseTime($item->startAt);
         });
 
-        foreach ($sessions as $key => $message) {
+        foreach ($conversations as $key => $message) {
             $day = $key;
             $totalCount = $message->count();
             $hours = $hours->merge([
@@ -173,13 +203,13 @@ class ReportsController extends Controller
 
         $dates = $this->generateDates($startDate, $endDate);
 
-        $sessions = Session::where('startAt', '>=', $startDate)
+        $conversations = Conversation::where('startAt', '>=', $startDate)
             ->where('startAt', '<', $endDate->addDay())
-        ->orderBy('startAt', 'DESC')->get()->groupBy(function ($item) {
-            return $this->parseDate($item->startAt);
-        });
+            ->orderBy('startAt', 'DESC')->get()->groupBy(function ($item) {
+                return $this->parseDate($item->startAt);
+            });
 
-        foreach ($sessions as $key => $message) {
+        foreach ($conversations as $key => $message) {
             $day = $key;
             $totalCount = $message->count();
             $dates = $dates->merge([
@@ -233,6 +263,102 @@ class ReportsController extends Controller
 
         return date('h A', ($millis / 1000));
     }
+    public function liveVisitorSessions()
+    {
+        $liveVisitorSessions = Session::where('endAt', null)->where('clientType', "visitor")->get();
+        $output = array();
+        $timeout = $this->getTimeoutSetting().' mins';
+        foreach($liveVisitorSessions as $vSession){
+            $exclude = false;
+            $visitors = Visitor::where("_id", $vSession->clientId)->get();
+            //echo $vSession->startAt->toDateTime()->format('U.u')."<br>";
+            foreach($visitors as $visitor){
+                $room = Room::where('members.clientId',$vSession->clientId)->first();
+                $browsingConvo = Conversation:: where('roomId',$room->_id)->whereNull('endAt')->whereNull('startAt')->first();
+                $noEndConvo = Conversation:: where('roomId',$room->_id)->whereNull('endAt')->whereNotNull('startAt')->first();
+                date_default_timezone_set('UTC');
+                $maxTime = date_create($vSession->startAt->toDateTime()->format(DATE_ATOM));
+                date_add($maxTime, date_interval_create_from_date_string($timeout));
+                $convoId = "";
+
+                if($noEndConvo != null){
+                    //start is not null and end is null == active chat
+                    $activeConvo = true;
+                    $convoId = $noEndConvo->_id;
+                }elseif($browsingConvo != null){
+                    //start and end is null == browsing or offline
+                    $activeConvo = false;
+                    $convoId = $browsingConvo->_id;
+                    if(now() >= $maxTime){
+                        //end session in db if more than getTimeoutSetting already
+                        //do not include in output
+                        $exclude = true;
+                        $vSession->endAt = now()->format(DATE_ATOM);
+                        $vSession->save();
+                    }                 
+                }elseif($browsingConvo==null && $noEndConvo==null){
+                    //offline or done with chat and hasn't started browsing again
+                    $activeConvo = false;
+                    $convoId = false;
+                    if(now() >= $maxTime){
+                        //end session in db if more than getTimeoutSetting already;
+                        //do not include in output
+                        $exclude = true;                        
+                        $vSession->endAt = now()->format(DATE_ATOM);
+                        $vSession->save();
+                    }                    
+                }
+                if(!$exclude){
+                    $output[]=array(
+                        "socketId" => $vSession->socketId,
+                        "ipAddress" => $visitor->ipAddress,
+                        "browser" => $visitor->browser,
+                        "roomId" => $room->_id,
+                        "fromURL" => $visitor->webpage_source,
+                        "startAt" => $vSession->startAt->toDateTime()->format(DATE_ATOM),
+                        "time" => "",
+                        "pageTitle" => $vSession->pageTitle,
+                        "fullUrl" => $vSession->fullUrl,
+                        "activeConvo" => $activeConvo,
+                        "convoId" => $convoId
+                    );
+                }
+
+
+            }
+        }
+        return response(['data' => $output], 200);
+    }
+
+    public function pastConversations(Request  $request)
+    {
+        $dayOfWeek = Carbon::now()->dayOfWeek;
+        $startDate = $request->start_date == null ? Carbon::today()->subDays($dayOfWeek) : Carbon::parse($request->start_date);
+        $endDate = $request->end_date == null ? Carbon::today() : Carbon::parse($request->end_date);
+
+        $conversations = Conversation::where('endAt', '!=', null)
+        ->where('startAt', '>=', $startDate)
+            ->where('startAt', '<', $endDate->addDay())
+            ->whereNotNull("missed")
+            ->orderBy('startAt', 'DESC')->get();
+
+
+        return response(['data' => ConversationResource::collection($conversations)], 200);
+    }
+
+    public function getTimeoutSetting(){
+        $widget = ChatWidget::first();
+        return $widget->inactivity_timeout_minutes;
+    }
+
+
+
+    public function test(){
+        echo '<pre>';
+        var_dump("");
+        echo '</pre>';     
+    }
+
 }
 
 

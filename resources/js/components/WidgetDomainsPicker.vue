@@ -5,7 +5,7 @@
         </div>
         <div class="widget-block">
             <label class="switch">
-                <input type="checkbox" v-model="enabled">
+                <input type="checkbox" v-model="enabled" :disabled="!editable">
                 <span class="slider round"></span>
             </label> 
             <span class="chat-label">
@@ -16,7 +16,7 @@
         <template v-if="enabled">
             <div class="widget-block">
                 <label class="chat-label me-auto">Allowed Domains</label>
-                <button class="btn btn-light d-flex align-items-center justify-content-between" @click.prevent="addDomainEntry()">
+                <button class="btn btn-light d-flex align-items-center justify-content-between" @click.prevent="addDomainEntry()" :disabled="!editable">
                     <ion-icon name="add-circle-outline"></ion-icon>&nbsp;Domain
                 </button>
             </div>
@@ -31,8 +31,9 @@
                         type="text" 
                         v-model="domainsList[index]" 
                         placeholder="https://sms-chat.ml" 
-                        required>
-                    <button class="btn save-button px-3" @click.prevent="removeDomainAt(index)">
+                        required
+                        :disabled="!editable">
+                    <button class="btn save-button px-3" @click.prevent="removeDomainAt(index)" :disabled="!editable">
                         <ion-icon name="close-circle-outline"></ion-icon>
                     </button>
                 </div>
@@ -57,6 +58,7 @@ const EMPTY_DOMAIN_LIST_JSON = '[""]';
 
 export default {
   props: [
+    "editable",
     "initialDomainsListJson"
   ],
 

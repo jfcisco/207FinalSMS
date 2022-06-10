@@ -6,10 +6,6 @@
 	font-family: monospace;
 }
 
-.widget-details-row {
-	max-height: 90vh !important;
-}
-
 .widget-details-sidebar {
 	max-height: inherit;
 	overflow-y: hidden;
@@ -18,4 +14,13 @@
 .widget-details-form {
 	max-height: inherit !important;
 	overflow-y: auto;
+}
+
+.widget-icon-option {
+	min-height: 2rem;
+
+	& > label {
+		flex: 0 0 40px;
+		// min-width: 40px;
+	}
 }

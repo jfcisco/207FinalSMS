@@ -71,7 +71,7 @@ export default {
             const labels = Object.keys(resp.data.data);
             this.chartData = {
                 labels: labels,
-                datasets: [{ data: labels.map((l) => resp.data.data[l]) }],
+                datasets: [{ backgroundColor: ["#627894"], data: labels.map((l) => resp.data.data[l]) }],
             };
             this.loaded = true;
         });

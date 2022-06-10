@@ -32,8 +32,7 @@ class RoomResource extends JsonResource
         return [
             'id' => $this->_id,
             'members' => $members,
-            'messages' => MessageResource::collection($this->messages),
-            'created_at' => $this->created_at,
+            'conversations' => ConversationResource::collection($this->conversations),
         ];
     }
 }

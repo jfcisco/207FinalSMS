@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model;
-use Jenssegers\Mongodb\Relations\BelongsTo;
 
-class Visitor extends Model
+class Icon extends Model
 {
     use HasFactory;
 
@@ -17,13 +16,6 @@ class Visitor extends Model
      */
     protected $fillable = [
         'name',
-        'ipAddress',
-        'browser',
-        'webpage_source',
+        'path',
     ];
-
-    public function session()
-    {
-        return $this->hasOne(Session::class, 'clientId', 'id');
-    }
 }

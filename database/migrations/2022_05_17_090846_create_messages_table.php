@@ -20,6 +20,7 @@ class CreateMessagesTable extends Migration
             $table->string('attachment_path')->nullable();
             $table->string('message');
             $table->boolean('is_whisper')->default(false);
+            $table->string('conversationId');
             $table->timestamps();
         });
     }

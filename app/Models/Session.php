@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Jenssegers\Mongodb\Relations\BelongsTo;
-use Jenssegers\Mongodb\Relations\BelongsToMany;
 
 class Session extends Model
 {
@@ -32,8 +31,8 @@ class Session extends Model
      * @var array
      */
     protected $casts = [
-        'startedAt' =>'datetime',
-        'endedAt' =>'datetime',
+        'startAt' =>'datetime',
+        'endAt' =>'datetime',
     ];
 
     public function chat_widget(): BelongsTo

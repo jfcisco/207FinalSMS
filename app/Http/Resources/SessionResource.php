@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
+use App\Models\Visitor;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SessionResource extends JsonResource
@@ -18,16 +20,34 @@ class SessionResource extends JsonResource
             $endAt = $this->parseDate($this->endAt);
         }
 
-        return [
-            'id' => $this->_id,
-            'socket_id' => $this->socketId,
-            'client_id' => $this->clientId,
-            'clientType' => $this->clientType,
-//            'visitor' => new VisitorResource($this->clientId),
-            'started_at' => $startAt,
-            'ended_at' => $endAt,
-            'end_reason' => $this->endReason,
-        ];
+        $user = User::find($this->clientId);
+        $visitor = Visitor::find($this->clientId);
+
+        if ($user != null) {
+            return [
+                'id' => $this->_id,
+                'socket_id' => $this->socketId,
+                'clientId' => $this->clientId,
+                'clientType' => $this->clientType,
+                'user' => new UserResource($user),
+                'started_at' => $startAt,
+                'ended_at' => $endAt,
+                'end_reason' => $this->endReason,
+            ];
+        } else {
+            return [
+                'id' => $this->_id,
+                'socket_id' => $this->socketId,
+                'clientId' => $this->clientId,
+                'webpage_source' => $this->socketId,
+                'clientType' => $this->clientType,
+                'visitor' => new VisitorResource($visitor),
+                'started_at' => $startAt,
+                'ended_at' => $endAt,
+                'end_reason' => $this->endReason,
+            ];
+
+        }
     }
 
     function parseDate($dateFromMongo)
