@@ -329,20 +329,32 @@
                                                     <td>{{ pastConvo.id }}</td>
                                                     <td>{{ pastConvo.startAt }}</td>
                                                     <td>{{ pastConvo.endAt }}</td>
-                                                    <td>{{ pastConvo.missed }}</td>
-                                                    <td>{{ pastConvo.messages.length }}</td>
-
-                                                </tr>                                                
+                                                    <td>{{ pastConvo.missed ? 'Yes' : 'No' }}</td>
+                                                    <td>
+                                                        <button
+                                                            class="btn btn-secondary w-100"
+                                                            :disabled="activePastConversation.loading"
+                                                            @click="loadConversation(pastConvo.id)">
+                                                        {{ pastConvo.messages.length }}
+                                                        </button>
+                                                    </td>
+                                                </tr>
                                             </thead>
                                             <tbody id="chathistory-container-body">
                                             </tbody>            
                                         </table>
+
                                     </div>
                                 </div>
                             </div>
                         
                     </div>
 
+                    <MessageHistoryComponent
+                        v-if="activePastConversation.conversation"
+                        :conversation="activePastConversation.conversation"
+                        :chatroomMembers="activePastConversation.chatroomMembers"
+                    ></MessageHistoryComponent>
                 </div>
                 <!--CHAT HISTORY END-->
 
@@ -363,15 +375,18 @@ const socket = io(process.env.MIX_SOCKET_SERVER, {
 });
 
 import axios from 'axios';
+import { Modal } from 'bootstrap';
 import HourlyVisitor from './Visuals/HourlyVisitor.vue';
 import HourlyChat from './Visuals/HourlyChat.vue';
+import MessageHistoryComponent from "./MessageHistoryComponent.vue";
 
 export default {
     props: ["user"],
     components:{
 
     HourlyVisitor,
-    HourlyChat
+    HourlyChat,
+    MessageHistoryComponent
 },
     data() {
         return {
@@ -381,6 +396,11 @@ export default {
             pastConversations:[],
             answeredChats: 0,
             missedChats: 0,
+            activePastConversation: {
+                loading: false,
+                conversation: null,
+                chatroomMembers: []
+            }
         };
     },
 
@@ -651,6 +671,26 @@ export default {
             }       
         },
 
+        async loadConversation(conversationId) {
+            this.activePastConversation.chatroomMembers = [];
+            this.activePastConversation.conversation = this.pastConversations.find(convo => convo.id === conversationId);
+
+            this.activePastConversation.loading = true;
+
+            try {
+                const roomId = this.activePastConversation.conversation.roomId;
+                const response = await fetch(`/api/rooms/${roomId}`);
+                const room = (await response.json()).data;
+                this.activePastConversation.chatroomMembers = room.members;
+            }
+            catch {
+                // Do nothing
+            }
+
+            this.activePastConversation.loading = false;
+            var historyModal = new Modal(document.getElementById('CheckTranscript'));
+            historyModal.show();
+        }
     },
 };
 </script>

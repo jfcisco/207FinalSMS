@@ -21,6 +21,7 @@ class ConversationResource extends JsonResource
         return [
             'id' => $this->_id,
             'messages' => MessageResource::collection($this->messages),
+            'roomId' => $this->roomId,
             'startAt' => $startAt,
             'endAt' => $endAt,
             'missed'=> $this->missed,
