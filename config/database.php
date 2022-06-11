@@ -93,7 +93,7 @@ return [
 
         'mongodb' => [
             'driver' => 'mongodb',
-            'dsn' => 'mongodb+srv://' . env('DB_USERNAME') . ':' . env('DB_PASSWORD') . '@' . env('DB_HOST') . '/' . env('DB_DATABASE') . '?retryWrites=true&w=majority',
+            'dsn' => env('DB_DSN', ''),
             'database' => env('DB_DATABASE', 'sms'),
             'options' => array_filter([
                 'tlsCAFile' => env('MONGODB_TLS_CA_FILE',
