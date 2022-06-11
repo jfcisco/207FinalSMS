@@ -20,11 +20,10 @@ Widget-based chat application made by team SMS.
     APP_URL=http://localhost:8000
 
     DB_CONNECTION=mongodb
-    DB_HOST=<see MongoDB Local Setup doc>
     DB_PORT=27017
-    DB_DATABASE=<see MongoDB Local Setup doc>
-    DB_USERNAME=<see MongoDB Local Setup doc>
-    DB_PASSWORD=<see MongoDB Local Setup doc>
+    DB_DSN=<see MongoDB Local Setup Document>
+
+    MIX_SOCKET_SERVER=http://localhost:3000
     ```
     - If you are using a different domain or port, change the APP_URL to them.
     - The MongoDB Local Setup document can be found in our shared Google Drive.
